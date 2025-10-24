@@ -1,4 +1,6 @@
 package me.jetby.xClans.records;
 
-public class Chest {
+public record Chest(
+
+) {
 }

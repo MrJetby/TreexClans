@@ -4,5 +4,4 @@ public record Rank(
         String id,
         String name,
         RankPermissions rankPermissions
-) {
-}
+) {}

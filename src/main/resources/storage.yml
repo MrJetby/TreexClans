@@ -1,0 +1,22 @@
+
+
+clan-id:
+  balance: 150000.0
+  ranks:
+    member:
+      display-name: Участник
+      permissions:
+        invite: false
+        kick: false
+        base: false
+        setbase: false
+        setrank: false
+        deposit: true
+        withdraw: false
+        pvp: false
+  leader:
+    uuid: uuid
+    rank: leader
+    level: 10
+    joined-at: 1700000000
+    last-online: 1700000000

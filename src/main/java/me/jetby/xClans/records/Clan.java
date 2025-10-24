@@ -5,7 +5,7 @@ import me.jetby.xClans.records.rank.Rank;
 import java.util.Set;
 
 public record Clan(
-        Member owner,
+        Member leader,
         Set<Member> members,
         Set<Rank> ranks,
         Chest chest

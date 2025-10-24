@@ -1,7 +1,10 @@
 name: XClans
 version: '1.0'
-main: me.jetby.xClans.XClans
-api-version: '1.18'
+main: me.jetby.xClans.TreexClans
+api-version: '1.16'
 load: STARTUP
 authors: [ MrJetby ]
 website: https://dsc.gg/treexstudio
+commands:
+  xclans: {}
+  clan: {}

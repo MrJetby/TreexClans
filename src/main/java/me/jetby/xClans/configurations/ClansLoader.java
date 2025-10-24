@@ -15,6 +15,5 @@ public class ClansLoader {
     private final Set<Level> levels = new HashSet<>();
 
 
-    Level level = new Level("").toString()
 
 }
