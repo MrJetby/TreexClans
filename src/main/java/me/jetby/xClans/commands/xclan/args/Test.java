@@ -1,4 +1,4 @@
-package me.jetby.xClans.commands.xClan.args;
+package me.jetby.xClans.commands.xclan.args;
 
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
@@ -19,12 +19,8 @@ public class Test implements Subcommand {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
 
-        if (args[0].equalsIgnoreCase("id")) {
-            sender.sendMessage(plugin.getRank().id());
-            return true;
-        }
-        if (args[0].equalsIgnoreCase("name")) {
-            sender.sendMessage(plugin.getRank().name());
+        if (args[0].equalsIgnoreCase("info")) {
+
             return true;
         }
         return false;

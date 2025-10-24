@@ -9,7 +9,8 @@ import java.util.UUID;
 public record Member(
         UUID uuid,
         Rank rank,
-        Level level,
+        int joinedAt,
+        int lastOnline,
         boolean clanGlow,
         Color glowColor
 ) {

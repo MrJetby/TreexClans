@@ -15,8 +15,11 @@ clan-create:
     - "admin"
     - "owner"
     - "op"
+  default-rank: LEADER # ВАЖНО: Укажите здесь ранг, который будет присвоен создателю клана при создании клана
+
 
 ranks:
+  # можно создавать неограниченное количество рангов
   MEMBER:
     display-name: Участник
     permissions:
@@ -28,3 +31,14 @@ ranks:
       deposit: true
       withdraw: false
       pvp: false
+  LEADER:
+    display-name: Участник
+    permissions:
+      invite: true
+      kick: true
+      base: true
+      setbase: true
+      setrank: true
+      deposit: true
+      withdraw: true
+      pvp: true

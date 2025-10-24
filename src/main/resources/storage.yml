@@ -2,6 +2,19 @@
 
 clan-id:
   balance: 150000.0
+  level: 1
+
+  leader:
+    uuid: uuid
+    rank: leader
+    joined-at: 1700000000
+    last-online: 1700000000
+
+  members:
+    - uuid: uuid
+      rank: member
+      joined-at: 1700000000
+      last-online: 1700000000
   ranks:
     member:
       display-name: Участник
@@ -14,9 +27,3 @@ clan-id:
         deposit: true
         withdraw: false
         pvp: false
-  leader:
-    uuid: uuid
-    rank: leader
-    level: 10
-    joined-at: 1700000000
-    last-online: 1700000000

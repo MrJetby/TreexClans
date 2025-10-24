@@ -2,8 +2,10 @@ package me.jetby.xClans;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
+import lombok.Getter;
 import me.jetby.xClans.commands.clan.ClanCommand;
-import me.jetby.xClans.commands.xClan.XClanCommand;
+import me.jetby.xClans.commands.xclan.XClanCommand;
+import me.jetby.xClans.configurations.ClansLoader;
 import me.jetby.xClans.functions.ClanGlow;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,11 +18,17 @@ public final class TreexClans extends JavaPlugin {
         return INSTANCE;
     }
 
+    @Getter
+    private final ClansLoader clansLoader = new ClansLoader();
+    @Getter
+    private ClanManager clanManager = new ClanManager(this);
+
     @Override
     public void onEnable() {
         INSTANCE = this;
         saveDefaultConfig();
 
+        clansLoader.load();
         // register /xclan command
         PluginCommand xClanCommand = this.getCommand("xclans");
         if (xClanCommand != null) {

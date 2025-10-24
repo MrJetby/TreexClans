@@ -1,4 +1,4 @@
-package me.jetby.xClans.commands.xClan;
+package me.jetby.xClans.commands.xclan;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

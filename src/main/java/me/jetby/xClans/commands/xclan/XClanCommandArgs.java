@@ -1,9 +1,9 @@
-package me.jetby.xClans.commands.xClan;
+package me.jetby.xClans.commands.xclan;
 
 import lombok.Getter;
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
-import me.jetby.xClans.commands.xClan.args.Test;
+import me.jetby.xClans.commands.xclan.args.Test;
 
 public enum XClanCommandArgs {
     TEST(new Test(TreexClans.getInstance()));
