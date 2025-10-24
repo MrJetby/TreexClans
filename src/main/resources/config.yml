@@ -1,0 +1,30 @@
+
+clan-create:
+  requirements:
+    example:
+      type: math
+      express: "%vault_eco_balance_fixed% >= 5000"
+      actions:
+        - "[message] &aВы успешно создали клан &e{clan_tag}"
+      deny_actions:
+        - "[message] &cНедостаточно денег на создание клана! Минимум 5000 монет"
+    "example2": {}
+
+  max-clan-name-length: 16
+  blocked-tags:
+    - "admin"
+    - "owner"
+    - "op"
+
+ranks:
+  MEMBER:
+    display-name: Участник
+    permissions:
+      invite: false
+      kick: false
+      base: false
+      setbase: false
+      setrank: false
+      deposit: true
+      withdraw: false
+      pvp: false
