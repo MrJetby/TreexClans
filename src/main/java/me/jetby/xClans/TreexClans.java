@@ -6,9 +6,11 @@ import lombok.Getter;
 import me.jetby.xClans.commands.clan.ClanCommand;
 import me.jetby.xClans.commands.xclan.XClanCommand;
 import me.jetby.xClans.configurations.ClansLoader;
+import me.jetby.xClans.configurations.Config;
 import me.jetby.xClans.functions.ClanGlow;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+
 
 public final class TreexClans extends JavaPlugin {
 
@@ -19,24 +21,34 @@ public final class TreexClans extends JavaPlugin {
     }
 
     @Getter
-    private final ClansLoader clansLoader = new ClansLoader();
+    private Config cfg;
+
     @Getter
-    private ClanManager clanManager = new ClanManager(this);
+    private ClanGlow clanGlow;
+
+    @Getter
+    private ClansLoader clansLoader;
+    @Getter
+    private ClanManager clanManager;
+
+    @Override
+    public void onLoad() {
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+        PacketEvents.getAPI().load();
+    }
 
     @Override
     public void onEnable() {
         INSTANCE = this;
-        saveDefaultConfig();
+        cfg = new Config();
+        cfg.load();
 
-        clansLoader.load();
-        // register /xclan command
-        PluginCommand xClanCommand = this.getCommand("xclans");
+        PluginCommand xClanCommand = this.getCommand("xclan");
         if (xClanCommand != null) {
             XClanCommand cmd = new XClanCommand();
             xClanCommand.setExecutor(cmd);
             xClanCommand.setTabCompleter(cmd);
         }
-        // register /clan command
         PluginCommand clanCommand = this.getCommand("clan");
         if (clanCommand != null) {
             ClanCommand cmd = new ClanCommand();
@@ -44,16 +56,19 @@ public final class TreexClans extends JavaPlugin {
             clanCommand.setTabCompleter(cmd);
         }
 
-        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
-        PacketEvents.getAPI().load();
 
-        PacketEvents.getAPI().getEventManager().registerListener(new ClanGlow());
+        clansLoader = new ClansLoader();
+        clansLoader.load();
+
+        clanManager = new ClanManager(this);
+
+        clanGlow = new ClanGlow();
 
 
     }
 
     @Override
     public void onDisable() {
-
+        PacketEvents.getAPI().terminate();
     }
 }

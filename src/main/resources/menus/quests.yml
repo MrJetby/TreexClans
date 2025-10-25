@@ -1,0 +1,15 @@
+id: quests
+title: "&6&lQuests Menu"
+size: 27
+
+items:
+  quest1:
+    slot:
+    - 10-16
+    material: BOOK
+    category: example
+    name: "&e&lКвест %quest_name%"
+    lore:
+      - "&7Задача: &f%quest_description%"
+      - "&7Прогресс: &a%quest_progress%/%quest_target%"
+      - ""

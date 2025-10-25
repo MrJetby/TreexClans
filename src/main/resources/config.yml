@@ -10,12 +10,14 @@ clan-create:
         - "[message] &cНедостаточно денег на создание клана! Минимум 5000 монет"
     "example2": {}
 
-  max-clan-name-length: 16
+  min-clan-tag-length: 3
+  max-clan-tag-length: 6
   blocked-tags:
     - "admin"
     - "owner"
     - "op"
-  default-rank: LEADER # ВАЖНО: Укажите здесь ранг, который будет присвоен создателю клана при создании клана
+  member-rank: MEMBER # ВАЖНО: Укажите здесь ранг, который будет присвоен новому участнику клана при вступлении в клан
+  leader-rank: LEADER # ВАЖНО: Укажите здесь ранг, который будет присвоен создателю клана при создании клана
 
 
 ranks:
@@ -32,7 +34,7 @@ ranks:
       withdraw: false
       pvp: false
   LEADER:
-    display-name: Участник
+    display-name: Лидер
     permissions:
       invite: true
       kick: true

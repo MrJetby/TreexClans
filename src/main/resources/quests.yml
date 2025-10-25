@@ -1,0 +1,29 @@
+
+category:
+  example:
+    - quest1
+    - quest2
+
+quest1:
+  # PLAYER_KILL
+  # ENTITY_KILL;ENTITY_TYPE (example: ENTITY_KILL;ZOMBIE)
+  # BLOCK_BREAK;BLOCK_TYPE (example: BLOCK_BREAK;DIAMOND_ORE)
+  # BLOCK_PLACE;BLOCK_TYPE (example: BLOCK_PLACE;OAK_LOG)
+  type: PLAYER_KILL
+  target: 10
+  name: "Киллер"
+  description: "Выполните 10 убийств игроков"
+  rewards:
+    - "[money_add] 1000"
+    - "[message] &aВы выполнили квест &eКиллер &aи получили &a1000 монет!"
+
+
+quest2:
+  type: ENTITY_KILL;ZOMBIE
+  target: 10
+  name: "Охотник на монстров"
+  description: "Убейте 10 зомби"
+  rewards:
+    - "[money_add] 5000"
+    - "[message] &aВы выполнили квест &eКиллер &aи получили &a5000 монет!"
+

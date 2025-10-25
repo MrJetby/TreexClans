@@ -3,8 +3,6 @@ package me.jetby.xClans.commands.clan.args;
 import me.jetby.xClans.ClanManager;
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
-import me.jetby.xClans.records.Clan;
-import me.jetby.xClans.records.Level;
 import me.jetby.xClans.records.Member;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -35,9 +33,10 @@ public class Create implements Subcommand {
                     sender.sendMessage("§cA clan with that name already exists.");
                     return true;
                 }
-                Member leader = new Member(player.getUniqueId(), plugin.getClansLoader().getLeaderRank(), false, null);
-                clanManager.createClan(clanName, leader);
-                sender.sendMessage("§aClan " + clanName + " created successfully!");
+                Member leader = new Member(player.getUniqueId(), plugin.getCfg().getLeaderRank(), System.currentTimeMillis(), System.currentTimeMillis() ,false, null);
+                if (clanManager.createClan(clanName, leader)) {
+                    sender.sendMessage("§aClan " + clanName + " created successfully!");
+                }
             }
 
         }

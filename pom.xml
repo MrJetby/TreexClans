@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.jetby</groupId>
-    <artifactId>XClans</artifactId>
+    <artifactId>TreexClans</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
-    <name>XClans</name>
+    <name>TreexClans</name>
 
     <properties>
         <java.version>17</java.version>
@@ -60,9 +60,19 @@
             <id>codemc-releases</id>
             <url>https://repo.codemc.io/repository/maven-releases/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.MrJetby</groupId>
+            <artifactId>Treex</artifactId>
+            <version>169bf507</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>

@@ -1,10 +1,14 @@
 package me.jetby.xClans.configurations;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import me.jetby.xClans.records.Clan;
 import me.jetby.xClans.records.Level;
 import me.jetby.xClans.records.rank.Rank;
 import me.jetby.xClans.records.rank.RankPermissions;
+import me.jetby.xClans.tools.FileLoader;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,14 +18,13 @@ import java.util.Set;
 @Getter
 public class ClansLoader {
 
-    private final Set<Rank> defaultRanks = new HashSet<>();
+    private final FileConfiguration configuration = FileLoader.getFileConfiguration("storage.yml");
+
     private final Set<Level> levels = new HashSet<>();
     private final Map<String, Clan> clans = new HashMap<>();
 
-    private Rank leaderRank;
 
     public void load() {
-        leaderRank = new Rank("leader", "Leader", new RankPermissions(
-                true, true, true, true, true, true, true, true));
+
     }
 }
