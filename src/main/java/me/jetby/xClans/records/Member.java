@@ -13,6 +13,6 @@ public class Member {
     private Rank rank;
     private long joinedAt;
     private long lastOnline;
-    private  boolean clanGlow;
+    private boolean clanGlow;
 
 }

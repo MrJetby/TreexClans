@@ -10,6 +10,15 @@ public enum ClanCommandArgs {
     ACCEPT(new Accept()),
     GLOW(new Glow()),
     KICK(new Kick()),
+    DISBAND(new Disband()),
+    DEPOSIT(new Deposit()),
+    BALANCE(new Balance()),
+    INVEST(new Deposit()),
+    WITHDRAW(new Withdraw()),
+    SETBASE(new SetBase()),
+    SETRANK(new SetRank()),
+    BASE(new Base()),
+    LEAVE(new Leave()),
     INFO(new Info());
 
     @Getter

@@ -10,10 +10,18 @@ formattedTime:
   minutes: [ "минута", "минуты", "минут" ]
   seconds: [ "секунда", "секунды", "секунд" ]
 
+clan-does-not-exist: "&cКлан {clan} не найден."
 clan-is-already-exists: "&cДанный клан уже существует. Придумайте другой тег"
 clan-created-successfully: "&aВы успешно создали клан &e{clan_tag} &a!"
 your-not-in-clan: "&cВы не состоите в клане!"
+your-already-in-clan: "&cВы уже состоите в клане"
 clan-tag-invalid-characters: "&cТег клана содержит недопустимые символы!"
 clan-tag-too-short: "&cТег клана слишком короткий! Минимальная длина: {min_length} символов."
 clan-tag-too-long: "&cТег клана слишком длинный! Максимальная длина: {max_length} символов."
 clan-tag-blocked: "&cДанный тег клана запрещен!"
+you-havent-not-enough-money: ""
+
+your-rank-is-not-allowed-to-do-that: "&cYou are not allowed to do that! Please ask your clan leader to give you permission"
+
+clan-balance-deposit: "&aВы успешно пополнили баланс клана на сумму: {sum}"
+clan-balance-withdraw: "&aВы успешно сняли с баланса банка на сумму {sum}"

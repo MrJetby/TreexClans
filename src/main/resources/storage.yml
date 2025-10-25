@@ -11,6 +11,19 @@ clan-id:
     last-online: 1700000000
     clan-glow: true
 
+  ranks:
+    member:
+      display-name: "Участник"
+      permissions:
+        invite: false
+        kick: false
+        base: false
+        setbase: false
+        setrank: false
+        deposit: true
+        withdraw: false
+        pvp: false
+
   members:
     uuid:
       rank: member

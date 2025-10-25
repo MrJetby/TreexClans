@@ -21,7 +21,7 @@ public class Create implements Subcommand {
         if (sender instanceof Player player) {
 
             if (clanManager.isInClan(player.getUniqueId())) {
-                sender.sendMessage("§cYou are already in a clan.");
+                sender.sendMessage(plugin.getLang().getMessage("your-already-in-clan"));
                 return true;
             } else {
                 if (args.length < 1) {

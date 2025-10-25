@@ -4,6 +4,8 @@ package me.jetby.xClans.configurations;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.jetby.xClans.TreexClans;
+import me.jetby.xClans.records.Clan;
+import me.jetby.xClans.records.Level;
 import me.jetby.xClans.records.rank.Rank;
 import me.jetby.xClans.records.rank.RankPermissions;
 import me.jetby.xClans.tools.FileLoader;
@@ -12,7 +14,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Getter
 public class Config {
@@ -21,6 +25,9 @@ public class Config {
     final File file;
     private final FileConfiguration language;
     final String lang;
+
+    private final Set<Level> levels = new HashSet<>();
+    private final Map<String, Clan> clans = new HashMap<>();
 
     private final Map<String, Rank> defaultRanks = new HashMap<>();
     private Rank defaultRank;

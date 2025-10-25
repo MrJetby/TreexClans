@@ -18,9 +18,14 @@ public class Accept implements Subcommand {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
 
+        if (args.length==0) {
+            sender.sendMessage("§c/clan accept [clan]");
+            return true;
+        }
+
         if (sender instanceof Player player) {
             if (plugin.getClanManager().isInClan(player.getUniqueId())) {
-                sender.sendMessage("§cYou are already in a clan.");
+                sender.sendMessage(plugin.getLang().getMessage("your-already-in-clan"));
                 return true;
             }
             if (!plugin.getClanManager().clanExists(args[0])) {
@@ -34,8 +39,9 @@ public class Accept implements Subcommand {
                 Cooldown.removeCooldown("invite_"+player.getUniqueId()+"_"+args[0]);
                 Clan clan = plugin.getClanManager().getClan(args[0]);
                 Member member = new Member(player.getUniqueId(), plugin.getCfg().getDefaultRank(), System.currentTimeMillis(), System.currentTimeMillis() ,false);
-                clan.addMember(member);
                 sender.sendMessage("§aYou have joined the clan!");
+                plugin.getClanManager().sendChat(clan, " ");
+                clan.addMember(member);
             }
             return true;
         }

@@ -3,45 +3,46 @@ package me.jetby.xClans.commands.clan.args;
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
 import me.jetby.xClans.records.Clan;
-import me.jetby.xClans.records.Member;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-public class Glow implements Subcommand {
+public class Deposit implements Subcommand {
     private final TreexClans plugin = TreexClans.getInstance();
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
+
+        if (args.length==0) {
+            sender.sendMessage("§c/clan invest [amount]");
+            return true;
+        }
+
         if (sender instanceof Player player) {
             if (!plugin.getClanManager().isInClan(player.getUniqueId())) {
                 player.sendMessage(plugin.getLang().getMessage("your-not-in-clan"));
                 return true;
             }
 
-            if (!plugin.isPacketInit()) {
-                player.sendMessage("Для работы этой функции требуется рестарт сервера!");
+            Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
+            if (!clan.getMember(player.getUniqueId()).getRank().rankPermissions().deposit()) {
+                player.sendMessage(plugin.getLang().getMessage("your-rank-is-not-allowed-to-do-that"));
                 return true;
             }
-            Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
-            if (plugin.getClanGlow().hasObserver(player)) {
-                plugin.getClanGlow().removeObserver(player);
-                sender.sendMessage("§cClan glow disabled.");
+            double balance = Double.parseDouble(args[0]);
+            if (plugin.getEconomy().has(player, balance)) {
+                plugin.getEconomy().withdrawPlayer(player, balance);
+                plugin.getClanManager().addBalance(balance, clan);
+                player.sendMessage(plugin.getLang().getMessage("clan-balance-deposit").replace("{sum}", String.valueOf(balance)));
             } else {
-                Set<Member> members = new HashSet<>(clan.getMembers());
-                if (clan.getMember(player.getUniqueId())!=clan.getLeader()) {
-                    members.add(clan.getLeader());
-                }
-                members.remove(clan.getMember(player.getUniqueId()));
-                plugin.getClanGlow().addObserver(player, members);
-                sender.sendMessage("§aClan glow enabled.");
+                player.sendMessage("You haven't enough money");
             }
+
         }
+
         return true;
     }
 

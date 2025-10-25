@@ -3,18 +3,15 @@ package me.jetby.xClans.commands.clan.args;
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
 import me.jetby.xClans.records.Clan;
-import me.jetby.xClans.records.Member;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-public class Glow implements Subcommand {
+public class Leave implements Subcommand {
     private final TreexClans plugin = TreexClans.getInstance();
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
@@ -23,24 +20,12 @@ public class Glow implements Subcommand {
                 player.sendMessage(plugin.getLang().getMessage("your-not-in-clan"));
                 return true;
             }
-
-            if (!plugin.isPacketInit()) {
-                player.sendMessage("Для работы этой функции требуется рестарт сервера!");
+            Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
+            if (clan.getLeader().equals(clan.getMember(player.getUniqueId()))) {
+                player.sendMessage("§cYou can't leave this clan because you are the leader. If you want disband this clan you can use /clan disband");
                 return true;
             }
-            Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
-            if (plugin.getClanGlow().hasObserver(player)) {
-                plugin.getClanGlow().removeObserver(player);
-                sender.sendMessage("§cClan glow disabled.");
-            } else {
-                Set<Member> members = new HashSet<>(clan.getMembers());
-                if (clan.getMember(player.getUniqueId())!=clan.getLeader()) {
-                    members.add(clan.getLeader());
-                }
-                members.remove(clan.getMember(player.getUniqueId()));
-                plugin.getClanGlow().addObserver(player, members);
-                sender.sendMessage("§aClan glow enabled.");
-            }
+            clan.removeMember(clan.getMember(player.getUniqueId()));
         }
         return true;
     }

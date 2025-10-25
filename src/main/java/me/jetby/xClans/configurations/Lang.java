@@ -6,6 +6,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.util.List;
 
 
 public class Lang {
@@ -47,5 +48,11 @@ public class Lang {
             this.config = configuration;
             break;
         }
+    }
+    public String getMessage(String path) {
+        return config.getString(path);
+    }
+    public List<String> getMessageList(String path) {
+        return config.getStringList(path);
     }
 }

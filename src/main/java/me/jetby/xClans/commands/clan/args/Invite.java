@@ -19,15 +19,18 @@ public class Invite implements Subcommand {
     private final TreexClans plugin = TreexClans.getInstance();
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-
+        if (args.length==0) {
+            sender.sendMessage("§c/clan invite [player]");
+            return true;
+        }
         if (sender instanceof Player player) {
             if (!plugin.getClanManager().isInClan(player.getUniqueId())) {
-                sender.sendMessage("§cYou are not in a clan.");
+                player.sendMessage(plugin.getLang().getMessage("your-not-in-clan"));
                 return true;
             }
             Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
             if (!clan.getMember(player.getUniqueId()).getRank().rankPermissions().invite()) {
-                player.sendMessage("You are not allowed to do that! Please ask your clan leader to give you permission");
+                player.sendMessage(plugin.getLang().getMessage("your-rank-is-not-allowed-to-do-that"));
                 return true;
             }
             Player target = player.getServer().getPlayer(args[0]);

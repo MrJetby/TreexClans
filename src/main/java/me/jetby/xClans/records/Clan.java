@@ -1,15 +1,18 @@
 package me.jetby.xClans.records;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.jetby.xClans.records.rank.Rank;
+import org.bukkit.Location;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Getter @Setter
 public class Clan {
     private final String id;
@@ -19,7 +22,8 @@ public class Clan {
     private final Map<String, Rank> ranks;
     private final Chest chest;
     private final Level level;
-    private final double balance;
+    private double balance;
+    private Location base;
 
     public void addMember(Member member) {
         this.members.add(member);

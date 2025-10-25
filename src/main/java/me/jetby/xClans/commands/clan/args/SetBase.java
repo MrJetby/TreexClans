@@ -3,45 +3,34 @@ package me.jetby.xClans.commands.clan.args;
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
 import me.jetby.xClans.records.Clan;
-import me.jetby.xClans.records.Member;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-public class Glow implements Subcommand {
+public class SetBase implements Subcommand {
     private final TreexClans plugin = TreexClans.getInstance();
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
+
         if (sender instanceof Player player) {
             if (!plugin.getClanManager().isInClan(player.getUniqueId())) {
                 player.sendMessage(plugin.getLang().getMessage("your-not-in-clan"));
                 return true;
             }
+            Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
 
-            if (!plugin.isPacketInit()) {
-                player.sendMessage("Для работы этой функции требуется рестарт сервера!");
+            if (!clan.getMember(player.getUniqueId()).getRank().rankPermissions().setbase()) {
+                player.sendMessage(plugin.getLang().getMessage("your-rank-is-not-allowed-to-do-that"));
                 return true;
             }
-            Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
-            if (plugin.getClanGlow().hasObserver(player)) {
-                plugin.getClanGlow().removeObserver(player);
-                sender.sendMessage("§cClan glow disabled.");
-            } else {
-                Set<Member> members = new HashSet<>(clan.getMembers());
-                if (clan.getMember(player.getUniqueId())!=clan.getLeader()) {
-                    members.add(clan.getLeader());
-                }
-                members.remove(clan.getMember(player.getUniqueId()));
-                plugin.getClanGlow().addObserver(player, members);
-                sender.sendMessage("§aClan glow enabled.");
-            }
+            clan.setBase(player.getLocation());
+            player.sendMessage("You has successfully set the base location");
         }
+
         return true;
     }
 
