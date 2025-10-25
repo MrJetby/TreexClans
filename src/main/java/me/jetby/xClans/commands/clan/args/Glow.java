@@ -2,6 +2,8 @@ package me.jetby.xClans.commands.clan.args;
 
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
+import me.jetby.xClans.records.Clan;
+import me.jetby.xClans.records.Member;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -10,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Glow implements Subcommand {
     private final TreexClans plugin = TreexClans.getInstance();
@@ -20,11 +23,22 @@ public class Glow implements Subcommand {
                 sender.sendMessage("§cYou are not in a clan.");
                 return true;
             }
+
+            if (!plugin.isPacketInit()) {
+                player.sendMessage("Для работы этой функции требуется рестарт сервера!");
+                return true;
+            }
+            Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
             if (plugin.getClanGlow().hasObserver(player)) {
                 plugin.getClanGlow().removeObserver(player);
                 sender.sendMessage("§cClan glow disabled.");
             } else {
-                plugin.getClanGlow().addObserver(player, new HashSet<>(plugin.getClanManager().getClanByMember(player.getUniqueId()).getMembers()));
+                Set<Member> members = new HashSet<>(clan.getMembers());
+                if (clan.getMember(player.getUniqueId())!=clan.getLeader()) {
+                    members.add(clan.getLeader());
+                }
+                members.remove(clan.getMember(player.getUniqueId()));
+                plugin.getClanGlow().addObserver(player, members);
                 sender.sendMessage("§aClan glow enabled.");
             }
         }

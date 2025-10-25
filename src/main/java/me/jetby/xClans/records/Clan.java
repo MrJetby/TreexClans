@@ -25,8 +25,11 @@ public class Clan {
         this.members.add(member);
     }
     public Member getMember(UUID uuid) {
+        if (leader.getUuid().equals(uuid)) {
+            return leader;
+        }
         return members.stream()
-                .filter(member -> member.uuid().equals(uuid))
+                .filter(member -> member.getUuid().equals(uuid))
                 .findFirst()
                 .orElse(null);
     }

@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import me.jetby.xClans.records.Clan;
 import me.jetby.xClans.records.Level;
 import me.jetby.xClans.records.Member;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -21,9 +23,9 @@ public class ClanManager {
      */
     public boolean isInClan(@NotNull UUID uuid) {
         return plugin.getClansLoader().getClans().values().stream()
-                .anyMatch(clan -> (clan.getLeader() != null && clan.getLeader().uuid().equals(uuid))
+                .anyMatch(clan -> (clan.getLeader() != null && clan.getLeader().getUuid().equals(uuid))
                         || clan.getMembers().stream()
-                        .anyMatch(member -> member.uuid().equals(uuid)));
+                        .anyMatch(member -> member.getUuid().equals(uuid)));
     }
     /**
      * Checks if a player (by stringified UUID) is currently in any clan.
@@ -34,9 +36,9 @@ public class ClanManager {
     public boolean isInClan(@NotNull String playerName) {
         UUID uuid = UUID.fromString(playerName);
         return plugin.getClansLoader().getClans().values().stream()
-                .anyMatch(clan -> (clan.getLeader() != null && clan.getLeader().uuid().equals(uuid))
+                .anyMatch(clan -> (clan.getLeader() != null && clan.getLeader().getUuid().equals(uuid))
                         || clan.getMembers().stream()
-                        .anyMatch(member -> member.uuid().equals(uuid)));
+                        .anyMatch(member -> member.getUuid().equals(uuid)));
     }
     /**
      * Checks whether a clan with the given name already exists.
@@ -93,9 +95,9 @@ public class ClanManager {
      */
     public Clan getClanByMember(@NotNull UUID uuid) {
         return plugin.getClansLoader().getClans().values().stream()
-                .filter(clan -> (clan.getLeader() != null && clan.getLeader().uuid().equals(uuid))
+                .filter(clan -> (clan.getLeader() != null && clan.getLeader().getUuid().equals(uuid))
                         || clan.getMembers().stream()
-                        .anyMatch(member -> member.uuid().equals(uuid)))
+                        .anyMatch(member -> member.getUuid().equals(uuid)))
                 .findFirst()
                 .orElse(null);
     }
@@ -108,9 +110,9 @@ public class ClanManager {
     public Clan getClanByMember(@NotNull String playerName) {
         UUID uuid = UUID.fromString(playerName);
         return plugin.getClansLoader().getClans().values().stream()
-                .filter(clan -> (clan.getLeader() != null && clan.getLeader().uuid().equals(uuid))
+                .filter(clan -> (clan.getLeader() != null && clan.getLeader().getUuid().equals(uuid))
                         || clan.getMembers().stream()
-                        .anyMatch(member -> member.uuid().equals(uuid)))
+                        .anyMatch(member -> member.getUuid().equals(uuid)))
                 .findFirst()
                 .orElse(null);
     }
@@ -122,8 +124,20 @@ public class ClanManager {
      */
     public long getLastOnline(@NotNull UUID uuid) {
         if (isInClan(uuid)) {
-            return getClanByMember(uuid).getMember(uuid).lastOnline();
+            return getClanByMember(uuid).getMember(uuid).getLastOnline();
         }
         return -1;
+    }
+    public String getLastOnlineFormatted(@NotNull UUID uuid) {
+        if (isInClan(uuid)) {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+            if (offlinePlayer.isOnline()) {
+                getClanByMember(uuid).getMember(uuid).setLastOnline(System.currentTimeMillis());
+                return "В сети";
+            } else {
+                return plugin.getFormatTime().stringFormat(System.currentTimeMillis()-getClanByMember(uuid).getMember(uuid).getLastOnline());
+            }
+        }
+        return "-1";
     }
 }

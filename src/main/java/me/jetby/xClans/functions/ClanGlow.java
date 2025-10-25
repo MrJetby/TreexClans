@@ -1,13 +1,10 @@
 package me.jetby.xClans.functions;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.event.PacketListener;
-import com.github.retrooper.packetevents.protocol.packettype.PacketType;
-import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
-import com.github.retrooper.packetevents.wrapper.play.server.*;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.records.Member;
@@ -30,6 +27,7 @@ public class ClanGlow implements PacketListener {
     public ClanGlow() {
         startRefreshTask();
     }
+
     public void addObserver(Player observer, Set<Member> targets) {
         if (!observer.isOnline()) return;
         observersToTargets.put(observer.getUniqueId(), new HashSet<>(targets));
@@ -38,9 +36,9 @@ public class ClanGlow implements PacketListener {
     }
 
     public void removeObserver(Player observer) {
-        if (observersToTargets.remove(observer.getUniqueId()) != null) {
-            resetGlowForObserver(observer);
-        }
+        observersToTargets.remove(observer.getUniqueId());
+        resetGlowForObserver(observer);
+
     }
 
     public boolean hasObserver(Player observer) {
@@ -63,8 +61,8 @@ public class ClanGlow implements PacketListener {
         Set<Member> targets = observersToTargets.get(observer.getUniqueId());
         if (targets == null) return;
         for (Member member : targets) {
-            Player player = Bukkit.getPlayer(member.uuid());
-            if (player!=null) {
+            Player player = Bukkit.getPlayer(member.getUuid());
+            if (player != null) {
                 sendGlowEquipment(observer, player);
             }
         }
@@ -75,8 +73,8 @@ public class ClanGlow implements PacketListener {
         Set<Member> targets = observersToTargets.get(observer.getUniqueId());
         if (targets == null) return;
         for (Member member : targets) {
-            Player player = Bukkit.getPlayer(member.uuid());
-            if (player!=null) {
+            Player player = Bukkit.getPlayer(member.getUuid());
+            if (player != null) {
                 sendResetEquipment(observer, player);
             }
         }
@@ -98,56 +96,10 @@ public class ClanGlow implements PacketListener {
         PacketEvents.getAPI().getPlayerManager().sendPacket(observer, packet);
     }
 
-    @Override
-    public void onPacketSend(PacketSendEvent event) {
-        if (observersToTargets.isEmpty()) return;
-        Player eventObserver = event.getPlayer();
-        Set<Member> targets = observersToTargets.get(eventObserver.getUniqueId());
-        if (targets == null) return;
-
-        PacketTypeCommon type = event.getPacketType();
-        if (type == PacketType.Play.Server.ENTITY_EQUIPMENT) {
-            WrapperPlayServerEntityEquipment wrapper = new WrapperPlayServerEntityEquipment(event);
-            int entityId = wrapper.getEntityId();
-            Player target = findTargetByEntityId(targets, entityId);
-            if (target != null) {
-                List<Equipment> equipmentList = createGreenEquipmentList();
-                wrapper.setEquipment(equipmentList);
-            }
-        } else if (type == PacketType.Play.Server.SPAWN_PLAYER) {
-            WrapperPlayServerSpawnPlayer spawnWrapper = new WrapperPlayServerSpawnPlayer(event);
-            int entityId = spawnWrapper.getEntityId();
-            Player target = findTargetByEntityId(targets, entityId);
-            if (target != null) {
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (eventObserver.isOnline()) {
-                            sendGlowEquipment(eventObserver, target);
-                        }
-                    }
-                }.runTaskLater(TreexClans.getInstance(), 1L);
-            }
-        } else if (type == PacketType.Play.Server.ENTITY_METADATA) {
-            WrapperPlayServerEntityMetadata metaWrapper = new WrapperPlayServerEntityMetadata(event);
-            int entityId = metaWrapper.getEntityId();
-            Player target = findTargetByEntityId(targets, entityId);
-            if (target != null) {
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (eventObserver.isOnline()) {
-                            sendGlowEquipment(eventObserver, target);
-                        }
-                    }
-                }.runTaskLater(TreexClans.getInstance(), 1L);
-            }
-        }
-    }
 
     private Player findTargetByEntityId(Set<Member> targets, int entityId) {
         for (Member member : targets) {
-            Player p = Bukkit.getPlayer(member.uuid());
+            Player p = Bukkit.getPlayer(member.getUuid());
             if (p == null) continue;
             if (p.isOnline() && p.getEntityId() == entityId) {
                 return p;
@@ -185,20 +137,16 @@ public class ClanGlow implements PacketListener {
         refreshTask = new BukkitRunnable() {
             @Override
             public void run() {
-                observersToTargets.keySet().removeIf(observer -> {
-                    Player p = Bukkit.getPlayer(observer);
-                    return p == null || !p.isOnline();
-                });
+
 
                 for (Map.Entry<UUID, Set<Member>> entry : new HashSet<>(observersToTargets.entrySet())) {
                     Player observer = Bukkit.getPlayer(entry.getKey());
                     if (observer == null || !observer.isOnline()) continue;
 
-                    resetGlowForObserver(observer);
                     applyGlowForObserver(observer);
                 }
             }
         };
-        refreshTask.runTaskTimer(TreexClans.getInstance(), 100L, 100L); // 5 сек
+        refreshTask.runTaskTimerAsynchronously(TreexClans.getInstance(), 100L, 100L); // 5 сек
     }
 }

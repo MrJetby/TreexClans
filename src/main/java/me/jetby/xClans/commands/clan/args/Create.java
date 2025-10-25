@@ -33,7 +33,7 @@ public class Create implements Subcommand {
                     sender.sendMessage("§cA clan with that name already exists.");
                     return true;
                 }
-                Member leader = new Member(player.getUniqueId(), plugin.getCfg().getLeaderRank(), System.currentTimeMillis(), System.currentTimeMillis() ,false, null);
+                Member leader = new Member(player.getUniqueId(), plugin.getCfg().getLeaderRank(), System.currentTimeMillis(), System.currentTimeMillis() ,false);
                 if (clanManager.createClan(clanName, leader)) {
                     sender.sendMessage("§aClan " + clanName + " created successfully!");
                 }

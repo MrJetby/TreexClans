@@ -21,16 +21,35 @@ public class Info implements Subcommand {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
 
         if (sender instanceof Player player) {
+            if (args.length==1) {
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
+                if (clanManager.isInClan(offlinePlayer.getUniqueId())) {
+                    Clan clan = clanManager.getClanByMember(offlinePlayer.getUniqueId());
+                    OfflinePlayer leader = Bukkit.getOfflinePlayer(clan.getLeader().getUuid());
+                    player.sendMessage("Clan id: " + clan.getId());
+                    player.sendMessage("Clan leader: " + leader.getName());
+                    player.sendMessage("Clan Prefix: " + clan.getPrefix());
+                    player.sendMessage("Clan Level: " + clan.getLevel().id());
+                    player.sendMessage("Clan Members: " + clan.getMembers().size());
+                    player.sendMessage("Hist Rank: " + clan.getMember(offlinePlayer.getUniqueId()).getRank().name());
+                    player.sendMessage("His Last online: " + clanManager.getLastOnlineFormatted(offlinePlayer.getUniqueId()));
+                } else {
+                    player.sendMessage("§cYou are not in a clan.");
+                }
+                return true;
+            }
             if (clanManager.isInClan(player.getUniqueId())) {
                 Clan clan = clanManager.getClanByMember(player.getUniqueId());
-                OfflinePlayer leader = Bukkit.getOfflinePlayer(clan.getLeader().uuid());
-                sender.sendMessage("Clan id: " + clan.getId());
-                sender.sendMessage("Clan leader: " + leader.getName());
-                sender.sendMessage("Clan Prefix: " + clan.getPrefix());
-                sender.sendMessage("Clan Level: " + clan.getLevel().id());
-                sender.sendMessage("Clan Members: " + clan.getMembers().size());
+                OfflinePlayer leader = Bukkit.getOfflinePlayer(clan.getLeader().getUuid());
+                player.sendMessage("Clan id: " + clan.getId());
+                player.sendMessage("Clan leader: " + leader.getName());
+                player.sendMessage("Clan Prefix: " + clan.getPrefix());
+                player.sendMessage("Clan Level: " + clan.getLevel().id());
+                player.sendMessage("Clan Members: " + clan.getMembers().size());
+                player.sendMessage("Your Rank: " + clan.getMember(player.getUniqueId()).getRank().name());
+                player.sendMessage("Last online: " + clanManager.getLastOnlineFormatted(player.getUniqueId()));
             } else {
-                sender.sendMessage("§cYou are not in a clan.");
+                player.sendMessage("§cYou are not in a clan.");
             }
             return true;
         }

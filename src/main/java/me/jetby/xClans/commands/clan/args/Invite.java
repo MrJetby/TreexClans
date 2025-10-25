@@ -4,13 +4,16 @@ import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
 import me.jetby.xClans.records.Clan;
 import me.jetby.xClans.tools.Cooldown;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Invite implements Subcommand {
     private final TreexClans plugin = TreexClans.getInstance();
@@ -23,6 +26,10 @@ public class Invite implements Subcommand {
                 return true;
             }
             Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
+            if (!clan.getMember(player.getUniqueId()).getRank().rankPermissions().invite()) {
+                player.sendMessage("You are not allowed to do that! Please ask your clan leader to give you permission");
+                return true;
+            }
             Player target = player.getServer().getPlayer(args[0]);
             if (target == null) {
                 player.sendMessage("§cPlayer not found.");
@@ -46,8 +53,12 @@ public class Invite implements Subcommand {
         return true;
     }
 
+
     @Override
     public @Nullable List<String> onTabCompleter(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+        if (args.length>0) {
+            return new ArrayList<>((Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList())));
+        }
         return List.of();
     }
 }

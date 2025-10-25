@@ -2,7 +2,7 @@ name: TreexClans
 version: '1.0'
 main: me.jetby.xClans.TreexClans
 api-version: '1.16'
-load: STARTUP
+load: POSTWORLD
 authors: [ MrJetby ]
 website: https://dsc.gg/treexstudio
 depend:

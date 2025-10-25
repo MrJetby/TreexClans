@@ -9,6 +9,7 @@ public enum ClanCommandArgs {
     INVITE(new Invite()),
     ACCEPT(new Accept()),
     GLOW(new Glow()),
+    KICK(new Kick()),
     INFO(new Info());
 
     @Getter

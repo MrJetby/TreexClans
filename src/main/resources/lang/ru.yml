@@ -1,4 +1,15 @@
 
+lang: ru
+
+prefix: "&6&lTreexClans &7>"
+
+formattedTime:
+  weeks: [ "неделя", "недели", "недель" ]
+  days: [ "день", "дня", "дней" ]
+  hours: [ "час", "часа", "часов" ]
+  minutes: [ "минута", "минуты", "минут" ]
+  seconds: [ "секунда", "секунды", "секунд" ]
+
 clan-is-already-exists: "&cДанный клан уже существует. Придумайте другой тег"
 clan-created-successfully: "&aВы успешно создали клан &e{clan_tag} &a!"
 your-not-in-clan: "&cВы не состоите в клане!"

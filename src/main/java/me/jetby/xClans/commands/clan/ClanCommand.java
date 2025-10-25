@@ -15,14 +15,14 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length < 1) {
-            sender.sendMessage("§cUsage: /xclan <subcommand> [args]");
+            sender.sendMessage("§cUsage: /clan <subcommand> [args]");
             return true;
         }
         try {
             var arg = ClanCommandArgs.valueOf(args[0].toUpperCase());
             arg.getSubcommand().onCommand(sender, Arrays.copyOfRange(args, 1, args.length));
         } catch (IllegalArgumentException e) {
-            sender.sendMessage("§cUnknown subcommand. Use /xclan for help.");
+            sender.sendMessage("§cUnknown subcommand. Use /clan for help.");
         }
         return true;
     }
