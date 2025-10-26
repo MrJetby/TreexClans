@@ -45,7 +45,9 @@ public class Accept implements Subcommand {
                         plugin.getCfg().getDefaultRank(),
                         System.currentTimeMillis(),
                         System.currentTimeMillis() ,
-                        false, false);
+                        false, false,
+                        0, 0
+                );
                 plugin.getLang().sendMessage(player, clan, "clan-join", List.of(
                         new Lang.ReplaceString("{player}", player.getName()),
                         new Lang.ReplaceString("{clan}", clan.getId())

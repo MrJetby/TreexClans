@@ -37,7 +37,15 @@ public class Create implements Subcommand {
                     plugin.getLang().sendMessage(player, null, "clan-is-already-exists");
                     return true;
                 }
-                Member leader = new Member(player.getUniqueId(), plugin.getCfg().getLeaderRank(), System.currentTimeMillis(), System.currentTimeMillis() ,false, false);
+                Member leader = new Member(
+                        player.getUniqueId(),
+                        plugin.getCfg().getLeaderRank(),
+                        System.currentTimeMillis(),
+                        System.currentTimeMillis() ,
+                        false, false,
+                        0, 0
+
+                );
                 if (clanManager.createClan(clanName, leader)) {
                     Clan clan = plugin.getClanManager().getClan(clanName);
                     Bukkit.getPluginManager().callEvent(new OnClanCreate(clan));
