@@ -1,5 +1,6 @@
 package me.jetby.xClans.commands.clan.args;
 
+import me.jetby.treex.text.Colorize;
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
 import me.jetby.xClans.records.Clan;
@@ -20,12 +21,12 @@ public class Glow implements Subcommand {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (sender instanceof Player player) {
             if (!plugin.getClanManager().isInClan(player.getUniqueId())) {
-                player.sendMessage(plugin.getLang().getMessage("your-not-in-clan"));
+                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
 
             if (!plugin.isPacketInit()) {
-                player.sendMessage("Для работы этой функции требуется рестарт сервера!");
+                player.sendMessage(Colorize.text(plugin.getLang().getConfig().getString("restart-need", "restart-needed")));
                 return true;
             }
             Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());

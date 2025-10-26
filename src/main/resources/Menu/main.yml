@@ -1,0 +1,11 @@
+id: main
+title: "&6&lMain menu"
+size: 54
+open_permission: none
+open_commands:
+  - 'test2'
+
+Items:
+  free:
+    free-slot: true
+    slot: 0-44

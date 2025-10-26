@@ -14,5 +14,8 @@ public class Member {
     private long joinedAt;
     private long lastOnline;
     private boolean clanGlow;
+    private boolean chat;
+    private int coin;
+    private int exp;
 
 }

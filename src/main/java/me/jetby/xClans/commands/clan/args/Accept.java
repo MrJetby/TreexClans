@@ -2,6 +2,7 @@ package me.jetby.xClans.commands.clan.args;
 
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
+import me.jetby.xClans.configurations.Lang;
 import me.jetby.xClans.records.Clan;
 import me.jetby.xClans.records.Member;
 import me.jetby.xClans.tools.Cooldown;
@@ -25,11 +26,12 @@ public class Accept implements Subcommand {
 
         if (sender instanceof Player player) {
             if (plugin.getClanManager().isInClan(player.getUniqueId())) {
-                sender.sendMessage(plugin.getLang().getMessage("your-already-in-clan"));
+                    plugin.getLang().sendMessage(player, null, "your-already-in-clan");
                 return true;
             }
             if (!plugin.getClanManager().clanExists(args[0])) {
-                sender.sendMessage("§cThat clan does not exist.");
+                plugin.getLang().sendMessage(player, null, "clan-does-not-exist");
+
                 return true;
             }
             if (!Cooldown.isOnCooldown("invite_"+player.getUniqueId()+"_"+args[0])) {
@@ -38,9 +40,16 @@ public class Accept implements Subcommand {
             } else {
                 Cooldown.removeCooldown("invite_"+player.getUniqueId()+"_"+args[0]);
                 Clan clan = plugin.getClanManager().getClan(args[0]);
-                Member member = new Member(player.getUniqueId(), plugin.getCfg().getDefaultRank(), System.currentTimeMillis(), System.currentTimeMillis() ,false);
-                sender.sendMessage("§aYou have joined the clan!");
-                plugin.getClanManager().sendChat(clan, " ");
+                Member member = new Member(
+                        player.getUniqueId(),
+                        plugin.getCfg().getDefaultRank(),
+                        System.currentTimeMillis(),
+                        System.currentTimeMillis() ,
+                        false, false);
+                plugin.getLang().sendMessage(player, clan, "clan-join", List.of(
+                        new Lang.ReplaceString("{player}", player.getName()),
+                        new Lang.ReplaceString("{clan}", clan.getId())
+                ));
                 clan.addMember(member);
             }
             return true;

@@ -18,7 +18,7 @@ public class Base implements Subcommand {
 
         if (sender instanceof Player player) {
             if (!plugin.getClanManager().isInClan(player.getUniqueId())) {
-                player.sendMessage(plugin.getLang().getMessage("your-not-in-clan"));
+                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
             Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
@@ -27,7 +27,7 @@ public class Base implements Subcommand {
                 return true;
             }
             if (!clan.getMember(player.getUniqueId()).getRank().rankPermissions().base()) {
-                player.sendMessage(plugin.getLang().getMessage("your-rank-is-not-allowed-to-do-that"));
+                plugin.getLang().sendMessage(player, clan, "your-rank-is-not-allowed-to-do-that");
                 return true;
             }
             player.teleport(clan.getBase());

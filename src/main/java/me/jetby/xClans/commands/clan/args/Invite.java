@@ -2,6 +2,7 @@ package me.jetby.xClans.commands.clan.args;
 
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
+import me.jetby.xClans.configurations.Lang;
 import me.jetby.xClans.records.Clan;
 import me.jetby.xClans.tools.Cooldown;
 import org.bukkit.Bukkit;
@@ -25,12 +26,12 @@ public class Invite implements Subcommand {
         }
         if (sender instanceof Player player) {
             if (!plugin.getClanManager().isInClan(player.getUniqueId())) {
-                player.sendMessage(plugin.getLang().getMessage("your-not-in-clan"));
+                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
             Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
             if (!clan.getMember(player.getUniqueId()).getRank().rankPermissions().invite()) {
-                player.sendMessage(plugin.getLang().getMessage("your-rank-is-not-allowed-to-do-that"));
+                plugin.getLang().sendMessage(player, clan, "your-rank-is-not-allowed-to-do-that");
                 return true;
             }
             Player target = player.getServer().getPlayer(args[0]);
@@ -48,7 +49,13 @@ public class Invite implements Subcommand {
                 return true;
             } else {
                 Cooldown.setCooldown("invite_"+target.getUniqueId()+"_"+clan.getId(), 60);
-                target.sendMessage("§aYou have been invited to join " + clan.getId() + " by " + player.getName() + ". Use /clan accept " + clan.getId() + " to join.");
+                plugin.getLang().sendMessage(player, clan, "clan-invite", new Lang.ReplaceString("{target}", target.getName()));
+
+                plugin.getLang().sendMessage(target, null, "clan-join-request", List.of(
+                        new Lang.ReplaceString("{clan}", clan.getId()),
+                        new Lang.ReplaceString("{player}", player.getName())
+                ));
+
             }
             return true;
         }

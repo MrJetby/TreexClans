@@ -1,6 +1,7 @@
 package me.jetby.xClans;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.jodexindustries.jguiwrapper.common.JGuiInitializer;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,14 +12,21 @@ import me.jetby.xClans.commands.xclan.XClanCommand;
 import me.jetby.xClans.configurations.Config;
 import me.jetby.xClans.configurations.Lang;
 import me.jetby.xClans.functions.ClanGlow;
-import me.jetby.xClans.listeners.UserLoader;
+import me.jetby.xClans.gui.CommandRegistrar;
+import me.jetby.xClans.gui.Loader;
 import me.jetby.xClans.storage.Storage;
 import me.jetby.xClans.storage.YAML;
 import me.jetby.xClans.tools.FormatTime;
+import me.jetby.xClans.tools.TreexInitializer;
+import me.jetby.xClans.tools.customActions.Actions;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.IOException;
 
 @Getter
 public final class TreexClans extends JavaPlugin {
@@ -28,7 +36,7 @@ public final class TreexClans extends JavaPlugin {
     public static TreexClans getInstance() {
         return INSTANCE;
     }
-    private Economy economy;
+    private Economy economy = null;
 
     private Config cfg;
     @Setter
@@ -42,7 +50,11 @@ public final class TreexClans extends JavaPlugin {
 
     private boolean packetInit = true;
 
-    private Logger LOGGER;
+    public static Logger LOGGER;
+    public static final NamespacedKey NAMESPACED_KEY = new NamespacedKey("treexclans", "item");
+
+    private Loader menuLoader;
+
 
     @Override
     public void onLoad() {
@@ -53,6 +65,16 @@ public final class TreexClans extends JavaPlugin {
     @Override
     public void onEnable() {
         INSTANCE = this;
+
+        try {
+            new TreexInitializer(this);
+            new Actions().registerCustomActions();
+        } catch (IOException ex) {
+            getLogger().warning("Failed to initialize Treex: " + ex.getMessage());
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
         LOGGER = LogInitialize.getLogger(this);
 
         setupEconomy();
@@ -89,7 +111,10 @@ public final class TreexClans extends JavaPlugin {
         storage = new YAML(this);
         storage.load();
 
-        getServer().getPluginManager().registerEvents(new UserLoader(this), this);
+        JGuiInitializer.init(this, false);
+        menuLoader = new Loader(this, getDataFolder());
+        menuLoader.load();
+        CommandRegistrar.createCommands(this);
 
     }
 
@@ -101,15 +126,13 @@ public final class TreexClans extends JavaPlugin {
 
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
-            LOGGER.error("Vault was not found! Disabling plugin.");
-            getServer().getPluginManager().disablePlugin(this);
+            LOGGER.error("Vault was not found!");
             return false;
         }
 
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
-            LOGGER.error("Vault economy plugin was not found! Disabling plugin.");
-            getServer().getPluginManager().disablePlugin(this);
+            LOGGER.error("Vault economy plugin was not found!");
             return false;
         }
 

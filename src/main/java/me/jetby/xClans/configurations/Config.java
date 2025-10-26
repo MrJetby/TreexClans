@@ -33,6 +33,8 @@ public class Config {
     private Rank defaultRank;
     private Rank leaderRank;
 
+    private String chatFormat;
+
     private String formattedTimeFormat;
 
 
@@ -80,5 +82,7 @@ public class Config {
             defaultRank = defaultRanks.get(clanCreate.getString("member-rank", "MEMBER"));
             leaderRank = defaultRanks.get(clanCreate.getString("leader-rank", "LEADER"));
         }
+
+        chatFormat = configuration.getString("chat-format", "<#FFE259>&l[TreexClans]</#FFA751> &e&l{player} &7▶ &f{message}");
     }
 }

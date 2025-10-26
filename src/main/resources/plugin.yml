@@ -7,6 +7,9 @@ authors: [ MrJetby ]
 website: https://dsc.gg/treexstudio
 depend:
   - packetevents
+  - Treex
+softdepend:
+  - Vault
 commands:
   xclan: {}
   clan: {}

@@ -1,7 +1,9 @@
 package me.jetby.xClans.commands.clan.args;
 
+import me.jetby.treex.text.Colorize;
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
+import me.jetby.xClans.configurations.Lang;
 import me.jetby.xClans.records.Clan;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -22,21 +24,25 @@ public class Deposit implements Subcommand {
         }
 
         if (sender instanceof Player player) {
+            if (plugin.getEconomy()==null) {
+                player.sendMessage(Colorize.text(plugin.getLang().getConfig().getString("null-economy", "null-economy")));
+                return true;
+            }
             if (!plugin.getClanManager().isInClan(player.getUniqueId())) {
-                player.sendMessage(plugin.getLang().getMessage("your-not-in-clan"));
+                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
 
             Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
             if (!clan.getMember(player.getUniqueId()).getRank().rankPermissions().deposit()) {
-                player.sendMessage(plugin.getLang().getMessage("your-rank-is-not-allowed-to-do-that"));
+                plugin.getLang().sendMessage(player, clan, "your-rank-is-not-allowed-to-do-that");
                 return true;
             }
             double balance = Double.parseDouble(args[0]);
             if (plugin.getEconomy().has(player, balance)) {
                 plugin.getEconomy().withdrawPlayer(player, balance);
                 plugin.getClanManager().addBalance(balance, clan);
-                player.sendMessage(plugin.getLang().getMessage("clan-balance-deposit").replace("{sum}", String.valueOf(balance)));
+                plugin.getLang().sendMessage(player, clan, "clan-balance-deposit", new Lang.ReplaceString("{sum}", String.valueOf(balance)));
             } else {
                 player.sendMessage("You haven't enough money");
             }

@@ -1,7 +1,7 @@
 
 lang: ru
 
-prefix: "&6&lTreexClans &7>"
+prefix: "<#FFE259>&lTreexClans</#FFA751> &7>"
 
 formattedTime:
   weeks: [ "неделя", "недели", "недель" ]
@@ -10,18 +10,81 @@ formattedTime:
   minutes: [ "минута", "минуты", "минут" ]
   seconds: [ "секунда", "секунды", "секунд" ]
 
-clan-does-not-exist: "&cКлан {clan} не найден."
-clan-is-already-exists: "&cДанный клан уже существует. Придумайте другой тег"
-clan-created-successfully: "&aВы успешно создали клан &e{clan_tag} &a!"
-your-not-in-clan: "&cВы не состоите в клане!"
-your-already-in-clan: "&cВы уже состоите в клане"
-clan-tag-invalid-characters: "&cТег клана содержит недопустимые символы!"
-clan-tag-too-short: "&cТег клана слишком короткий! Минимальная длина: {min_length} символов."
-clan-tag-too-long: "&cТег клана слишком длинный! Максимальная длина: {max_length} символов."
-clan-tag-blocked: "&cДанный тег клана запрещен!"
-you-havent-not-enough-money: ""
 
-your-rank-is-not-allowed-to-do-that: "&cYou are not allowed to do that! Please ask your clan leader to give you permission"
+commands:
+  help-no-clan:
+    - "&#FFE259◀&m          &r <#FFE259>&lTreexClans</#FFA751> &#FFE259&m          &#FFE259▶ "
+    - ""
+    - "&#FC835C• /clan create [тэг] &7- &fСоздать клан"
+    - "&#FC835C• /clan accept [тэг] &7- &fПринять приглашение в клан"
+    - ""
+    - "&#FFE259◀&m          &r <#FFE259>&lTreexClans</#FFA751> &#FFE259&m          &#FFE259▶ "
+  help:
+    - "&#FFE259◀&m          &r <#FFE259>&lTreexClans</#FFA751> &#FFE259&m          &#FFE259▶ "
+    - ""
+    - "&#FC835C• /clan menu &7- &fМеню клана"
+    - "&#FC835C• /clan balance &7- &fПроверить баланс клана"
+    - "&#FC835C• /clan invest [сумма] &7- &fПополнить баланс клана"
+    - "&#FC835C• /clan withdraw [сумма] &7- &fСнять с баланса клана"
+    - "&#FC835C• /clan glow &7- &fПереключить свечение игроков из клана"
+    - "&#FC835C• /clan invite [ник] &7- &fПригласить игрока в свой клан"
+    - "&#FC835C• /clan kick [ник] &7- &fИзгнать игрока из своего клана"
+    - "&#FC835C• /clan base &7- &fТелепортироваться на точку базы"
+    - "&#FC835C• /clan setbase &7- &fПоставить точку базы"
+    - "&#FC835C• /clan disband &7- &fРасформировать клан (удаление клана)"
+    - ""
+    - "&#FFE259◀&m                                       &#FFE259▶ "
 
-clan-balance-deposit: "&aВы успешно пополнили баланс клана на сумму: {sum}"
-clan-balance-withdraw: "&aВы успешно сняли с баланса банка на сумму {sum}"
+player-not-found:
+  - "[message] {prefix} &cИгрок не найден"
+clan-does-not-exist:
+  - "[message] {prefix} &cКлан {clan} не найден."
+clan-is-already-exists:
+  - "[message] {prefix} &cДанный клан уже существует. Придумайте другой тег"
+clan-created-successfully:
+  - "[message] {prefix} &aВы успешно создали клан &e{clan_tag} &a!"
+your-not-in-clan:
+  - "[message] {prefix} &cВы не состоите в клане!"
+your-already-in-clan:
+  - "[message] {prefix} &cВы уже состоите в клане"
+clan-tag-invalid-characters:
+  - "[message] {prefix} &cТег клана содержит недопустимые символы!"
+clan-tag-too-short:
+  - "[message] {prefix} &cТег клана слишком короткий! Минимальная длина: {min_length} символов."
+clan-tag-too-long:
+  - "[message] {prefix} &cТег клана слишком длинный! Максимальная длина: {max_length} символов."
+clan-tag-blocked:
+  - "[message] {prefix} &cДанный тег клана запрещен!"
+you-haven-not-enough-money:
+  - "[message] {prefix} "
+
+
+
+you-cant-do-that-with-leader:
+  - "[message] {prefix} &cВы не можете выполнить данное действие против лидера клана"
+
+your-rank-is-not-allowed-to-do-that:
+  - "[message] {prefix} &cYou are not allowed to do that! Please ask your clan leader to give you permission"
+
+
+clan-create:
+  - "[message] {prefix} &#17FF35Вы успешно создали клан &l{clan}"
+clan-balance:
+  - "[message] {prefix} &fБаланс клана составляет: &#17FF35&l${balance}"
+clan-balance-deposit:
+  - "[message] {prefix} &#17FF35Вы успешно &aпополнили &#17FF35баланс клана на сумму: &l${sum}"
+clan-balance-withdraw:
+  - "[message] {prefix} &#17FF35Вы успешно &cсняли &#17FF35с баланса банка на сумму: &l${sum}"
+clan-player-kick:
+  - "[message] {prefix} &aВы кикнули игрока {target} из клана"
+clan-you-was-kicked:
+  - "[message] {prefix} &aИгрок {player} кикнул вас из клана"
+clan-invite:
+  - "[message] {prefix} &#17FF35Запрос на вступление в клан игроку &l{target} &r&#17FF35успешно отправлен."
+clan-join-request:
+  - "[message] {prefix} &#17FF35Вам поступил запрос на вступление в клан &l{clan} &r&#17FF35от игрока &f&l{player}"
+  - "[message] &#17FF35Используйте &l/clan accept {clan} &r&#17FF35чтобы вступить в клан"
+clan-join:
+  - '[message] {prefix} &aВы вступили в клан {clan}'
+  - '[team_msg] {prefix} &aВ клане новый игрок &f{player}&a. Поприветствуйте его!'
+

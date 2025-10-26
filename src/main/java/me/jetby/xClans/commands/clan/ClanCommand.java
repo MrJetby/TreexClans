@@ -1,5 +1,6 @@
 package me.jetby.xClans.commands.clan;
 
+import me.jetby.treex.text.Colorize;
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.records.Member;
 import org.bukkit.command.Command;
@@ -10,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,15 +24,27 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (args.length < 1) {
-            sender.sendMessage("§cUsage: /clan <subcommand> [args]");
-            return true;
+        if (sender instanceof Player player) {
+            if (args.length < 1) {
+                if (!plugin.getClanManager().isInClan(player.getUniqueId())) {
+                    for (String str : plugin.getLang().getConfig().getStringList("commands.help-no-clan")) {
+                        sender.sendMessage(Colorize.text(str));
+                    }
+                } else {
+                    for (String str : plugin.getLang().getConfig().getStringList("commands.help")) {
+                        sender.sendMessage(Colorize.text(str));
+                    }
+                }
+
+                return true;
+            }
         }
+
         try {
             var arg = ClanCommandArgs.valueOf(args[0].toUpperCase());
             arg.getSubcommand().onCommand(sender, Arrays.copyOfRange(args, 1, args.length));
         } catch (IllegalArgumentException e) {
-            sender.sendMessage("§cUnknown subcommand. Use /clan for help.");
+            sender.sendMessage("§cUnknown command. Use /clan for help.");
         }
         return true;
     }
@@ -49,7 +61,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
 
             if (!plugin.getClanManager().isInClan(player.getUniqueId())) {
                 return completions.stream()
-                        .filter(cmd -> cmd.equals("create"))
+                        .filter(cmd -> cmd.equals("create") || cmd.equals("accept"))
                         .filter(cmd -> cmd.startsWith(args[0].toLowerCase()))
                         .toList();
             }
@@ -66,8 +78,8 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
                 case "setbase" -> !perms.setbase();
                 case "base" -> !perms.base();
                 case "invite" -> !perms.invite();
-                case "withdraw" -> !perms.withdraw();
-                case "deposit", "invest" -> !perms.deposit();
+                case "withdraw" -> !perms.withdraw() || plugin.getEconomy()==null;
+                case "deposit", "invest" -> !perms.deposit() || plugin.getEconomy()==null;
                 case "kick" -> !perms.kick();
                 case "setrank" -> !perms.setrank();
                 case "pvp" -> !perms.pvp();

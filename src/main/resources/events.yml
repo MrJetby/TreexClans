@@ -1,0 +1,10 @@
+
+
+# LISTENERS
+# PLAYER_KILL - Каждый раз когда убийство игрока
+# UNIQUE_PLAYER_KILL - Каждый раз когда убийство разных игроков. Один и тот же игрок никогда не повторяется
+#
+example1:
+  listen: PLAYER_KILL
+  actions:
+    - "[clan_coin_add] 10"

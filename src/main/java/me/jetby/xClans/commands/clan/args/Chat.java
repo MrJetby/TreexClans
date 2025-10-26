@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class Leave implements Subcommand {
+public class Chat implements Subcommand {
     private final TreexClans plugin = TreexClans.getInstance();
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
@@ -20,12 +20,18 @@ public class Leave implements Subcommand {
                 plugin.getLang().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
-            Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
-            if (clan.getLeader().equals(clan.getMember(player.getUniqueId()))) {
-                player.sendMessage("§cYou can't leave this clan because you are the leader. If you want disband this clan you can use /clan disband");
+
+            if (args.length==0) {
                 return true;
+            } else {
+                StringBuilder message = new StringBuilder();
+                for (String str : args) message.append(" ").append(str);
+                Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
+
+                plugin.getClanManager().sendChat(clan, player, message.toString());
             }
-            clan.removeMember(clan.getMember(player.getUniqueId()));
+
+
         }
         return true;
     }

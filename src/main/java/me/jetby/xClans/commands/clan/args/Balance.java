@@ -2,6 +2,7 @@ package me.jetby.xClans.commands.clan.args;
 
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
+import me.jetby.xClans.configurations.Lang;
 import me.jetby.xClans.records.Clan;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -18,11 +19,11 @@ public class Balance implements Subcommand {
 
         if (sender instanceof Player player) {
             if (!plugin.getClanManager().isInClan(player.getUniqueId())) {
-                player.sendMessage(plugin.getLang().getMessage("your-not-in-clan"));
+                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
             Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
-            player.sendMessage("Clan balance is: "+clan.getBalance());
+            plugin.getLang().sendMessage(player, clan, "clan-balance", new Lang.ReplaceString("{balance}", String.valueOf(clan.getBalance())));
         }
 
         return true;

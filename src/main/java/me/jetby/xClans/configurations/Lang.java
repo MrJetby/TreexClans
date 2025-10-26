@@ -1,11 +1,18 @@
 package me.jetby.xClans.configurations;
 
 import lombok.Getter;
+import me.jetby.treex.actions.ActionContext;
+import me.jetby.treex.actions.ActionExecutor;
+import me.jetby.treex.actions.ActionRegistry;
+import me.jetby.treex.text.Colorize;
 import me.jetby.xClans.TreexClans;
+import me.jetby.xClans.records.Clan;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -49,10 +56,50 @@ public class Lang {
             break;
         }
     }
-    public String getMessage(String path) {
-        return config.getString(path);
+    public void sendMessage(Player player, Clan clan, String path) {
+        ActionContext ctx = new ActionContext(player);
+        ctx.put("clan", clan);
+
+        List<String> actions = config.getStringList(path).stream()
+                .map(str -> str.replace("{prefix}", config.getString("prefix", "")))
+                .toList();
+
+        ActionExecutor.execute(ctx, ActionRegistry.transform(actions));
     }
+
+    public void sendMessage(Player player, Clan clan, String path, ReplaceString replace) {
+        ActionContext ctx = new ActionContext(player);
+        ctx.put("clan", clan);
+
+        List<String> actions = config.getStringList(path).stream()
+                .map(str -> str
+                        .replace("{prefix}", config.getString("prefix", ""))
+                        .replace(replace.target(), replace.replacement()))
+                .toList();
+
+        ActionExecutor.execute(ctx, ActionRegistry.transform(actions));
+    }
+
+    public void sendMessage(Player player, Clan clan, String path, List<ReplaceString> replaceStrings) {
+        ActionContext ctx = new ActionContext(player);
+        ctx.put("clan", clan);
+
+        List<String> actions = config.getStringList(path).stream()
+                .map(str -> {
+                    String replaced = str.replace("{prefix}", config.getString("prefix", ""));
+                    for (ReplaceString replace : replaceStrings) {
+                        replaced = replaced.replace(replace.target(), replace.replacement());
+                    }
+                    return replaced;
+                })
+                .toList();
+
+        ActionExecutor.execute(ctx, ActionRegistry.transform(actions));
+    }
+
     public List<String> getMessageList(String path) {
         return config.getStringList(path);
     }
+
+    public record ReplaceString(String target, String replacement){}
 }

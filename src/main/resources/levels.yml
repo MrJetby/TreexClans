@@ -1,4 +1,8 @@
 '1':
-  max-members: 5
+  exp: 100
+  max-members: 3
   max-balance: 250000
-  max-homes: 1
+'2':
+  exp: 200
+  max-members: 3
+  max-balance: 250000

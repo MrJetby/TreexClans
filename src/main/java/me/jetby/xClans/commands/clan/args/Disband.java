@@ -20,7 +20,7 @@ public class Disband implements Subcommand {
 
         if (sender instanceof Player player) {
             if (!plugin.getClanManager().isInClan(player.getUniqueId())) {
-                player.sendMessage(plugin.getLang().getMessage("your-not-in-clan"));
+                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
             if (Cooldown.isOnCooldown("delete_" + player.getUniqueId())) {

@@ -2,7 +2,6 @@ package me.jetby.xClans.records;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.jetby.xClans.records.rank.Rank;
 import org.bukkit.Location;
@@ -20,10 +19,11 @@ public class Clan {
     private final Member leader;
     private final Set<Member> members;
     private final Map<String, Rank> ranks;
-    private final Chest chest;
+    private List<Item> items;
     private final Level level;
     private double balance;
     private Location base;
+    private int exp;
 
     public void addMember(Member member) {
         this.members.add(member);

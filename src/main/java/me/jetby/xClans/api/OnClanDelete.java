@@ -6,18 +6,25 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 public class OnClanDelete extends Event implements Cancellable {
+    private static final HandlerList handlers = new HandlerList();
+    private boolean cancelled = false;
+
+    @Override
+    public @NotNull HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     @Override
     public boolean isCancelled() {
-        return false;
+        return cancelled;
     }
 
     @Override
     public void setCancelled(boolean b) {
-
-    }
-
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return null;
+        cancelled = b;
     }
 }

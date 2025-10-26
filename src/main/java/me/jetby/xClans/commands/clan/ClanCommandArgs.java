@@ -19,6 +19,7 @@ public enum ClanCommandArgs {
     SETRANK(new SetRank()),
     BASE(new Base()),
     LEAVE(new Leave()),
+    CHAT(new Chat()),
     INFO(new Info());
 
     @Getter

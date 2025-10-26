@@ -2,6 +2,7 @@ package me.jetby.xClans.commands.clan.args;
 
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
+import me.jetby.xClans.configurations.Lang;
 import me.jetby.xClans.records.Clan;
 import me.jetby.xClans.records.Member;
 import org.bukkit.Bukkit;
@@ -28,13 +29,13 @@ public class Kick implements Subcommand {
 
         if (sender instanceof Player player) {
             if (!plugin.getClanManager().isInClan(player.getUniqueId())) {
-                player.sendMessage(plugin.getLang().getMessage("your-not-in-clan"));
+                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
             Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
 
             if (!clan.getMember(player.getUniqueId()).getRank().rankPermissions().kick()) {
-                player.sendMessage(plugin.getLang().getMessage("your-rank-is-not-allowed-to-do-that"));
+                plugin.getLang().sendMessage(player, clan, "your-rank-is-not-allowed-to-do-that");
                 return true;
             }
 
@@ -50,14 +51,19 @@ public class Kick implements Subcommand {
             Member member = clan.getMember(uuid);
 
             if (member==null) {
-                player.sendMessage("§cPlayer not found.");
+                plugin.getLang().sendMessage(player, clan, "player-not-found");
+                return true;
+            }
+
+            if (clan.getLeader().equals(member)) {
+                plugin.getLang().sendMessage(player, clan, "you-cant-do-that-with-leader");
                 return true;
             }
 
             clan.removeMember(member);
-            player.sendMessage(targetName+" was successfully kicked out the clan");
+            plugin.getLang().sendMessage(player, clan, "clan-player-kick", new Lang.ReplaceString("{target}", targetName));
             if (target!=null && target.isOnline()) {
-                target.sendMessage("You was kicked out your clan by "+player.getName());
+                plugin.getLang().sendMessage(player, clan, "clan-you-was-kicked", new Lang.ReplaceString("{player}", player.getName()));
             }
         }
         return true;

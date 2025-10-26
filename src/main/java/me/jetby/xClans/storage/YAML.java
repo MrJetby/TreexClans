@@ -40,6 +40,7 @@ public class YAML implements Storage {
             Set<Member> memberSet = new HashSet<>();
             double balance = clan.getDouble("balance", 0.0);
             String level = clan.getString("level", "1");
+            int clanExp = clan.getInt("exp", 0);
 
 
             String leaderUUID = clan.getString("leader.uuid");
@@ -47,7 +48,6 @@ public class YAML implements Storage {
                 plugin.getLogger().warning("Clan " + clanId + " has no leader UUID in storage.yml!");
                 continue;
             }
-            UUID uuid = UUID.fromString(leaderUUID);
 
             Map<String, Rank> ranks = new HashMap<>();
             ConfigurationSection ranksSection = clan.getConfigurationSection("ranks");
@@ -73,12 +73,15 @@ public class YAML implements Storage {
                 ranks.putAll(plugin.getCfg().getDefaultRanks());
             }
 
-            Rank rank = plugin.getCfg().getDefaultRanks().get(clan.getString("leader.rank"));
-            long joinedAt = clan.getLong("leader.joined-at");
-            long lastOnline = clan.getLong("leader.last-online");
-            boolean glow = clan.getBoolean("leader.clan-glow", false);
+            UUID leader_uuid = UUID.fromString(leaderUUID);
+            Rank leader_rank = plugin.getCfg().getDefaultRanks().get(clan.getString("leader.rank"));
+            long leader_joinedAt = clan.getLong("leader.joined-at");
+            long leader_lastOnline = clan.getLong("leader.last-online");
+            boolean leader_glow = clan.getBoolean("leader.clan-glow", false);
+            int leader_coin = clan.getInt("leader.coin", 0);
+            int leader_exp = clan.getInt("leader.exp", 0);
 
-            Member leader = new Member(uuid, rank, joinedAt, lastOnline, glow);
+            Member leader = new Member(leader_uuid, leader_rank, leader_joinedAt, leader_lastOnline, leader_glow, false, leader_coin, leader_exp);
 
             ConfigurationSection members = clan.getConfigurationSection("members");
             if (members != null) {
@@ -86,20 +89,22 @@ public class YAML implements Storage {
                 for (String key : members.getKeys(false)) {
                     ConfigurationSection member = members.getConfigurationSection(key);
                     if (member == null) continue;
-                    UUID u = UUID.fromString(key);
-                    Rank r = ranks.get(member.getString("rank"));
-                    long ja = member.getLong("joined-at");
-                    long lo = member.getLong("last-online");
-                    boolean g = member.getBoolean("clan-glow", false);
-                    memberSet.add(new Member(u, r, ja, lo, g));
+                    UUID uuid = UUID.fromString(key);
+                    Rank rank = ranks.get(member.getString("rank"));
+                    long joinedAt = member.getLong("joined-at");
+                    long lastOnline = member.getLong("last-online");
+                    boolean glow = member.getBoolean("clan-glow", false);
+                    int coin = member.getInt("coin", 0);
+                    int exp = member.getInt("exp", 0);
+                    memberSet.add(new Member(uuid, rank, joinedAt, lastOnline, glow, false, coin, exp));
 
                 }
             }
 
             Location base = LocationHandler.deserialize(clan.getString("base-location"));
-
-            plugin.getCfg().getClans().put(clanId, new Clan(clanId, prefix, leader, memberSet, ranks, null,
-                    new Level(Integer.parseInt(level)), balance, base));
+            
+            plugin.getCfg().getClans().put(clanId, new Clan(clanId, prefix, leader, memberSet, ranks, new ArrayList<>(),
+                    new Level(Integer.parseInt(level)), balance, base, clanExp));
         }
     }
 
@@ -129,6 +134,7 @@ public class YAML implements Storage {
 
                 configuration.set(clanId + ".balance", clan.getBalance());
                 configuration.set(clanId + ".level", clan.getLevel().id());
+                configuration.set(clanId + ".exp", clan.getExp());
 
                 Member leader = clan.getLeader();
                 configuration.set(clanId + ".leader.uuid", leader.getUuid().toString());
@@ -144,7 +150,12 @@ public class YAML implements Storage {
                     configuration.set(clanId + ".members." + member.getUuid() + ".last-online", member.getLastOnline());
                     configuration.set(clanId + ".members." + member.getUuid() + ".clan-glow", member.isClanGlow());
                 }
-                configuration.set(clanId + ".base-location", LocationHandler.serialize(clan.getBase()));
+                Location location = clan.getBase();
+                if (location!=null) {
+                    configuration.set(clanId + ".base-location", LocationHandler.serialize(clan.getBase()));
+                } else {
+                    configuration.set(clanId + ".base-location", null);
+                }
             }
             configuration.save(file);
         } catch (IOException e) {

@@ -1,20 +1,30 @@
 package me.jetby.xClans;
 
 import lombok.RequiredArgsConstructor;
+import me.jetby.treex.text.Colorize;
 import me.jetby.xClans.records.Clan;
 import me.jetby.xClans.records.Level;
 import me.jetby.xClans.records.Member;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 
-@RequiredArgsConstructor
-public class ClanManager {
+public class ClanManager implements Listener {
     private final TreexClans plugin;
+
+    public ClanManager(TreexClans plugin) {
+        this.plugin = plugin;
+        Bukkit.getPluginManager().registerEvents(this, plugin);
+
+    }
 
     /**
      * Checks if a player (by UUID) is currently in any clan.
@@ -77,8 +87,8 @@ public class ClanManager {
      */
     public boolean createClan(@NotNull String clanName, @NotNull Member leader) {
         if (!clanExists(clanName)) {
-            Clan clan = new Clan(clanName, null, leader, new HashSet<>(), plugin.getCfg().getDefaultRanks(), null,
-                    new Level(1), 0.0, null);
+            Clan clan = new Clan(clanName, null, leader, new HashSet<>(), plugin.getCfg().getDefaultRanks(), new ArrayList<>(),
+                    new Level(1), 0.0, null, 0);
             plugin.getCfg().getClans().put(clanName, clan);
             return true;
         }
@@ -187,8 +197,7 @@ public class ClanManager {
         }
         return "-1";
     }
-
-    public void sendChat(Clan clan, String message) {
+    public void sendMessage(Clan clan, String message) {
         for (Member member : clan.getMembers()) {
             Player player = Bukkit.getPlayer(member.getUuid());
             player.sendMessage(message);
@@ -196,5 +205,28 @@ public class ClanManager {
         Member leader = clan.getLeader();
         Player player = Bukkit.getPlayer(leader.getUuid());
         player.sendMessage(message);
+    }
+    public void sendChat(Clan clan, Player sender, String message) {
+        for (Member member : clan.getMembers()) {
+            Player player = Bukkit.getPlayer(member.getUuid());
+            player.sendMessage(Colorize.text(plugin.getCfg().getChatFormat()
+                    .replace("{player}", sender.getName())
+                    .replace("{message}", message)));
+        }
+        Member leader = clan.getLeader();
+        Player player = Bukkit.getPlayer(leader.getUuid());
+        player.sendMessage(Colorize.text(plugin.getCfg().getChatFormat()
+                .replace("{player}", sender.getName())
+                .replace("{message}", message)));
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e) {
+        UUID uuid = e.getPlayer().getUniqueId();
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, ()-> {
+            Clan clan = getClanByMember(uuid);
+            if (clan==null) return;
+            getClanByMember(uuid).getMember(uuid).setLastOnline(System.currentTimeMillis());
+        });
     }
 }
