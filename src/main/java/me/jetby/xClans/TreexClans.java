@@ -1,8 +1,8 @@
 package me.jetby.xClans;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.jodexindustries.jguiwrapper.common.JGuiInitializer;
-import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import me.jetby.treex.tools.LogInitialize;
@@ -12,11 +12,14 @@ import me.jetby.xClans.commands.xclan.XClanCommand;
 import me.jetby.xClans.configurations.Config;
 import me.jetby.xClans.configurations.Lang;
 import me.jetby.xClans.functions.ClanGlow;
+import me.jetby.xClans.functions.ClanListeners;
+import me.jetby.xClans.functions.glow.Glow;
 import me.jetby.xClans.gui.CommandRegistrar;
 import me.jetby.xClans.gui.Loader;
 import me.jetby.xClans.storage.Storage;
 import me.jetby.xClans.storage.YAML;
 import me.jetby.xClans.tools.FormatTime;
+import me.jetby.xClans.tools.PacketEventsDownloader;
 import me.jetby.xClans.tools.TreexInitializer;
 import me.jetby.xClans.tools.customActions.Actions;
 import net.milkbowl.vault.economy.Economy;
@@ -44,6 +47,7 @@ public final class TreexClans extends JavaPlugin {
     private FormatTime formatTime;
 
     private ClanGlow clanGlow;
+    private Glow glow;
 
     private ClanManager clanManager;
     private Storage storage;
@@ -58,10 +62,10 @@ public final class TreexClans extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
-        PacketEvents.getAPI().load();
+        new PacketEventsDownloader(this);
+        PacketEvents.getAPI().getEventManager().registerListener(
+               glow = new Glow(this), PacketListenerPriority.NORMAL);
     }
-
     @Override
     public void onEnable() {
         INSTANCE = this;
@@ -75,6 +79,7 @@ public final class TreexClans extends JavaPlugin {
             return;
         }
 
+
         LOGGER = LogInitialize.getLogger(this);
 
         setupEconomy();
@@ -83,19 +88,6 @@ public final class TreexClans extends JavaPlugin {
         cfg.load();
 
         formatTime = new FormatTime(this);
-
-        PluginCommand xClanCommand = this.getCommand("xclan");
-        if (xClanCommand != null) {
-            XClanCommand cmd = new XClanCommand();
-            xClanCommand.setExecutor(cmd);
-            xClanCommand.setTabCompleter(cmd);
-        }
-        PluginCommand clanCommand = this.getCommand("clan");
-        if (clanCommand != null) {
-            ClanCommand cmd = new ClanCommand(this);
-            clanCommand.setExecutor(cmd);
-            clanCommand.setTabCompleter(cmd);
-        }
 
         try {
             PacketEvents.getAPI().init();
@@ -115,6 +107,22 @@ public final class TreexClans extends JavaPlugin {
         menuLoader = new Loader(this, getDataFolder());
         menuLoader.load();
         CommandRegistrar.createCommands(this);
+
+        PluginCommand xClanCommand = this.getCommand("xclan");
+        if (xClanCommand != null) {
+            XClanCommand cmd = new XClanCommand();
+            xClanCommand.setExecutor(cmd);
+            xClanCommand.setTabCompleter(cmd);
+        }
+        PluginCommand clanCommand = this.getCommand("clan");
+        if (clanCommand != null) {
+            ClanCommand cmd = new ClanCommand(this);
+            clanCommand.setExecutor(cmd);
+            clanCommand.setTabCompleter(cmd);
+        }
+
+
+        getServer().getPluginManager().registerEvents(new ClanListeners(this), this);
 
     }
 

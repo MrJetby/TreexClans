@@ -1,7 +1,12 @@
 package me.jetby.xClans;
 
-import lombok.RequiredArgsConstructor;
+import me.jetby.treex.actions.ActionContext;
+import me.jetby.treex.actions.ActionExecutor;
+import me.jetby.treex.actions.ActionRegistry;
 import me.jetby.treex.text.Colorize;
+import me.jetby.xClans.configurations.Lang;
+import me.jetby.xClans.gui.requirements.Requirements;
+import me.jetby.xClans.gui.requirements.SimpleRequirement;
 import me.jetby.xClans.records.Clan;
 import me.jetby.xClans.records.Level;
 import me.jetby.xClans.records.Member;
@@ -13,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
@@ -88,17 +94,47 @@ public class ClanManager implements Listener {
     public boolean createClan(@NotNull String clanName, @NotNull Member leader) {
         if (!clanExists(clanName)) {
             Clan clan = new Clan(clanName, null, leader, new HashSet<>(), plugin.getCfg().getDefaultRanks(), new ArrayList<>(),
-                    new Level(1), 0.0, null, 0);
+                    new Level(1), 0.0, null, 0, false);
             plugin.getCfg().getClans().put(clanName, clan);
             return true;
         }
         return false;
     }
 
+    public boolean isAllowedName(Player player, String clanName) {
+
+        if (clanName.length() < plugin.getCfg().getMinTagLength()) {
+            plugin.getLang().sendMessage(player, null, "clan-tag-too-short", new Lang.ReplaceString("{min_length}", String.valueOf(plugin.getCfg().getMinTagLength())));
+            return false;
+        }
+        if (clanName.length() > plugin.getCfg().getMaxTagLength()) {
+            plugin.getLang().sendMessage(player, null, "clan-tag-too-long", new Lang.ReplaceString("{max_length}", String.valueOf(plugin.getCfg().getMaxTagLength())));
+            return false;
+        }
+
+        if (plugin.getCfg().getBlockedTags().contains(clanName)) {
+            plugin.getLang().sendMessage(player, null, "clan-tag-blocked");
+            return false;
+        }
+
+        // TODO: проверить что никаких символов и только англо буквы
+//        plugin.getLang().sendMessage(player, null, "clan-tag-invalid-characters");
+
+        for (SimpleRequirement requirement : plugin.getCfg().getRequirements()) {
+            if (!Requirements.check(player, requirement)) {
+                Requirements.runDenyCommands(player, requirement.denyActions());
+                return false;
+            } else {
+                ActionExecutor.execute(new ActionContext(player), ActionRegistry.transform(requirement.actions()));
+            }
+        }
+        return true;
+    }
+
     public boolean deleteClan(@NotNull Clan clan) {
         for (Member member : clan.getMembers()) {
             Player player = Bukkit.getPlayer(member.getUuid());
-            if (player!=null) {
+            if (player != null) {
                 player.sendMessage("Your clan was disbanded by clan leader");
             }
         }
@@ -108,12 +144,12 @@ public class ClanManager implements Listener {
 
     public boolean deleteClan(@NotNull String clanName) {
         Clan clan = getClan(clanName);
-        if (clan==null) {
+        if (clan == null) {
             return false;
         }
         for (Member member : clan.getMembers()) {
             Player player = Bukkit.getPlayer(member.getUuid());
-            if (player!=null) {
+            if (player != null) {
                 player.sendMessage("Your clan was disbanded by clan leader");
             }
         }
@@ -123,14 +159,17 @@ public class ClanManager implements Listener {
 
 
     public void addBalance(double a, Clan clan) {
-        clan.setBalance(clan.getBalance()+a);
+        clan.setBalance(clan.getBalance() + a);
     }
+
     public double getBalance(Clan clan) {
         return clan.getBalance();
     }
+
     public void takeBalance(double a, Clan clan) {
-        clan.setBalance(clan.getBalance()-a);
+        clan.setBalance(clan.getBalance() - a);
     }
+
     /**
      * Retrieves a clan by its name.
      *
@@ -172,6 +211,15 @@ public class ClanManager implements Listener {
                 .orElse(null);
     }
 
+    public Clan getClanByMember(@NotNull Member member) {
+        return plugin.getCfg().getClans().values().stream()
+                .filter(clan -> (clan.getLeader() != null && clan.getLeader().equals(member))
+                        || clan.getMembers().stream()
+                        .anyMatch(player -> player.equals(member)))
+                .findFirst()
+                .orElse(null);
+    }
+
     /**
      * Retrieves the last online timestamp for a specific player.
      *
@@ -197,24 +245,30 @@ public class ClanManager implements Listener {
         }
         return "-1";
     }
+
     public void sendMessage(Clan clan, String message) {
         for (Member member : clan.getMembers()) {
             Player player = Bukkit.getPlayer(member.getUuid());
+            if (player==null) continue;
             player.sendMessage(message);
         }
         Member leader = clan.getLeader();
         Player player = Bukkit.getPlayer(leader.getUuid());
+        if (player==null) return;
         player.sendMessage(message);
     }
+
     public void sendChat(Clan clan, Player sender, String message) {
         for (Member member : clan.getMembers()) {
             Player player = Bukkit.getPlayer(member.getUuid());
+            if (player==null) continue;
             player.sendMessage(Colorize.text(plugin.getCfg().getChatFormat()
                     .replace("{player}", sender.getName())
                     .replace("{message}", message)));
         }
         Member leader = clan.getLeader();
         Player player = Bukkit.getPlayer(leader.getUuid());
+        if (player==null) return;
         player.sendMessage(Colorize.text(plugin.getCfg().getChatFormat()
                 .replace("{player}", sender.getName())
                 .replace("{message}", message)));
@@ -223,9 +277,9 @@ public class ClanManager implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, ()-> {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             Clan clan = getClanByMember(uuid);
-            if (clan==null) return;
+            if (clan == null) return;
             getClanByMember(uuid).getMember(uuid).setLastOnline(System.currentTimeMillis());
         });
     }

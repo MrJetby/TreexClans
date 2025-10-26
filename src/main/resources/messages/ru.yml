@@ -11,18 +11,36 @@ formattedTime:
   seconds: [ "секунда", "секунды", "секунд" ]
 
 
+null-economy: "Для этой функции требуется плагин на экономику"
+restart-needed: "Видимо администрация неправильно загрузила плагин. Если вы администратор то вам нужно перезапустить сервер так как для этой функции требуется работа с пакетами."
+
 commands:
+  kick:
+    - "&#FC835C• /clan kick [ник] &7- &fИзгнать игрока из своего клана"
+  invite:
+    - "&#FC835C• /clan invite [ник] &7- &fПригласить игрока в свой клан"
+  withdraw:
+    - "&#FC835C• /clan withdraw [сумма] &7- &fСнять с баланса клана"
+  deposit:
+    - "&#FC835C• /clan invest [сумма] &7- &fПополнить баланс клана"
+  create:
+    - "&#FC835C• /clan create [тэг] &7- &fСоздать клан"
+  accept:
+    - "&#FC835C• /clan accept [тэг] &7- &fПринять приглашение в клан"
   help-no-clan:
     - "&#FFE259◀&m          &r <#FFE259>&lTreexClans</#FFA751> &#FFE259&m          &#FFE259▶ "
     - ""
     - "&#FC835C• /clan create [тэг] &7- &fСоздать клан"
     - "&#FC835C• /clan accept [тэг] &7- &fПринять приглашение в клан"
     - ""
-    - "&#FFE259◀&m          &r <#FFE259>&lTreexClans</#FFA751> &#FFE259&m          &#FFE259▶ "
+    - "&#FFE259◀&m                                       &#FFE259▶ "
   help:
     - "&#FFE259◀&m          &r <#FFE259>&lTreexClans</#FFA751> &#FFE259&m          &#FFE259▶ "
     - ""
     - "&#FC835C• /clan menu &7- &fМеню клана"
+    - "&#FC835C• /clan chat &7- &fПереключить клановый чат"
+    - "&#FC835C• /clan chat [текст] &7- &fНаписать в клановый чат"
+    - "&#FC835C• /clan pvp &7- &fПереключить чат"
     - "&#FC835C• /clan balance &7- &fПроверить баланс клана"
     - "&#FC835C• /clan invest [сумма] &7- &fПополнить баланс клана"
     - "&#FC835C• /clan withdraw [сумма] &7- &fСнять с баланса клана"
@@ -56,8 +74,10 @@ clan-tag-too-long:
 clan-tag-blocked:
   - "[message] {prefix} &cДанный тег клана запрещен!"
 you-haven-not-enough-money:
-  - "[message] {prefix} "
-
+  - "[message] {prefix} &cУ вас недостаточно средств!"
+pvp-disabled:
+  # Если вам не нужно это сообщение то просто оставьте эту строку пустым pvp-disabled: {}
+  - "[message] {prefix} &7Вы не можете ударить соклановца так как в вашем клане отключён pvp"
 
 
 you-cant-do-that-with-leader:
@@ -72,7 +92,7 @@ clan-create:
 clan-balance:
   - "[message] {prefix} &fБаланс клана составляет: &#17FF35&l${balance}"
 clan-balance-deposit:
-  - "[message] {prefix} &#17FF35Вы успешно &aпополнили &#17FF35баланс клана на сумму: &l${sum}"
+  - "[message] {prefix} &#17FF35Вы успешно &eпополнили &#17FF35баланс клана на сумму: &l${sum}"
 clan-balance-withdraw:
   - "[message] {prefix} &#17FF35Вы успешно &cсняли &#17FF35с баланса банка на сумму: &l${sum}"
 clan-player-kick:
@@ -87,4 +107,11 @@ clan-join-request:
 clan-join:
   - '[message] {prefix} &aВы вступили в клан {clan}'
   - '[team_msg] {prefix} &aВ клане новый игрок &f{player}&a. Поприветствуйте его!'
-
+clan-chat-on:
+  - '[message] {prefix} &fКлановый чат &#17FF35включён'
+clan-chat-off:
+  - '[message] {prefix} &fКлановый чат &#FB0000выключен'
+clan-pvp-on:
+  - '[message] {prefix} &fКлановый pvp &#17FF35включён'
+clan-pvp-off:
+  - '[message] {prefix} &fКлановый pvp &#FB0000выключен'

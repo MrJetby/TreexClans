@@ -63,7 +63,7 @@ public class ClanGlow implements PacketListener {
         for (Member member : targets) {
             Player player = Bukkit.getPlayer(member.getUuid());
             if (player != null) {
-                sendGlowEquipment(observer, player);
+                sendGlowEquipment(observer, player, member.getGlowColors().get(member));
             }
         }
     }
@@ -80,8 +80,8 @@ public class ClanGlow implements PacketListener {
         }
     }
 
-    private void sendGlowEquipment(Player observer, Player target) {
-        List<Equipment> equipmentList = createGreenEquipmentList();
+    private void sendGlowEquipment(Player observer, Player target, Color color) {
+        List<Equipment> equipmentList = createGreenEquipmentList(color);
         WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment(
                 target.getEntityId(), equipmentList
         );
@@ -96,25 +96,13 @@ public class ClanGlow implements PacketListener {
         PacketEvents.getAPI().getPlayerManager().sendPacket(observer, packet);
     }
 
-
-    private Player findTargetByEntityId(Set<Member> targets, int entityId) {
-        for (Member member : targets) {
-            Player p = Bukkit.getPlayer(member.getUuid());
-            if (p == null) continue;
-            if (p.isOnline() && p.getEntityId() == entityId) {
-                return p;
-            }
-        }
-        return null;
-    }
-
-    private List<Equipment> createGreenEquipmentList() {
+    private List<Equipment> createGreenEquipmentList(Color color) {
         List<Equipment> equipmentList = new ArrayList<>();
         ItemStack[] armorPieces = {
-                createColoredLeather(Material.LEATHER_HELMET),
-                createColoredLeather(Material.LEATHER_CHESTPLATE),
-                createColoredLeather(Material.LEATHER_LEGGINGS),
-                createColoredLeather(Material.LEATHER_BOOTS)
+                createColoredLeather(Material.LEATHER_HELMET, color),
+                createColoredLeather(Material.LEATHER_CHESTPLATE, color),
+                createColoredLeather(Material.LEATHER_LEGGINGS, color),
+                createColoredLeather(Material.LEATHER_BOOTS, color)
         };
         equipmentList.add(new Equipment(EquipmentSlot.HELMET, SpigotConversionUtil.fromBukkitItemStack(armorPieces[0])));
         equipmentList.add(new Equipment(EquipmentSlot.CHEST_PLATE, SpigotConversionUtil.fromBukkitItemStack(armorPieces[1])));
@@ -123,11 +111,11 @@ public class ClanGlow implements PacketListener {
         return equipmentList;
     }
 
-    private ItemStack createColoredLeather(Material material) {
+    private ItemStack createColoredLeather(Material material, Color color) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta instanceof LeatherArmorMeta lam) {
-            lam.setColor(Color.GREEN);
+            lam.setColor(color);
         }
         item.setItemMeta(meta);
         return item;
@@ -137,7 +125,6 @@ public class ClanGlow implements PacketListener {
         refreshTask = new BukkitRunnable() {
             @Override
             public void run() {
-
 
                 for (Map.Entry<UUID, Set<Member>> entry : new HashSet<>(observersToTargets.entrySet())) {
                     Player observer = Bukkit.getPlayer(entry.getKey());

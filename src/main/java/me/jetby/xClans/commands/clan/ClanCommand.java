@@ -2,6 +2,10 @@ package me.jetby.xClans.commands.clan;
 
 import me.jetby.treex.text.Colorize;
 import me.jetby.xClans.TreexClans;
+import me.jetby.xClans.gui.GuiFactory;
+import me.jetby.xClans.gui.GuiType;
+import me.jetby.xClans.gui.Menu;
+import me.jetby.xClans.records.Clan;
 import me.jetby.xClans.records.Member;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,19 +16,33 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ClanCommand implements CommandExecutor, TabCompleter {
     private final TreexClans plugin;
+    private final Map<String, List<String>> menuArgs = new HashMap<>();
 
     public ClanCommand(TreexClans plugin) {
         this.plugin = plugin;
+        plugin.getMenuLoader().getMenus().forEach((key, item) -> menuArgs.put(key, item.openArgs()));
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player player) {
+
+            Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
+            if (clan!=null) {
+                for (Map.Entry<String, List<String>> entry : menuArgs.entrySet()) {
+                    if (entry.getValue().contains(args[0])) {
+                        GuiFactory.create(plugin, plugin.getMenuLoader().getMenus().get(entry.getKey()), player, clan).open(player);
+                        return true;
+                    }
+                }
+            }
             if (args.length < 1) {
                 if (!plugin.getClanManager().isInClan(player.getUniqueId())) {
                     for (String str : plugin.getLang().getConfig().getStringList("commands.help-no-clan")) {
@@ -39,6 +57,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
         }
+
 
         try {
             var arg = ClanCommandArgs.valueOf(args[0].toUpperCase());
@@ -59,15 +78,25 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
                     .map(String::toLowerCase)
                     .collect(Collectors.toList());
 
+            for (Map.Entry<String, List<String>> entry : menuArgs.entrySet()) {
+                if (entry.getValue().contains(args[0])) {
+                    Menu menu = plugin.getMenuLoader().getMenus().get(entry.getKey());
+                    if (menu.type()==GuiType.DEFAULT) {
+                        if (player.hasPermission(menu.permission())) {
+                            completions.addAll(entry.getValue());
+                        }
+                    }
+                }
+            }
+
             if (!plugin.getClanManager().isInClan(player.getUniqueId())) {
                 return completions.stream()
                         .filter(cmd -> cmd.equals("create") || cmd.equals("accept"))
                         .filter(cmd -> cmd.startsWith(args[0].toLowerCase()))
                         .toList();
             }
-            Member member = plugin.getClanManager()
-                    .getClanByMember(player.getUniqueId())
-                    .getMember(player.getUniqueId());
+            Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
+            Member member = clan.getMember(player.getUniqueId());
 
             if (member == null || member.getRank() == null)
                 return List.of();
@@ -86,6 +115,16 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
                 default -> false;
             });
             completions.remove("create");
+            for (Map.Entry<String, List<String>> entry : menuArgs.entrySet()) {
+                if (entry.getValue().contains(args[0])) {
+                    Menu menu = plugin.getMenuLoader().getMenus().get(entry.getKey());
+                    if (menu.type()!=GuiType.DEFAULT) {
+                        if (player.hasPermission(menu.permission())) {
+                            completions.addAll(entry.getValue());
+                        }
+                    }
+                }
+            }
 
             return completions.stream()
                     .filter(cmd -> cmd.startsWith(args[0].toLowerCase()))

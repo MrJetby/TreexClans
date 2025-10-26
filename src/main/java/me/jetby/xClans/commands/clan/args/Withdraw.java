@@ -19,11 +19,12 @@ public class Withdraw implements Subcommand {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
 
 
-        if (args.length==0) {
-            sender.sendMessage("§c/clan withdraw [amount]");
-            return true;
-        }
+
         if (sender instanceof Player player) {
+            if (args.length==0) {
+                plugin.getLang().sendMessage(player, null, "commands.withdraw");
+                return true;
+            }
             if (plugin.getEconomy()==null) {
                 player.sendMessage(Colorize.text(plugin.getLang().getConfig().getString("null-economy", "null-economy")));
                 return true;

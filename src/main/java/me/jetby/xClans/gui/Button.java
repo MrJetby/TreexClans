@@ -18,7 +18,9 @@ public record Button(
         ItemStack itemStack,
         List<ViewRequirement> viewRequirements,
         List<Command> commands,
-        int priority
+        int priority,
+        String type
+
 
 ) {
 }

@@ -24,6 +24,7 @@ public class Clan {
     private double balance;
     private Location base;
     private int exp;
+    private boolean pvp;
 
     public void addMember(Member member) {
         this.members.add(member);

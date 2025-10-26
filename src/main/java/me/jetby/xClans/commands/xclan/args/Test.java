@@ -1,18 +1,15 @@
 package me.jetby.xClans.commands.xclan.args;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
-import me.jetby.xClans.functions.ClanGlow;
-import org.bukkit.Bukkit;
+import me.jetby.xClans.gui.GuiFactory;
+import me.jetby.xClans.records.Clan;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.List;
 
 public class Test implements Subcommand {
@@ -26,7 +23,8 @@ public class Test implements Subcommand {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
 
         if (sender instanceof Player player) {
-
+            Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
+//            GuiFactory.create(plugin, , player, clan).open(player);
         }
 
         return true;

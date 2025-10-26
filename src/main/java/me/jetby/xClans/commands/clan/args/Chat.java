@@ -3,6 +3,7 @@ package me.jetby.xClans.commands.clan.args;
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
 import me.jetby.xClans.records.Clan;
+import me.jetby.xClans.records.Member;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,10 +23,18 @@ public class Chat implements Subcommand {
             }
 
             if (args.length==0) {
+                Member member = plugin.getClanManager().getClanByMember(player.getUniqueId()).getMember(player.getUniqueId());
+                if (!member.isChat()) {
+                    plugin.getLang().sendMessage(player, null, "clan-chat-on");
+                    member.setChat(true);
+                } else {
+                    plugin.getLang().sendMessage(player, null, "clan-chat-off");
+                    member.setChat(false);
+                }
                 return true;
             } else {
                 StringBuilder message = new StringBuilder();
-                for (String str : args) message.append(" ").append(str);
+                for (String str : args) message.append(str).append(" ");
                 Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
 
                 plugin.getClanManager().sendChat(clan, player, message.toString());

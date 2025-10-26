@@ -1,21 +1,17 @@
 package me.jetby.xClans.commands.clan.args;
 
-import me.jetby.treex.text.Colorize;
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
 import me.jetby.xClans.records.Clan;
-import me.jetby.xClans.records.Member;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-public class Glow implements Subcommand {
+public class Pvp implements Subcommand {
     private final TreexClans plugin = TreexClans.getInstance();
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
@@ -24,23 +20,19 @@ public class Glow implements Subcommand {
                 plugin.getLang().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
+            Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
 
-            if (!plugin.isPacketInit()) {
-                player.sendMessage(Colorize.text(plugin.getLang().getConfig().getString("restart-needed", "restart-needed")));
+            if (!clan.getMember(player.getUniqueId()).getRank().rankPermissions().kick()) {
+                plugin.getLang().sendMessage(player, clan, "your-rank-is-not-allowed-to-do-that");
                 return true;
             }
-            Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
-            if (plugin.getGlow().hasObserver(player)) {
-                plugin.getGlow().removeObserver(player);
-                sender.sendMessage("§cClan glow disabled.");
+
+            if (clan.isPvp()) {
+                plugin.getLang().sendMessage(player, clan, "clan-pvp-off");
+                clan.setPvp(false);
             } else {
-                Set<Member> members = new HashSet<>(clan.getMembers());
-                if (clan.getMember(player.getUniqueId())!=clan.getLeader()) {
-                    members.add(clan.getLeader());
-                }
-                members.remove(clan.getMember(player.getUniqueId()));
-                plugin.getGlow().addObserver(player, members);
-                sender.sendMessage("§aClan glow enabled.");
+                plugin.getLang().sendMessage(player, clan, "clan-pvp-on");
+                clan.setPvp(true);
             }
         }
         return true;

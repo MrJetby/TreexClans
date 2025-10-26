@@ -3,7 +3,9 @@ package me.jetby.xClans.records;
 
 import lombok.*;
 import me.jetby.xClans.records.rank.Rank;
+import org.bukkit.Color;
 
+import java.util.Map;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -17,5 +19,6 @@ public class Member {
     private boolean chat;
     private int coin;
     private int exp;
+    private Map<UUID, Color> glowColors;
 
 }

@@ -4,7 +4,6 @@ import lombok.Getter;
 import me.jetby.treex.actions.ActionContext;
 import me.jetby.treex.actions.ActionExecutor;
 import me.jetby.treex.actions.ActionRegistry;
-import me.jetby.treex.text.Colorize;
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.records.Clan;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -12,7 +11,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -22,7 +20,7 @@ public class Lang {
     private FileConfiguration config;
 
     public Lang(TreexClans plugin, String lang) {
-        File langFolder = new File(plugin.getDataFolder(), "lang");
+        File langFolder = new File(plugin.getDataFolder(), "messages");
 
 
         File[] files = langFolder.listFiles();
@@ -33,7 +31,7 @@ public class Lang {
             File target = new File(langFolder, name);
 
             if (!target.exists()) {
-                plugin.saveResource("lang/" + name, false);
+                plugin.saveResource("messages/" + name, false);
                 FileConfiguration configuration = YamlConfiguration.loadConfiguration(target);
                 String foundedLang = configuration.getString("lang");
                 if (foundedLang == null) continue;

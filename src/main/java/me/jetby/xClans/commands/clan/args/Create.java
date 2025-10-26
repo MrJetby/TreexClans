@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class Create implements Subcommand {
@@ -25,7 +26,7 @@ public class Create implements Subcommand {
         if (sender instanceof Player player) {
 
             if (clanManager.isInClan(player.getUniqueId())) {
-                plugin.getLang().sendMessage(player, null, "your-already-in-clan");
+                plugin.getLang().sendMessage(player, null, "commands.create");
                 return true;
             } else {
                 if (args.length < 1) {
@@ -43,9 +44,13 @@ public class Create implements Subcommand {
                         System.currentTimeMillis(),
                         System.currentTimeMillis() ,
                         false, false,
-                        0, 0
+                        0, 0, new HashMap<>()
 
                 );
+                if (!clanManager.isAllowedName(player, clanName)) {
+                    return true;
+                }
+
                 if (clanManager.createClan(clanName, leader)) {
                     Clan clan = plugin.getClanManager().getClan(clanName);
                     Bukkit.getPluginManager().callEvent(new OnClanCreate(clan));

@@ -5,6 +5,9 @@ open_permission: none
 open_commands:
   - 'test2'
 
+
+type: default
+
 Items:
   free:
     free-slot: true

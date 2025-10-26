@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class Accept implements Subcommand {
@@ -19,12 +20,13 @@ public class Accept implements Subcommand {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
 
-        if (args.length==0) {
-            sender.sendMessage("§c/clan accept [clan]");
-            return true;
-        }
+
 
         if (sender instanceof Player player) {
+            if (args.length==0) {
+                plugin.getLang().sendMessage(player, null, "commands.accept");
+                return true;
+            }
             if (plugin.getClanManager().isInClan(player.getUniqueId())) {
                     plugin.getLang().sendMessage(player, null, "your-already-in-clan");
                 return true;
@@ -46,7 +48,7 @@ public class Accept implements Subcommand {
                         System.currentTimeMillis(),
                         System.currentTimeMillis() ,
                         false, false,
-                        0, 0
+                        0, 0, new HashMap<>()
                 );
                 plugin.getLang().sendMessage(player, clan, "clan-join", List.of(
                         new Lang.ReplaceString("{player}", player.getName()),

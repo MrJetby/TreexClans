@@ -22,12 +22,13 @@ public class Kick implements Subcommand {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (args.length==0) {
-            sender.sendMessage("§c/clan kick player");
-            return true;
-        }
+
 
         if (sender instanceof Player player) {
+            if (args.length==0) {
+                plugin.getLang().sendMessage(player, null, "commands.kick");
+                return true;
+            }
             if (!plugin.getClanManager().isInClan(player.getUniqueId())) {
                 plugin.getLang().sendMessage(player, null, "your-not-in-clan");
                 return true;

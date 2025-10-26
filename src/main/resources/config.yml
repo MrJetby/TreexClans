@@ -5,9 +5,8 @@ clan-create:
   requirements:
     example:
       type: math
-      express: "%vault_eco_balance_fixed% >= 5000"
+      input: "%vault_eco_balance_fixed% >= 5000"
       actions:
-        - "[message] &aВы успешно создали клан &e{clan_tag}"
         - "[money_take] 5000"
       deny_actions:
         - "[message] &cНедостаточно денег на создание клана! Минимум 5000 монет"

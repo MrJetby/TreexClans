@@ -27,7 +27,7 @@ public class Loader {
     @Getter
     private final Map<String, Menu> menus = new HashMap<>();
     @Getter
-    private final Map<UUID, Gui> guis = new HashMap<>();
+    private final Map<UUID, TGui> guis = new HashMap<>();
 
     private final JavaPlugin plugin;
     private final File file;
@@ -80,14 +80,15 @@ public class Loader {
             FileConfiguration config = YamlConfiguration.loadConfiguration(file);
 
             String title = Colorize.text(config.getString("title"), true);
-            GuiType type = GuiType.valueOf(config.getString("type", "default").toUpperCase());
+            GuiType type = GuiType.valueOf(config.getString("listen", "default").toUpperCase());
             int size = config.getInt("size", 27);
             String permission = config.getString("open_permission");
             InventoryType inventoryType = InventoryType.valueOf(config.getString("inventory", "CHEST"));
             List<String> openCommands = config.getStringList("open_commands");
+            List<String> openArgs = config.getStringList("open_args");
             List<Button> buttons = loadButtons(config);
 
-            menus.put(menuId, new Menu(menuId, title, type, size, inventoryType, permission, openCommands, buttons));
+            menus.put(menuId, new Menu(menuId, title, type, size, inventoryType, permission, openCommands, openArgs,  buttons));
         } catch (Exception e) {
             LOGGER.error("Error trying to load menu: "+e.getMessage());
         }
@@ -108,6 +109,7 @@ public class Loader {
                     boolean enchanted = itemSection.getBoolean("enchanted", false);
                     boolean freeSlot = itemSection.getBoolean("free-slot", false);
                     int priority = itemSection.getInt("priority", 0);
+                    String type = itemSection.getString("type");
                     String defaultMaterial;
                     if (freeSlot) {
                         defaultMaterial = "AIR";
@@ -134,7 +136,7 @@ public class Loader {
                         buttons.add(new Button(key, displayName, lore, slot, amount, customModelData, enchanted, freeSlot, itemStack,
                                 requirements(itemSection, slot),
                                 loadCommands(itemSection),
-                                priority));
+                                priority, type));
                     }
                 }
             }

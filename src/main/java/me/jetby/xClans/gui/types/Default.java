@@ -1,12 +1,13 @@
-package me.jetby.xClans.gui;
+package me.jetby.xClans.gui.types;
 
 import com.jodexindustries.jguiwrapper.api.item.ItemWrapper;
-import com.jodexindustries.jguiwrapper.gui.advanced.AdvancedGui;
 import lombok.Getter;
 import me.jetby.treex.actions.ActionContext;
 import me.jetby.treex.actions.ActionExecutor;
 import me.jetby.treex.actions.ActionRegistry;
 import me.jetby.treex.text.Papi;
+import me.jetby.xClans.TreexClans;
+import me.jetby.xClans.gui.*;
 import me.jetby.xClans.gui.requirements.ClickRequirement;
 import me.jetby.xClans.gui.requirements.Requirements;
 import me.jetby.xClans.gui.requirements.ViewRequirement;
@@ -15,20 +16,18 @@ import me.jetby.xClans.records.Item;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
 import static me.jetby.xClans.TreexClans.NAMESPACED_KEY;
 
-public class Gui extends AdvancedGui implements Listener {
+public class Default extends TGui {
     @Getter
     private final List<Integer> freeSlots = new ArrayList<>();
 
@@ -37,8 +36,8 @@ public class Gui extends AdvancedGui implements Listener {
     private final Inventory inventory;
     private final Clan clan;
 
-    public Gui(JavaPlugin plugin, Menu menu, Player player, Clan clan) {
-        super(menu.title());
+    public Default(TreexClans plugin, Menu menu, Player player, Clan clan) {
+        super(plugin, menu, player, clan);
         this.menu = menu;
         this.player = player;
         this.inventory = holder().getInventory();
@@ -82,7 +81,6 @@ public class Gui extends AdvancedGui implements Listener {
         });
 
     }
-
 
     private void registerButtons() {
         freeSlots.clear();
@@ -299,6 +297,11 @@ public class Gui extends AdvancedGui implements Listener {
             e.setCancelled(true);
             return;
         }
-
     }
+
+    @Override
+    public GuiType guiType() {
+        return GuiType.DEFAULT;
+    }
+
 }

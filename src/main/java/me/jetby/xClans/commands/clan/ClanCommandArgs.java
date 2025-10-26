@@ -20,6 +20,7 @@ public enum ClanCommandArgs {
     BASE(new Base()),
     LEAVE(new Leave()),
     CHAT(new Chat()),
+    PVP(new Pvp()),
     INFO(new Info());
 
     @Getter

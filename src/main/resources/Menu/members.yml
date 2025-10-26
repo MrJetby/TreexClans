@@ -1,0 +1,38 @@
+id: members
+title: "&6&lMembers"
+size: 54
+open_permission: none
+open_args:
+  - "member"
+open_commands: {}
+
+listen: members
+
+# Available types
+# leader
+# members
+Items:
+
+  leader:
+    material: basehead-%player_name%
+    type: leader
+    display_name: "%rank% %player_name%"
+    slot: 0
+    lore:
+      - "Это лидер клана"
+
+  members:
+    material: basehead-%player_name%
+    type: members
+    slot:
+      - '1-5'
+    display_name: "%rank% %player_name%"
+    lore:
+      - "%kills%"
+      - "%deaths%"
+      - "%kd%"
+      - "%war_wins%"
+      - "%war_participated%"
+      - "%war_loses%"
+      - "%exp%"
+      - "%coin%"

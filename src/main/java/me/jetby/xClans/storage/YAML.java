@@ -8,6 +8,7 @@ import me.jetby.xClans.records.Member;
 import me.jetby.xClans.records.rank.Rank;
 import me.jetby.xClans.records.rank.RankPermissions;
 import me.jetby.xClans.tools.FileLoader;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -41,6 +42,7 @@ public class YAML implements Storage {
             double balance = clan.getDouble("balance", 0.0);
             String level = clan.getString("level", "1");
             int clanExp = clan.getInt("exp", 0);
+            boolean pvp = clan.getBoolean("pvp", false);
 
 
             String leaderUUID = clan.getString("leader.uuid");
@@ -51,7 +53,7 @@ public class YAML implements Storage {
 
             Map<String, Rank> ranks = new HashMap<>();
             ConfigurationSection ranksSection = clan.getConfigurationSection("ranks");
-            if (ranksSection!=null) {
+            if (ranksSection != null) {
 
                 for (String key : ranksSection.getKeys(false)) {
                     String displayName = ranksSection.getString(key + ".display-name");
@@ -80,12 +82,28 @@ public class YAML implements Storage {
             boolean leader_glow = clan.getBoolean("leader.clan-glow", false);
             int leader_coin = clan.getInt("leader.coin", 0);
             int leader_exp = clan.getInt("leader.exp", 0);
+            Map<UUID, Color> leader_colors = new HashMap<>();
+            for (String str : clan.getStringList("leader.glow-colors")) {
+                String[] args = str.split(";");
+                UUID id = UUID.fromString(args[0]);
+                Color color = Color.fromBGR(Integer.parseInt(args[1]));
+                leader_colors.put(id, color);
+            }
 
-            Member leader = new Member(leader_uuid, leader_rank, leader_joinedAt, leader_lastOnline, leader_glow, false, leader_coin, leader_exp);
+            Member leader = new Member(
+                    leader_uuid,
+                    leader_rank,
+                    leader_joinedAt,
+                    leader_lastOnline,
+                    leader_glow,
+                    false,
+                    leader_coin,
+                    leader_exp,
+                    leader_colors
+            );
 
             ConfigurationSection members = clan.getConfigurationSection("members");
             if (members != null) {
-
                 for (String key : members.getKeys(false)) {
                     ConfigurationSection member = members.getConfigurationSection(key);
                     if (member == null) continue;
@@ -96,15 +114,21 @@ public class YAML implements Storage {
                     boolean glow = member.getBoolean("clan-glow", false);
                     int coin = member.getInt("coin", 0);
                     int exp = member.getInt("exp", 0);
-                    memberSet.add(new Member(uuid, rank, joinedAt, lastOnline, glow, false, coin, exp));
-
+                    Map<UUID, Color> colors = new HashMap<>();
+                    for (String str : member.getStringList("glow-colors")) {
+                        String[] args = str.split(";");
+                        UUID id = UUID.fromString(args[0]);
+                        Color color = Color.fromBGR(Integer.parseInt(args[1]));
+                        colors.put(id, color);
+                    }
+                    memberSet.add(new Member(uuid, rank, joinedAt, lastOnline, glow, false, coin, exp, colors));
                 }
             }
 
             Location base = LocationHandler.deserialize(clan.getString("base-location"));
-            
+
             plugin.getCfg().getClans().put(clanId, new Clan(clanId, prefix, leader, memberSet, ranks, new ArrayList<>(),
-                    new Level(Integer.parseInt(level)), balance, base, clanExp));
+                    new Level(Integer.parseInt(level)), balance, base, clanExp, pvp));
         }
     }
 
@@ -120,21 +144,22 @@ public class YAML implements Storage {
 
                 for (String key : clan.getRanks().keySet()) {
                     Rank rank = clan.getRanks().get(key);
-                    configuration.set(clanId+".ranks."+rank.id()+".display-name", rank.name());
+                    configuration.set(clanId + ".ranks." + rank.id() + ".display-name", rank.name());
                     RankPermissions perm = rank.rankPermissions();
-                    configuration.set(clanId+".ranks."+rank.id()+".permissions.invite", perm.invite());
-                    configuration.set(clanId+".ranks."+rank.id()+".permissions.kick", perm.kick());
-                    configuration.set(clanId+".ranks."+rank.id()+".permissions.base", perm.base());
-                    configuration.set(clanId+".ranks."+rank.id()+".permissions.setbase", perm.setbase());
-                    configuration.set(clanId+".ranks."+rank.id()+".permissions.setrank", perm.setrank());
-                    configuration.set(clanId+".ranks."+rank.id()+".permissions.deposit", perm.deposit());
-                    configuration.set(clanId+".ranks."+rank.id()+".permissions.withdraw", perm.withdraw());
-                    configuration.set(clanId+".ranks."+rank.id()+".permissions.pvp", perm.pvp());
+                    configuration.set(clanId + ".ranks." + rank.id() + ".permissions.invite", perm.invite());
+                    configuration.set(clanId + ".ranks." + rank.id() + ".permissions.kick", perm.kick());
+                    configuration.set(clanId + ".ranks." + rank.id() + ".permissions.base", perm.base());
+                    configuration.set(clanId + ".ranks." + rank.id() + ".permissions.setbase", perm.setbase());
+                    configuration.set(clanId + ".ranks." + rank.id() + ".permissions.setrank", perm.setrank());
+                    configuration.set(clanId + ".ranks." + rank.id() + ".permissions.deposit", perm.deposit());
+                    configuration.set(clanId + ".ranks." + rank.id() + ".permissions.withdraw", perm.withdraw());
+                    configuration.set(clanId + ".ranks." + rank.id() + ".permissions.pvp", perm.pvp());
                 }
 
                 configuration.set(clanId + ".balance", clan.getBalance());
                 configuration.set(clanId + ".level", clan.getLevel().id());
                 configuration.set(clanId + ".exp", clan.getExp());
+                configuration.set(clanId + ".pvp", clan.isPvp());
 
                 Member leader = clan.getLeader();
                 configuration.set(clanId + ".leader.uuid", leader.getUuid().toString());
@@ -149,9 +174,16 @@ public class YAML implements Storage {
                     configuration.set(clanId + ".members." + member.getUuid() + ".joined-at", member.getJoinedAt());
                     configuration.set(clanId + ".members." + member.getUuid() + ".last-online", member.getLastOnline());
                     configuration.set(clanId + ".members." + member.getUuid() + ".clan-glow", member.isClanGlow());
+                    List<String> colors = new ArrayList<>();
+                    for (UUID key : member.getGlowColors().keySet()) {
+                        Color color = member.getGlowColors().get(key);
+                        colors.add(key + ";" + color.serialize());
+                    }
+                    configuration.set(clanId + ".members." + member.getUuid() + ".glow-colors", colors);
+
                 }
                 Location location = clan.getBase();
-                if (location!=null) {
+                if (location != null) {
                     configuration.set(clanId + ".base-location", LocationHandler.serialize(clan.getBase()));
                 } else {
                     configuration.set(clanId + ".base-location", null);

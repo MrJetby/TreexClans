@@ -5,11 +5,10 @@ api-version: '1.16'
 load: POSTWORLD
 authors: [ MrJetby ]
 website: https://dsc.gg/treexstudio
-depend:
-  - packetevents
-  - Treex
 softdepend:
   - Vault
+  - packetevents
+  - Treex
 commands:
   xclan: {}
   clan: {}

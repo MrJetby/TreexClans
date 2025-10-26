@@ -12,5 +12,6 @@ public record Menu(
     InventoryType inventoryType,
     String permission,
     List<String> openCommands,
+    List<String> openArgs,
     List<Button> buttons
 ){}

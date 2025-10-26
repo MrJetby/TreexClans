@@ -1,4 +1,6 @@
 package me.jetby.xClans.configurations;
 
-public class Messages {
+public class Quests {
+
+
 }

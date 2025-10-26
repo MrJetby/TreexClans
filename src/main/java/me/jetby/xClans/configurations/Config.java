@@ -4,6 +4,7 @@ package me.jetby.xClans.configurations;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.jetby.xClans.TreexClans;
+import me.jetby.xClans.gui.requirements.SimpleRequirement;
 import me.jetby.xClans.records.Clan;
 import me.jetby.xClans.records.Level;
 import me.jetby.xClans.records.rank.Rank;
@@ -13,10 +14,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 public class Config {
@@ -37,6 +35,10 @@ public class Config {
 
     private String formattedTimeFormat;
 
+    private int minTagLength;
+    private int maxTagLength;
+    private List<String> blockedTags;
+    private final List<SimpleRequirement> requirements = new ArrayList<>();
 
     public Config(TreexClans plugin) {
         this.configuration = FileLoader.getFileConfiguration("config.yml");
@@ -79,8 +81,28 @@ public class Config {
 
         ConfigurationSection clanCreate = configuration.getConfigurationSection("clan-create");
         if (clanCreate != null) {
+            ConfigurationSection requirements = configuration.getConfigurationSection("requirements");
+            if (requirements!=null) {
+                for (String key : requirements.getKeys(false)) {
+                    ConfigurationSection req = requirements.getConfigurationSection(key);
+                    if (req==null) continue;
+                    String type = req.getString("type");
+                    String input = req.getString("input");
+                    String output = req.getString("output");
+                    String permission = req.getString("permission");
+                    List<String> actions = req.getStringList("actions");
+                    List<String> deny_actions = req.getStringList("deny_actions");
+                    this.requirements.add(new SimpleRequirement(type, input, output, permission, actions, deny_actions));
+                }
+            }
+
+
+
             defaultRank = defaultRanks.get(clanCreate.getString("member-rank", "MEMBER"));
             leaderRank = defaultRanks.get(clanCreate.getString("leader-rank", "LEADER"));
+            minTagLength = clanCreate.getInt("min-clan-tag-length", 3);
+            maxTagLength = clanCreate.getInt("max-clan-tag-length", 6);
+            blockedTags = clanCreate.getStringList("blocked-tags");
         }
 
         chatFormat = configuration.getString("chat-format", "<#FFE259>&l[TreexClans]</#FFA751> &e&l{player} &7▶ &f{message}");
