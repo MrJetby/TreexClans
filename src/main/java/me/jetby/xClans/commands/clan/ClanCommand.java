@@ -5,8 +5,8 @@ import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.gui.GuiFactory;
 import me.jetby.xClans.gui.GuiType;
 import me.jetby.xClans.gui.Menu;
-import me.jetby.xClans.records.Clan;
-import me.jetby.xClans.records.Member;
+import me.jetby.xClans.clan.Clan;
+import me.jetby.xClans.clan.Member;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -110,21 +110,20 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
                 case "withdraw" -> !perms.withdraw() || plugin.getEconomy()==null;
                 case "deposit", "invest" -> !perms.deposit() || plugin.getEconomy()==null;
                 case "kick" -> !perms.kick();
-                case "setrank" -> !perms.setrank();
                 case "pvp" -> !perms.pvp();
                 default -> false;
             });
             completions.remove("create");
+            completions.remove("setrank");
             for (Map.Entry<String, List<String>> entry : menuArgs.entrySet()) {
-                if (entry.getValue().contains(args[0])) {
-                    Menu menu = plugin.getMenuLoader().getMenus().get(entry.getKey());
-                    if (menu.type()!=GuiType.DEFAULT) {
-                        if (player.hasPermission(menu.permission())) {
-                            completions.addAll(entry.getValue());
-                        }
-                    }
+                Menu menu = plugin.getMenuLoader().getMenus().get(entry.getKey());
+                if (menu.type() != GuiType.DEFAULT && player.hasPermission(menu.permission())) {
+                    completions.addAll(entry.getValue().stream()
+                            .filter(str -> str.toLowerCase().startsWith(args[0].toLowerCase()))
+                            .toList());
                 }
             }
+
 
             return completions.stream()
                     .filter(cmd -> cmd.startsWith(args[0].toLowerCase()))

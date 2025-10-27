@@ -1,4 +1,4 @@
-package me.jetby.xClans.tools.customActions;
+package me.jetby.xClans.tools.customactions;
 
 import me.jetby.treex.actions.ActionTypeRegistry;
 

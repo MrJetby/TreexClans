@@ -1,7 +1,7 @@
 package me.jetby.xClans.api;
 
 import lombok.Getter;
-import me.jetby.xClans.records.Clan;
+import me.jetby.xClans.clan.Clan;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

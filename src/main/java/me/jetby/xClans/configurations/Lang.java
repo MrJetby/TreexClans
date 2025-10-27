@@ -5,7 +5,7 @@ import me.jetby.treex.actions.ActionContext;
 import me.jetby.treex.actions.ActionExecutor;
 import me.jetby.treex.actions.ActionRegistry;
 import me.jetby.xClans.TreexClans;
-import me.jetby.xClans.records.Clan;
+import me.jetby.xClans.clan.Clan;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;

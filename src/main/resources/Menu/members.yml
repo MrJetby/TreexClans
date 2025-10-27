@@ -1,9 +1,9 @@
 id: members
-title: "&6&lMembers"
+title: "&0&lУчастники клана"
 size: 54
 open_permission: none
 open_args:
-  - "member"
+  - "members"
 open_commands: {}
 
 listen: members
@@ -16,23 +16,82 @@ Items:
   leader:
     material: basehead-%player_name%
     type: leader
-    display_name: "%rank% %player_name%"
-    slot: 0
+    display_name: "%rank% &f&l%player_name%"
+    slot: 13
     lore:
-      - "Это лидер клана"
+      - "&6&m                    "
+      - "&6&lСтатистика"
+      - "&6⚗ &fОпыта принёс клану: &6&l%exp%"
+      - "&6♦ &fЗаработано коинов: &6&l%coin%"
+      - "&6⚔ &fУбийств: &6&l%kills%"
+      - "&6☠ &fСмертей: &6&l%deaths%"
+      - "&6🛡 &fК/Д: &6&l%kd%"
+      - "&6🏹 &fПобед в клановых войнах: &6&l%war_wins%"
+      - "&6🏹 &fУчастий в клановых войнах: &6&l%war_participated%"
+      - "&6🏹 &fПоражений в клановых войнах: &6&l%war_loses%"
+      - "&6&m                    "
 
   members:
     material: basehead-%player_name%
     type: members
     slot:
-      - '1-5'
-    display_name: "%rank% %player_name%"
+      - '19-25'
+      - '28-34'
+      - '37-43'
+    display_name: "%rank% &f%player_name%"
     lore:
-      - "%kills%"
-      - "%deaths%"
-      - "%kd%"
-      - "%war_wins%"
-      - "%war_participated%"
-      - "%war_loses%"
-      - "%exp%"
-      - "%coin%"
+      - "&6&m                    "
+      - "&6&lСтатистика"
+      - "&6⚗ &fОпыта принёс клану: &6&l%exp%"
+      - "&6♦ &fЗаработано коинов: &6&l%coin%"
+      - "&6⚔ &fУбийств: &6&l%kills%"
+      - "&6☠ &fСмертей: &6&l%deaths%"
+      - "&6🛡 &fК/Д: &6&l%kd%"
+      - "&6🏹 &fПобед в клановых войнах: &6&l%war_wins%"
+      - "&6🏹 &fУчастий в клановых войнах: &6&l%war_participated%"
+      - "&6🏹 &fПоражений в клановых войнах: &6&l%war_loses%"
+      - "&6&m                    "
+
+
+  next_page:
+    material: SPECTRAL_ARROW
+    type: next_page
+    slot: 52
+    display_name: "&aСледующая страница ▶"
+
+  prev_page:
+    material: ARROW
+    slot: 46
+    type: prev_page
+    display_name: "&c◀ Предыдущая страница"
+
+  orange:
+    material: ORANGE_STAINED_GLASS_PANE
+    slot:
+      - 0-2
+      - 6-8
+      - 45
+      - 47
+      - 51
+      - 53
+    display_name: " "
+
+  black:
+    material: BLACK_STAINED_GLASS_PANE
+    slot:
+      - 3
+      - 5
+      - 48
+      - 50
+    display_name: " "
+
+
+  gray:
+    material: GRAY_STAINED_GLASS_PANE
+    slot:
+      - 4
+      - 49
+    display_name: " "
+
+
+

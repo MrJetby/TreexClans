@@ -10,6 +10,8 @@ import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +39,7 @@ public class EquipmentUtil {
     }
 
     public static void sendDefaultEquipment(Player source, Player target) {
-        PacketEvents.getAPI().getPlayerManager().sendPacket(target, packetFromPlayer(source));
+        PacketEvents.getAPI().getPlayerManager().sendPacket(source, packetFromPlayer(target));
     }
 
     @Contract("_ -> new")
@@ -70,10 +72,16 @@ public class EquipmentUtil {
      *                   (in order: helmet, chestplate, leggings, boots)
      * @return a list of {@link Equipment} objects mapped to their respective {@link EquipmentSlot}s
      */
-    public static @NotNull List<Equipment> withItemStacks(ItemStack... itemStacks) {
+    public static @NotNull List<Equipment> withItemStacks(Color color, ItemStack... itemStacks) {
         List<Equipment> list = new ArrayList<>();
         for (int i = 0; i < Math.min(itemStacks.length, 4); i++) {
-            list.add(new Equipment(Equip.VALUES[i].packet, SpigotConversionUtil.fromBukkitItemStack(itemStacks[i])));
+            ItemStack itemStack = itemStacks[i];
+            ItemMeta meta = itemStack.getItemMeta();
+            if (meta instanceof LeatherArmorMeta lam) {
+                lam.setColor(color);
+            }
+            itemStack.setItemMeta(meta);
+            list.add(new Equipment(Equip.VALUES[i].packet, SpigotConversionUtil.fromBukkitItemStack(itemStack)));
         }
         return list;
     }

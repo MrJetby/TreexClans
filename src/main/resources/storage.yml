@@ -4,6 +4,10 @@ clan-id:
   balance: 150000.0
   level: 1
   prefix: "Sexy"
+
+  quests-progress:
+    id: 1
+    id2: 50
   leader:
     uuid: uuid
     rank: leader

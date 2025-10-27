@@ -4,7 +4,7 @@ import me.jetby.treex.text.Colorize;
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
 import me.jetby.xClans.configurations.Lang;
-import me.jetby.xClans.records.Clan;
+import me.jetby.xClans.clan.Clan;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

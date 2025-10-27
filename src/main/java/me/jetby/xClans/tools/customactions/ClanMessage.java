@@ -1,9 +1,9 @@
-package me.jetby.xClans.tools.customActions;
+package me.jetby.xClans.tools.customactions;
 
 import me.jetby.treex.actions.Action;
 import me.jetby.treex.actions.ActionContext;
 import me.jetby.xClans.TreexClans;
-import me.jetby.xClans.records.Clan;
+import me.jetby.xClans.clan.Clan;
 import org.jetbrains.annotations.NotNull;
 
 public class ClanMessage implements Action {

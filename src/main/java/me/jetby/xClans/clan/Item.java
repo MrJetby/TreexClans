@@ -1,4 +1,4 @@
-package me.jetby.xClans.records;
+package me.jetby.xClans.clan;
 
 import org.bukkit.inventory.ItemStack;
 

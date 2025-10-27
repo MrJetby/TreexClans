@@ -7,7 +7,7 @@ import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import me.jetby.xClans.TreexClans;
-import me.jetby.xClans.records.Member;
+import me.jetby.xClans.clan.Member;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;

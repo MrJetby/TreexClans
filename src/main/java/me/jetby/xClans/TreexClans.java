@@ -11,17 +11,15 @@ import me.jetby.xClans.commands.clan.ClanCommand;
 import me.jetby.xClans.commands.xclan.XClanCommand;
 import me.jetby.xClans.configurations.Config;
 import me.jetby.xClans.configurations.Lang;
-import me.jetby.xClans.functions.ClanGlow;
-import me.jetby.xClans.functions.ClanListeners;
+import me.jetby.xClans.listeners.ClanListeners;
 import me.jetby.xClans.functions.glow.Glow;
 import me.jetby.xClans.gui.CommandRegistrar;
 import me.jetby.xClans.gui.Loader;
 import me.jetby.xClans.storage.Storage;
 import me.jetby.xClans.storage.YAML;
 import me.jetby.xClans.tools.FormatTime;
-import me.jetby.xClans.tools.PacketEventsDownloader;
 import me.jetby.xClans.tools.TreexInitializer;
-import me.jetby.xClans.tools.customActions.Actions;
+import me.jetby.xClans.tools.customactions.Actions;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -46,13 +44,11 @@ public final class TreexClans extends JavaPlugin {
     public Lang lang;
     private FormatTime formatTime;
 
-    private ClanGlow clanGlow;
     private Glow glow;
 
     private ClanManager clanManager;
     private Storage storage;
 
-    private boolean packetInit = true;
 
     public static Logger LOGGER;
     public static final NamespacedKey NAMESPACED_KEY = new NamespacedKey("treexclans", "item");
@@ -62,7 +58,6 @@ public final class TreexClans extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        new PacketEventsDownloader(this);
         PacketEvents.getAPI().getEventManager().registerListener(
                glow = new Glow(this), PacketListenerPriority.NORMAL);
     }
@@ -89,16 +84,8 @@ public final class TreexClans extends JavaPlugin {
 
         formatTime = new FormatTime(this);
 
-        try {
-            PacketEvents.getAPI().init();
-        } catch (Exception e) {
-            packetInit = false;
-        }
-
 
         clanManager = new ClanManager(this);
-
-        clanGlow = new ClanGlow();
 
         storage = new YAML(this);
         storage.load();
@@ -129,7 +116,6 @@ public final class TreexClans extends JavaPlugin {
     @Override
     public void onDisable() {
         if (storage!=null) storage.save();
-        PacketEvents.getAPI().terminate();
     }
 
     private boolean setupEconomy() {

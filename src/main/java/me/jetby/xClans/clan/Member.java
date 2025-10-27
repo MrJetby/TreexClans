@@ -1,8 +1,8 @@
-package me.jetby.xClans.records;
+package me.jetby.xClans.clan;
 
 
 import lombok.*;
-import me.jetby.xClans.records.rank.Rank;
+import me.jetby.xClans.clan.rank.Rank;
 import org.bukkit.Color;
 
 import java.util.Map;
@@ -20,5 +20,10 @@ public class Member {
     private int coin;
     private int exp;
     private Map<UUID, Color> glowColors;
+    private int kills;
+    private int deaths;
+    private int warWins;
+    private int warParticipated;
+    private int warLoses;
 
 }

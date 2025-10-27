@@ -3,8 +3,8 @@ package me.jetby.xClans.commands.clan.args;
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
 import me.jetby.xClans.configurations.Lang;
-import me.jetby.xClans.records.Clan;
-import me.jetby.xClans.records.Member;
+import me.jetby.xClans.clan.Clan;
+import me.jetby.xClans.clan.Member;
 import me.jetby.xClans.tools.Cooldown;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -48,7 +48,8 @@ public class Accept implements Subcommand {
                         System.currentTimeMillis(),
                         System.currentTimeMillis() ,
                         false, false,
-                        0, 0, new HashMap<>()
+                        0, 0, new HashMap<>(),
+                        0,0,0,0,0
                 );
                 plugin.getLang().sendMessage(player, clan, "clan-join", List.of(
                         new Lang.ReplaceString("{player}", player.getName()),

@@ -5,7 +5,7 @@ import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.gui.types.Default;
 import me.jetby.xClans.gui.types.Members;
 import me.jetby.xClans.gui.types.Quests;
-import me.jetby.xClans.records.Clan;
+import me.jetby.xClans.clan.Clan;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;

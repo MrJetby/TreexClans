@@ -16,17 +16,17 @@ restart-needed: "Видимо администрация неправильно 
 
 commands:
   kick:
-    - "&#FC835C• /clan kick [ник] &7- &fИзгнать игрока из своего клана"
+    - "[message] &#FC835C• /clan kick [ник] &7- &fИзгнать игрока из своего клана"
   invite:
-    - "&#FC835C• /clan invite [ник] &7- &fПригласить игрока в свой клан"
+    - "[message] &#FC835C• /clan invite [ник] &7- &fПригласить игрока в свой клан"
   withdraw:
-    - "&#FC835C• /clan withdraw [сумма] &7- &fСнять с баланса клана"
+    - "[message] &#FC835C• /clan withdraw [сумма] &7- &fСнять с баланса клана"
   deposit:
-    - "&#FC835C• /clan invest [сумма] &7- &fПополнить баланс клана"
+    - "[message] &#FC835C• /clan invest [сумма] &7- &fПополнить баланс клана"
   create:
-    - "&#FC835C• /clan create [тэг] &7- &fСоздать клан"
+    - "[message] &#FC835C• /clan create [тэг] &7- &fСоздать клан"
   accept:
-    - "&#FC835C• /clan accept [тэг] &7- &fПринять приглашение в клан"
+    - "[message] &#FC835C• /clan accept [тэг] &7- &fПринять приглашение в клан"
   help-no-clan:
     - "&#FFE259◀&m          &r <#FFE259>&lTreexClans</#FFA751> &#FFE259&m          &#FFE259▶ "
     - ""

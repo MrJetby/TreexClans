@@ -1,7 +1,7 @@
 package me.jetby.xClans.gui;
 
 import me.jetby.xClans.TreexClans;
-import me.jetby.xClans.records.Clan;
+import me.jetby.xClans.clan.Clan;
 import org.bukkit.command.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.defaults.BukkitCommand;

@@ -12,8 +12,9 @@ import me.jetby.xClans.gui.*;
 import me.jetby.xClans.gui.requirements.ClickRequirement;
 import me.jetby.xClans.gui.requirements.Requirements;
 import me.jetby.xClans.gui.requirements.ViewRequirement;
-import me.jetby.xClans.records.Clan;
-import me.jetby.xClans.records.Member;
+import me.jetby.xClans.clan.Clan;
+import me.jetby.xClans.clan.Member;
+import me.jetby.xClans.tools.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -26,11 +27,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -56,20 +53,6 @@ public class Members extends TGui {
 
         onDrag(event -> event.setCancelled(true));
 
-        registerItem("prev_page", b -> b.slots(45)
-                .defaultItem(ItemWrapper.builder(Material.ARROW).build())
-                .defaultClickHandler((e, gui) -> {
-                    e.setCancelled(true);
-                    previousPage();
-                }));
-
-        registerItem("next_page", b -> b.slots(53)
-                .defaultItem(ItemWrapper.builder(Material.ARROW).build())
-                .defaultClickHandler((e, gui) -> {
-                    e.setCancelled(true);
-                    nextPage();
-                }));
-
         registerStaticButtons();
 
         setupMembersPagination();
@@ -80,7 +63,32 @@ public class Members extends TGui {
     private void registerStaticButtons() {
         Map<Integer, List<Button>> buttonsBySlot = new HashMap<>();
         for (Button button : menu.buttons()) {
-            if ("members".equals(button.type())) continue;
+            switch (button.type().toLowerCase()) {
+                case "members":
+                    continue;
+                case "next_page": {
+                    ItemWrapper item = new ItemWrapper(button.itemStack());
+                    item.enchanted(button.enchanted());
+                    registerItem("next_page", b -> b.slots(button.slot())
+                            .defaultItem(item)
+                            .defaultClickHandler((e, gui) -> {
+                                e.setCancelled(true);
+                                nextPage();
+                            }));
+                    continue;
+                }
+                case "prev_page": {
+                    ItemWrapper item = new ItemWrapper(button.itemStack());
+                    item.enchanted(button.enchanted());
+                    registerItem("prev_page", b -> b.slots(button.slot())
+                            .defaultItem(item)
+                            .defaultClickHandler((e, gui) -> {
+                                e.setCancelled(true);
+                                previousPage();
+                            }));
+                    continue;
+                }
+            }
             buttonsBySlot.computeIfAbsent(button.slot(), k -> new ArrayList<>()).add(button);
         }
 
@@ -128,13 +136,13 @@ public class Members extends TGui {
                         wrapper = new ItemWrapper(itemStack);
 
                         String rawDisplayName = finalSelectedButton.displayName();
-                        String processedDisplayName = replaceMemberPlaceholders(rawDisplayName, leaderMember, target);
+                        String processedDisplayName = replaceMemberPlaceholders(rawDisplayName, leaderMember);
                         processedDisplayName = Papi.setPapi(player, processedDisplayName);
                         wrapper.displayName(Colorize.text(processedDisplayName));
 
                         List<String> rawLore = finalSelectedButton.lore();
                         List<String> processedLore = rawLore.stream()
-                                .map(l -> replaceMemberPlaceholders(l, leaderMember, target))
+                                .map(l -> replaceMemberPlaceholders(l, leaderMember))
                                 .map(l -> Papi.setPapi(player, l))
                                 .map(Colorize::text)
                                 .collect(Collectors.toList());
@@ -201,24 +209,24 @@ public class Members extends TGui {
     private void setupMembersPagination() {
         List<Button> memberButtons = menu.buttons().stream()
                 .filter(b -> "members".equals(b.type()))
-                .collect(Collectors.toList());
+                .toList();
 
         if (memberButtons.isEmpty()) return;
 
         List<Integer> memberSlots = memberButtons.stream()
                 .map(Button::slot)
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
 
         int itemsPerPage = memberSlots.size();
 
         List<Member> members = clan.getMembers().stream()
                 .filter(m -> !m.equals(clan.getLeader()))
-                .collect(Collectors.toList());
+                .toList();
 
         int totalPages = (int) Math.ceil((double) members.size() / itemsPerPage);
 
-        Button memberButton = memberButtons.get(0); // Assume all have same config
+        Button memberButton = memberButtons.get(0);
 
         for (int page = 0; page < totalPages; page++) {
             int start = page * itemsPerPage;
@@ -247,13 +255,13 @@ public class Members extends TGui {
                     ItemWrapper wrapper = new ItemWrapper(itemStack);
 
                     String rawDisplayName = memberButton.displayName();
-                    String processedDisplayName = replaceMemberPlaceholders(rawDisplayName, member, target);
+                    String processedDisplayName = replaceMemberPlaceholders(rawDisplayName, member);
                     processedDisplayName = Papi.setPapi(player, processedDisplayName);
                     wrapper.displayName(Colorize.text(processedDisplayName));
 
                     List<String> rawLore = memberButton.lore();
                     List<String> processedLore = rawLore.stream()
-                            .map(l -> replaceMemberPlaceholders(l, member, target))
+                            .map(l -> replaceMemberPlaceholders(l, member))
                             .map(l -> Papi.setPapi(player, l))
                             .map(Colorize::text)
                             .collect(Collectors.toList());
@@ -273,25 +281,26 @@ public class Members extends TGui {
         }
     }
 
-    private String replaceMemberPlaceholders(String text, Member member, OfflinePlayer target) {
-        text = text.replace("%player_name%", target.getName());
+    private String replaceMemberPlaceholders(String text, Member member) {
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(member.getUuid());
+        text = text.replace("%player_name%", offlinePlayer.getName());
         text = text.replace("%rank%", member.getRank().name());
-//        text = text.replace("%kills%", String.valueOf(member.getKills() != null ? member.getKills() : 0));
-//        text = text.replace("%deaths%", String.valueOf(member.getDeaths() != null ? member.getDeaths() : 0));
-//        text = text.replace("%kd%", String.valueOf(calculateKD(member)));
-//        text = text.replace("%war_wins%", String.valueOf(member.getWarWins() != null ? member.getWarWins() : 0));
-//        text = text.replace("%war_participated%", String.valueOf(member.getWarParticipated() != null ? member.getWarParticipated() : 0));
-//        text = text.replace("%war_loses%", String.valueOf(member.getWarLoses() != null ? member.getWarLoses() : 0));
-//        text = text.replace("%exp%", String.valueOf(member.getExp() != null ? member.getExp() : 0));
-//        text = text.replace("%coin%", String.valueOf(member.getCoin() != null ? member.getCoin() : 0));
+        text = text.replace("%kills%", String.valueOf(member.getKills()));
+        text = text.replace("%deaths%", String.valueOf(member.getDeaths()));
+        text = text.replace("%kd%", calculateKD(member));
+        text = text.replace("%war_wins%", String.valueOf(member.getWarWins()));
+        text = text.replace("%war_participated%", String.valueOf(member.getWarParticipated()));
+        text = text.replace("%war_loses%", String.valueOf(member.getWarLoses()));
+        text = text.replace("%exp%", String.valueOf(member.getExp()));
+        text = text.replace("%coin%", String.valueOf(member.getCoin()));
         return text;
     }
 
-//    private double calculateKD(Member member) {
-//        int kills = member.getKills() != null ? member.getKills() : 0;
-//        int deaths = member.getDeaths() != null ? member.getDeaths() : 0;
-//        return deaths == 0 ? kills : (double) kills / deaths;
-//    }
+    private String calculateKD(Member member) {
+        int kills = member.getKills();
+        int deaths = member.getDeaths();
+        return deaths == 0 ? kills+"" : NumberUtils.formatWithCommas((double) kills / deaths);
+    }
 
     @EventHandler
     public void click(InventoryClickEvent e) {
@@ -302,7 +311,7 @@ public class Members extends TGui {
         int rawSlot = e.getRawSlot();
         ClickType click = e.getClick();
 
-        if (holder().getInventory() == null || !holder().getInventory().equals(topInventory)) return;
+        if (!holder().getInventory().equals(topInventory)) return;
 
         if (clickedInv != null && clickedInv.equals(topInventory)) {
             if (!freeSlots.contains(rawSlot)) {

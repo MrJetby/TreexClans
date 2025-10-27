@@ -1,9 +1,9 @@
-package me.jetby.xClans.records;
+package me.jetby.xClans.clan;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import me.jetby.xClans.records.rank.Rank;
+import me.jetby.xClans.clan.rank.Rank;
 import org.bukkit.Location;
 
 import java.util.List;

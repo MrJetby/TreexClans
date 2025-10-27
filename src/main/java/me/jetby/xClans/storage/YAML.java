@@ -2,11 +2,11 @@ package me.jetby.xClans.storage;
 
 import me.jetby.treex.bukkit.LocationHandler;
 import me.jetby.xClans.TreexClans;
-import me.jetby.xClans.records.Clan;
-import me.jetby.xClans.records.Level;
-import me.jetby.xClans.records.Member;
-import me.jetby.xClans.records.rank.Rank;
-import me.jetby.xClans.records.rank.RankPermissions;
+import me.jetby.xClans.clan.Clan;
+import me.jetby.xClans.clan.Level;
+import me.jetby.xClans.clan.Member;
+import me.jetby.xClans.clan.rank.Rank;
+import me.jetby.xClans.clan.rank.RankPermissions;
 import me.jetby.xClans.tools.FileLoader;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -99,7 +99,12 @@ public class YAML implements Storage {
                     false,
                     leader_coin,
                     leader_exp,
-                    leader_colors
+                    leader_colors,
+                    clan.getInt("leader.kills", 0),
+                    clan.getInt("leader.deaths", 0),
+                    clan.getInt("leader.war-wins", 0),
+                    clan.getInt("leader.war-participated", 0),
+                    clan.getInt("leader.war-loses", 0)
             );
 
             ConfigurationSection members = clan.getConfigurationSection("members");
@@ -121,7 +126,12 @@ public class YAML implements Storage {
                         Color color = Color.fromBGR(Integer.parseInt(args[1]));
                         colors.put(id, color);
                     }
-                    memberSet.add(new Member(uuid, rank, joinedAt, lastOnline, glow, false, coin, exp, colors));
+                    memberSet.add(new Member(uuid, rank, joinedAt, lastOnline, glow, false, coin, exp, colors,
+                            member.getInt("kills", 0),
+                            member.getInt("deaths", 0),
+                            member.getInt("war-wins", 0),
+                            member.getInt("war-participated", 0),
+                            member.getInt("war-loses", 0)));
                 }
             }
 
@@ -168,12 +178,24 @@ public class YAML implements Storage {
                 configuration.set(clanId + ".leader.last-online", leader.getLastOnline());
                 configuration.set(clanId + ".leader.clan-glow", leader.isClanGlow());
 
+                configuration.set(clanId + ".leader.kills", leader.getKills());
+                configuration.set(clanId + ".leader.deaths", leader.getDeaths());
+                configuration.set(clanId + ".leader.war-wins", leader.getWarWins());
+                configuration.set(clanId + ".leader.war-participated", leader.getWarParticipated());
+                configuration.set(clanId + ".leader.war-loses", leader.getWarLoses());
+
                 for (Member member : clan.getMembers()) {
 
                     configuration.set(clanId + ".members." + member.getUuid() + ".rank", member.getRank().id());
                     configuration.set(clanId + ".members." + member.getUuid() + ".joined-at", member.getJoinedAt());
                     configuration.set(clanId + ".members." + member.getUuid() + ".last-online", member.getLastOnline());
                     configuration.set(clanId + ".members." + member.getUuid() + ".clan-glow", member.isClanGlow());
+
+                    configuration.set(clanId + ".members." + member.getUuid() + ".kills", leader.getKills());
+                    configuration.set(clanId + ".members." + member.getUuid() + ".deaths", leader.getDeaths());
+                    configuration.set(clanId + ".members." + member.getUuid() + ".war-wins", leader.getWarWins());
+                    configuration.set(clanId + ".members." + member.getUuid() + ".war-participated", leader.getWarParticipated());
+                    configuration.set(clanId + ".members." + member.getUuid() + ".war-loses", leader.getWarLoses());
                     List<String> colors = new ArrayList<>();
                     for (UUID key : member.getGlowColors().keySet()) {
                         Color color = member.getGlowColors().get(key);

@@ -14,6 +14,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -41,7 +42,7 @@ public class Loader {
 
         LOGGER.success("------------------------");
         if (!folder.exists() && folder.mkdirs()) {
-            String[] defaults = {"main.yml", "quests.yml"};
+            String[] defaults = {"main.yml", "quests.yml", "members.yml"};
 
             for (String name : defaults) {
                 File target = new File(folder, name);
@@ -109,7 +110,7 @@ public class Loader {
                     boolean enchanted = itemSection.getBoolean("enchanted", false);
                     boolean freeSlot = itemSection.getBoolean("free-slot", false);
                     int priority = itemSection.getInt("priority", 0);
-                    String type = itemSection.getString("type");
+                    String type = itemSection.getString("type", "default");
                     String defaultMaterial;
                     if (freeSlot) {
                         defaultMaterial = "AIR";
@@ -130,6 +131,13 @@ public class Loader {
                     }
 
                     itemStack.setAmount(amount);
+                    ItemMeta meta = itemStack.getItemMeta();
+                    if (meta!=null) {
+                        meta.setDisplayName(Colorize.text(displayName));
+                        meta.setLore(Colorize.list(lore));
+                        meta.setCustomModelData(customModelData);
+                        itemStack.setItemMeta(meta);
+                    }
 
                     for (Integer slot : slots) {
 

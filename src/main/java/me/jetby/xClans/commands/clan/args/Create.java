@@ -5,8 +5,8 @@ import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.api.OnClanCreate;
 import me.jetby.xClans.commands.Subcommand;
 import me.jetby.xClans.configurations.Lang;
-import me.jetby.xClans.records.Clan;
-import me.jetby.xClans.records.Member;
+import me.jetby.xClans.clan.Clan;
+import me.jetby.xClans.clan.Member;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -44,7 +44,8 @@ public class Create implements Subcommand {
                         System.currentTimeMillis(),
                         System.currentTimeMillis() ,
                         false, false,
-                        0, 0, new HashMap<>()
+                        0, 0, new HashMap<>(),
+                        0,0,0,0,0
 
                 );
                 if (!clanManager.isAllowedName(player, clanName)) {

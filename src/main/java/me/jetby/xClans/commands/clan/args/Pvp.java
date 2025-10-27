@@ -2,7 +2,7 @@ package me.jetby.xClans.commands.clan.args;
 
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
-import me.jetby.xClans.records.Clan;
+import me.jetby.xClans.clan.Clan;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

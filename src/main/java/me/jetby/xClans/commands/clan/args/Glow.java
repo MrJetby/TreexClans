@@ -1,10 +1,9 @@
 package me.jetby.xClans.commands.clan.args;
 
-import me.jetby.treex.text.Colorize;
 import me.jetby.xClans.TreexClans;
 import me.jetby.xClans.commands.Subcommand;
-import me.jetby.xClans.records.Clan;
-import me.jetby.xClans.records.Member;
+import me.jetby.xClans.clan.Clan;
+import me.jetby.xClans.clan.Member;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,10 +24,10 @@ public class Glow implements Subcommand {
                 return true;
             }
 
-            if (!plugin.isPacketInit()) {
-                player.sendMessage(Colorize.text(plugin.getLang().getConfig().getString("restart-needed", "restart-needed")));
-                return true;
-            }
+//            if (!plugin.isPacketInit()) {
+//                player.sendMessage(Colorize.text(plugin.getLang().getConfig().getString("restart-needed", "restart-needed")));
+//                return true;
+//            }
             Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
             if (plugin.getGlow().hasObserver(player)) {
                 plugin.getGlow().removeObserver(player);

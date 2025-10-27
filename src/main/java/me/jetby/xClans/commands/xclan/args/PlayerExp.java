@@ -1,33 +1,22 @@
 package me.jetby.xClans.commands.xclan.args;
 
-import me.jetby.xClans.TreexClans;
+
 import me.jetby.xClans.commands.Subcommand;
-import me.jetby.xClans.clan.Clan;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class Test implements Subcommand {
-    private final TreexClans plugin;
+// TODO:  playerexp give <player> <amount>
+// TODO:  playerexp set <player> <amount>
+// TODO:  playerexp take <player> <amount>
 
-    public Test(TreexClans plugin) {
-        this.plugin = plugin;
-    }
-
+public class PlayerExp implements Subcommand {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
-
-        if (sender instanceof Player player) {
-            Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
-//            GuiFactory.create(plugin, , player, clan).open(player);
-        }
-
-        return true;
-
+        return false;
     }
 
     @Override
