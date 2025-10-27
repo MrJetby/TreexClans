@@ -2,9 +2,9 @@ id: main
 title: "&6&lMain menu"
 size: 54
 open_permission: none
-open_commands:
-  - 'test2'
-
+open_args:
+  - 'menu'
+open_commands: {}
 
 type: default
 

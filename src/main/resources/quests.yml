@@ -6,6 +6,7 @@ category:
 
 quest1:
   # PLAYER_KILL
+  # UNIQUE_PLAYER_KILL
   # ENTITY_KILL;ENTITY_TYPE (example: ENTITY_KILL;ZOMBIE)
   # BLOCK_BREAK;BLOCK_TYPE (example: BLOCK_BREAK;DIAMOND_ORE)
   # BLOCK_PLACE;BLOCK_TYPE (example: BLOCK_PLACE;OAK_LOG)
@@ -13,6 +14,9 @@ quest1:
   target: 10
   name: "Киллер"
   description: "Выполните 10 убийств игроков"
+  disabled-worlds:
+    - duel-1
+    - duel-2
   rewards:
     - "[money_add] 1000"
     - "[clan_coin_add] 5" # Коины

@@ -4,7 +4,6 @@ size: 54
 open_permission: none
 open_args:
   - "members"
-open_commands: {}
 
 listen: members
 

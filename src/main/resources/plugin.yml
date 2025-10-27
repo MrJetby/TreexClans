@@ -1,6 +1,6 @@
 name: TreexClans
 version: '1.0'
-main: me.jetby.xClans.TreexClans
+main: me.jetby.treexclans.TreexClans
 api-version: '1.16'
 load: POSTWORLD
 authors: [ MrJetby ]
@@ -9,6 +9,7 @@ softdepend:
   - Vault
   - packetevents
   - Treex
+  - PlaceholderAPI
 commands:
   xclan: {}
   clan: {}

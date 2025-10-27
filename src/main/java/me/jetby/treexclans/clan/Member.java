@@ -1,0 +1,29 @@
+package me.jetby.treexclans.clan;
+
+
+import lombok.*;
+import me.jetby.treexclans.clan.rank.Rank;
+import org.bukkit.Color;
+
+import java.util.Map;
+import java.util.UUID;
+
+@AllArgsConstructor
+@Getter @Setter
+public class Member {
+    private UUID uuid;
+    private Rank rank;
+    private long joinedAt;
+    private long lastOnline;
+    private boolean clanGlow;
+    private boolean chat;
+    private int coin;
+    private int exp;
+    private Map<UUID, Color> glowColors;
+    private int kills;
+    private int deaths;
+    private int warWins;
+    private int warParticipated;
+    private int warLoses;
+
+}

@@ -32,6 +32,7 @@ commands:
     - ""
     - "&#FC835C• /clan create [тэг] &7- &fСоздать клан"
     - "&#FC835C• /clan accept [тэг] &7- &fПринять приглашение в клан"
+    - "&#FC835C• /clan top &7- &fСписок сильнейших кланов"
     - ""
     - "&#FFE259◀&m                                       &#FFE259▶ "
   help:
@@ -68,9 +69,9 @@ your-already-in-clan:
 clan-tag-invalid-characters:
   - "[message] {prefix} &cТег клана содержит недопустимые символы!"
 clan-tag-too-short:
-  - "[message] {prefix} &cТег клана слишком короткий! Минимальная длина: {min_length} символов."
+  - "[message] {prefix} &cТег короткий. Минимальная длина {min_length} символов."
 clan-tag-too-long:
-  - "[message] {prefix} &cТег клана слишком длинный! Максимальная длина: {max_length} символов."
+  - "[message] {prefix} &cТег длинный! Максимальная длина: {max_length} символов."
 clan-tag-blocked:
   - "[message] {prefix} &cДанный тег клана запрещен!"
 you-haven-not-enough-money:
@@ -84,7 +85,7 @@ you-cant-do-that-with-leader:
   - "[message] {prefix} &cВы не можете выполнить данное действие против лидера клана"
 
 your-rank-is-not-allowed-to-do-that:
-  - "[message] {prefix} &cYou are not allowed to do that! Please ask your clan leader to give you permission"
+  - "[message] {prefix} &cВаш ранг не позволяет вам это сделать! Пожалуйста, обратитесь к лидеру клана за выдаче прав."
 
 
 clan-create:
@@ -115,3 +116,13 @@ clan-pvp-on:
   - '[message] {prefix} &fКлановый pvp &#17FF35включён'
 clan-pvp-off:
   - '[message] {prefix} &fКлановый pvp &#FB0000выключен'
+clan-disband:
+  - '[message] {prefix} &a&lКлан был успешно расформирован'
+  - '[team_msg] {prefix} &c&lВаш клан был расформирован лидером'
+clan-disband-confirm:
+  - '[message] {prefix} &c&lПодтвердите что вы хотите удалить ваш клан без возможного восстановления прописав команду ещё раз.'
+
+quest-status-progress: "&eВ прогрессе"
+quest-status-uncompleted: "&cНе выполнен"
+quest-status-completed: "&aВыполнено"
+quest-status-gradual: "&eВыполните предыдущий"

@@ -4,7 +4,9 @@ clan-id:
   balance: 150000.0
   level: 1
   prefix: "Sexy"
-
+  quests-completed:
+    - id
+    - id2
   quests-progress:
     id: 1
     id2: 50
@@ -14,7 +16,9 @@ clan-id:
     joined-at: 1700000000
     last-online: 1700000000
     clan-glow: true
-
+  glow-colors:
+    uuid:
+      - UUID;COLOR
   ranks:
     member:
       display-name: "Участник"
