@@ -39,12 +39,14 @@ public class Members extends TGui {
     private final Menu menu;
     private final Player player;
     private final Clan clan;
+    private final TreexClans plugin;
 
     public Members(TreexClans plugin, Menu menu, Player player, Clan clan) {
         super(plugin, menu, player, clan);
         this.menu = menu;
         this.player = player;
         this.clan = clan;
+        this.plugin = plugin;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
 
         size(menu.size());
@@ -283,6 +285,8 @@ public class Members extends TGui {
 
     private String replaceMemberPlaceholders(String text, Member member) {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(member.getUuid());
+        text = text.replace("%joined-at%", plugin.getFormatTime().stringFormat(System.currentTimeMillis() - member.getJoinedAt()));
+        text = text.replace("%last-online%", plugin.getClanManager().getLastOnlineFormatted(member));
         text = text.replace("%player_name%", offlinePlayer.getName());
         text = text.replace("%rank%", member.getRank().name());
         text = text.replace("%kills%", String.valueOf(member.getKills()));

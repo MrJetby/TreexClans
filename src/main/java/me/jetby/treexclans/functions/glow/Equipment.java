@@ -71,6 +71,7 @@ public class Equipment {
      * @param itemStacks an array of {@link ItemStack}s representing the player's armor items
      *                   (in order: helmet, chestplate, leggings, boots)
      * @return a list of {@link com.github.retrooper.packetevents.protocol.player.Equipment} objects mapped to their respective {@link EquipmentSlot}s
+     * @author Jodex
      */
     public static @NotNull List<com.github.retrooper.packetevents.protocol.player.Equipment> withItemStacks(Color color, ItemStack... itemStacks) {
         List<com.github.retrooper.packetevents.protocol.player.Equipment> list = new ArrayList<>();

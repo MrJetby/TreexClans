@@ -4,12 +4,12 @@ import me.jetby.treex.actions.ActionContext;
 import me.jetby.treex.actions.ActionExecutor;
 import me.jetby.treex.actions.ActionRegistry;
 import me.jetby.treex.text.Colorize;
-import me.jetby.treexclans.configurations.Lang;
-import me.jetby.treexclans.gui.requirements.Requirements;
-import me.jetby.treexclans.gui.requirements.SimpleRequirement;
 import me.jetby.treexclans.clan.Clan;
 import me.jetby.treexclans.clan.Level;
 import me.jetby.treexclans.clan.Member;
+import me.jetby.treexclans.configurations.Lang;
+import me.jetby.treexclans.gui.requirements.Requirements;
+import me.jetby.treexclans.gui.requirements.SimpleRequirement;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.OfflinePlayer;
@@ -241,6 +241,17 @@ public record ClanManager(TreexClans plugin) implements Listener {
         return "-1";
     }
 
+    public String getLastOnlineFormatted(@NotNull Member member) {
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(member.getUuid());
+        if (offlinePlayer.isOnline()) {
+            member.setLastOnline(System.currentTimeMillis());
+            return "В сети";
+        } else {
+            return plugin.getFormatTime().stringFormat(System.currentTimeMillis() - member.getLastOnline());
+        }
+    }
+
+
     public void sendMessage(@NotNull Clan clan, String message) {
         for (Member member : clan.getMembers()) {
             Player player = Bukkit.getPlayer(member.getUuid());
@@ -279,6 +290,7 @@ public record ClanManager(TreexClans plugin) implements Listener {
         }
         member.setGlowColors(colors);
     }
+
     public void setColor(@NotNull Member member, @NotNull Set<Member> members, @NotNull Color color) {
         Map<UUID, Color> colors = member.getGlowColors();
         for (Member target : members) {

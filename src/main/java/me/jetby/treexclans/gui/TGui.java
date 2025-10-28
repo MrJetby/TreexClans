@@ -11,6 +11,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import javax.annotation.Nullable;
 
 public abstract class TGui extends PaginatedAdvancedGui implements Listener {
+
+    // TODO: Так как много кода повторяется придумай что то например регистр плейсхолдер отдельно и так далее
+    //  можно поставить null если не надо
+
     public TGui(JavaPlugin plugin, @Nullable Menu menu, Player player, Clan clan) {
         super(menu != null ? menu.title() : "Menu");
         size(menu != null ? menu.size() : 54);

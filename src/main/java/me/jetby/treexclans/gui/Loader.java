@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.jetby.treex.text.Colorize;
 import me.jetby.treex.text.Papi;
+import me.jetby.treexclans.functions.glow.Equipment;
 import me.jetby.treexclans.gui.requirements.ClickRequirement;
 import me.jetby.treexclans.gui.requirements.ViewRequirement;
 import org.bukkit.Bukkit;
@@ -15,6 +16,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -117,6 +119,8 @@ public class Loader {
                     } else {
                         defaultMaterial = "STONE";
                     }
+
+                    String rgb = itemSection.getString("color", "WHITE");
                     String material = Papi.setPapi(null, itemSection.getString("material", defaultMaterial));
                     ItemStack itemStack;
                     if (material.startsWith("basehead-")) {
@@ -136,12 +140,15 @@ public class Loader {
                         meta.setDisplayName(Colorize.text(displayName));
                         meta.setLore(Colorize.list(lore));
                         meta.setCustomModelData(customModelData);
+                        if (meta instanceof LeatherArmorMeta lam) {
+                            lam.setColor(Equipment.getColorByName(rgb));
+                        }
                         itemStack.setItemMeta(meta);
                     }
 
                     for (Integer slot : slots) {
 
-                        buttons.add(new Button(key, displayName, lore, slot, amount, customModelData, enchanted, freeSlot, itemStack,
+                        buttons.add(new Button(key, displayName, rgb, lore, slot, amount, customModelData, enchanted, freeSlot, itemStack,
                                 requirements(itemSection, slot),
                                 loadCommands(itemSection),
                                 priority, type));

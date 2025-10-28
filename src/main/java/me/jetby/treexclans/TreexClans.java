@@ -16,6 +16,7 @@ import me.jetby.treexclans.configurations.Lang;
 import me.jetby.treexclans.configurations.QuestsLoader;
 import me.jetby.treexclans.functions.glow.Glow;
 import me.jetby.treexclans.functions.quests.QuestManager;
+import me.jetby.treexclans.functions.war.War;
 import me.jetby.treexclans.gui.CommandRegistrar;
 import me.jetby.treexclans.gui.Loader;
 import me.jetby.treexclans.listeners.ClanListeners;

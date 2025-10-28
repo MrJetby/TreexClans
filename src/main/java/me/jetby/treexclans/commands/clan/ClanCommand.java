@@ -2,11 +2,11 @@ package me.jetby.treexclans.commands.clan;
 
 import me.jetby.treex.text.Colorize;
 import me.jetby.treexclans.TreexClans;
+import me.jetby.treexclans.clan.Clan;
+import me.jetby.treexclans.clan.Member;
 import me.jetby.treexclans.gui.GuiFactory;
 import me.jetby.treexclans.gui.GuiType;
 import me.jetby.treexclans.gui.Menu;
-import me.jetby.treexclans.clan.Clan;
-import me.jetby.treexclans.clan.Member;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -47,9 +47,9 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
 
                 return true;
             }
+            if (plugin.getClanManager().isInClan(player.getUniqueId())) {
 
-            Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
-            if (clan!=null) {
+                Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
                 for (Map.Entry<String, List<String>> entry : menuArgs.entrySet()) {
                     if (entry.getValue().contains(args[0])) {
                         GuiFactory.create(plugin, plugin.getMenuLoader().getMenus().get(entry.getKey()), player, clan).open(player);
@@ -57,6 +57,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
                     }
                 }
             }
+
         }
 
 
@@ -64,7 +65,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
             var arg = ClanCommandArgs.valueOf(args[0].toUpperCase());
             arg.getSubcommand().onCommand(sender, Arrays.copyOfRange(args, 1, args.length));
         } catch (IllegalArgumentException e) {
-            sender.sendMessage("§cUnknown command. Use "+command.getName()+"  for help.");
+            sender.sendMessage("§cUnknown command. Use /" + command.getName() + " for help.");
         }
         return true;
     }
@@ -82,7 +83,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
             for (Map.Entry<String, List<String>> entry : menuArgs.entrySet()) {
                 if (entry.getValue().contains(args[0])) {
                     Menu menu = plugin.getMenuLoader().getMenus().get(entry.getKey());
-                    if (menu.type()==GuiType.DEFAULT) {
+                    if (menu.type() == GuiType.DEFAULT) {
                         if (player.hasPermission(menu.permission())) {
                             completions.addAll(entry.getValue());
                         }
@@ -108,8 +109,8 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
                 case "setbase" -> !perms.setbase();
                 case "base" -> !perms.base();
                 case "invite" -> !perms.invite();
-                case "withdraw" -> !perms.withdraw() || plugin.getEconomy()==null;
-                case "deposit", "invest" -> !perms.deposit() || plugin.getEconomy()==null;
+                case "withdraw" -> !perms.withdraw() || plugin.getEconomy() == null;
+                case "deposit", "invest" -> !perms.deposit() || plugin.getEconomy() == null;
                 case "kick" -> !perms.kick();
                 case "pvp" -> !perms.pvp();
                 default -> false;

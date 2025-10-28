@@ -23,7 +23,7 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
             var arg = AdminCommandArgs.valueOf(args[0].toUpperCase());
             arg.getSubcommand().onCommand(sender, Arrays.copyOfRange(args, 1, args.length));
         } catch (IllegalArgumentException e) {
-            sender.sendMessage("§cUnknown subcommand. Use /"+command.getName()+"  for help.");
+            sender.sendMessage("§cUnknown subcommand. Use /"+command.getName()+" for help.");
         }
         return true;
     }

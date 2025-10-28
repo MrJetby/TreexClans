@@ -54,7 +54,7 @@ public class Config {
 
     public void load() {
 
-        formattedTimeFormat = configuration.getString("formattedTime.show-format", "%weeks% %days% %hours% %minutes% %seconds%");
+        formattedTimeFormat = configuration.getString("placeholder-show-format", "%weeks% %days% %hours% %minutes% %seconds%");
 
         ConfigurationSection ranks = configuration.getConfigurationSection("ranks");
         if (ranks != null) {

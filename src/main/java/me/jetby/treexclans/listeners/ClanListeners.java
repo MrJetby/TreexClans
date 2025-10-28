@@ -4,11 +4,14 @@ import me.jetby.treexclans.ClanManager;
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.clan.Clan;
 import me.jetby.treexclans.clan.Member;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 
@@ -41,6 +44,21 @@ public class ClanListeners implements Listener {
             if (clan == null) return;
             if (clan.isPvp()) return;
             if (e.getEntity() instanceof Player target) {
+                if (plugin.getClanManager().getClanByMember(target.getUniqueId()) != null && plugin.getClanManager().getClanByMember(target.getUniqueId()).equals(clan)) {
+                    plugin.getLang().sendMessage(player, clan, "pvp-disabled");
+                    e.setCancelled(true);
+                }
+            }
+        }
+    }
+    @EventHandler
+    public void onTeamDamageByProjectile(ProjectileHitEvent e) {
+        if (e.getEntity().getShooter() instanceof Player player) {
+            if (!plugin.getClanManager().isInClan(player.getUniqueId())) return;
+            Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
+            if (clan == null) return;
+            if (clan.isPvp()) return;
+            if (e.getHitEntity() instanceof Player target) {
                 if (plugin.getClanManager().getClanByMember(target.getUniqueId()) != null && plugin.getClanManager().getClanByMember(target.getUniqueId()).equals(clan)) {
                     plugin.getLang().sendMessage(player, clan, "pvp-disabled");
                     e.setCancelled(true);

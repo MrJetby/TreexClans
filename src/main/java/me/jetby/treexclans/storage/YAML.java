@@ -8,6 +8,7 @@ import me.jetby.treexclans.clan.Member;
 import me.jetby.treexclans.clan.rank.Rank;
 import me.jetby.treexclans.clan.rank.RankPermissions;
 import me.jetby.treexclans.tools.FileLoader;
+import me.jetby.treexclans.tools.ItemSerializer;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -17,6 +18,8 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+
+import static me.jetby.treexclans.TreexClans.LOGGER;
 
 public class YAML implements Storage {
 
@@ -89,7 +92,19 @@ public class YAML implements Storage {
             }
 
             Location base = LocationHandler.deserialize(clan.getString("base-location"));
-            Map<String, ItemStack> chest = new HashMap<>();
+
+            List<ItemStack> chestItems = new ArrayList<>();
+            List<String> itemsStr = clan.getStringList("chest");
+            for (String base64 : itemsStr) {
+                try {
+                    chestItems.add(ItemSerializer.itemFromBase64(base64));
+                } catch (Exception e) {
+                    LOGGER.warn("Не удалось загрузить предмет из " + clanId + ": " + e.getMessage());
+                }
+            }
+
+
+
             Map<String, Integer> questsProgress = new HashMap<>();
             ConfigurationSection progress = clan.getConfigurationSection("quests-progress");
             if (progress != null) {
@@ -102,7 +117,8 @@ public class YAML implements Storage {
 
 
             plugin.getCfg().getClans().put(clanId, new Clan(clanId, prefix, leader, memberSet, ranks,
-                    new Level(Integer.parseInt(level), 0, 0,30, new ArrayList<>()), balance, base, clanExp, pvp, questsProgress, completedQuests, new ArrayList<>()));
+                    new Level(Integer.parseInt(level), 0, 0,100, new ArrayList<>()),
+                    balance, base, clanExp, pvp, questsProgress, completedQuests, chestItems));
         }
     }
 
@@ -147,6 +163,12 @@ public class YAML implements Storage {
                 for (Member member : clan.getMembers()) {
                     setMember(member, clan, "members." + member.getUuid());
                 }
+
+                configuration.set(clanId + ".chest",
+                        clan.getChest().stream()
+                                .map(ItemSerializer::itemToBase64)
+                                .toList());
+
 
                 Location location = clan.getBase();
                 if (location != null) {

@@ -2,10 +2,7 @@ package me.jetby.treexclans.gui;
 
 import lombok.experimental.UtilityClass;
 import me.jetby.treexclans.TreexClans;
-import me.jetby.treexclans.gui.types.Chest;
-import me.jetby.treexclans.gui.types.Default;
-import me.jetby.treexclans.gui.types.Members;
-import me.jetby.treexclans.gui.types.Quests;
+import me.jetby.treexclans.gui.types.*;
 import me.jetby.treexclans.clan.Clan;
 import org.bukkit.entity.Player;
 
@@ -22,6 +19,7 @@ public class GuiFactory {
             case QUESTS -> new Quests(plugin, menu, player, clan);
             case MEMBERS -> new Members(plugin, menu, player, clan);
             case CHEST -> getChest(plugin, menu, player, clan);
+            case CHOOSE_COLOR -> new ChooseColor(plugin, menu, player, clan);
             default -> new Default(plugin, menu, player, clan);
         };
     }
@@ -30,6 +28,8 @@ public class GuiFactory {
         if (chests.containsKey(clan)) {
             return chests.get(clan);
         }
-        return chests.put(clan, new Chest(plugin, menu, player, clan));
+        Chest chest = new Chest(plugin, menu, player, clan);
+        chests.put(clan, chest);
+        return chest;
     }
 }
