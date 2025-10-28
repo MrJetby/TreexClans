@@ -2,7 +2,6 @@ package me.jetby.treexclans.commands.admin.subcommands;
 
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.commands.Subcommand;
-import me.jetby.treexclans.functions.war.War;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;

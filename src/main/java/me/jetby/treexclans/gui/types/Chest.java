@@ -23,6 +23,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -31,108 +32,120 @@ import java.util.stream.Collectors;
 import static me.jetby.treexclans.TreexClans.NAMESPACED_KEY;
 
 public class Chest extends TGui {
-    private final List<Integer> freeSlots = new ArrayList<>();
+    private static final Map<String, Set<Chest>> ACTIVE_CHESTS = new HashMap<>();
 
+    private final TreexClans plugin;
     private final Menu menu;
     private final Player player;
     private final Clan clan;
-    private final Inventory inventory;
+
+    private final Map<Integer, Integer> slotToGlobalIndex = new HashMap<>();
+
+    private int currentPage = 0;
+    private BukkitTask autoSaveTask;
+    private boolean isInitialized = false;
 
     public Chest(TreexClans plugin, Menu menu, Player player, Clan clan) {
         super(plugin, menu, player, clan);
+        this.plugin = plugin;
         this.menu = menu;
         this.player = player;
         this.clan = clan;
-        this.inventory = holder().getInventory();
+
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
 
         size(menu.size());
         type(menu.inventoryType());
         title(Papi.setPapi(player, menu.title()));
 
-        onDrag(event -> {
-            int topSize = inventory.getSize();
-            for (int rawSlot : event.getRawSlots()) {
-                if (rawSlot >= topSize) continue;
+        onDrag(event -> event.setCancelled(true));
 
-                if (!freeSlots.contains(rawSlot)) {
-                    event.setCancelled(true);
-                    return;
-                }
+        onClose(event -> {
+            if (autoSaveTask != null) {
+                autoSaveTask.cancel();
             }
-            event.setCancelled(false);
+            saveToCloudData();
+            unregisterChest();
         });
 
-
+        registerToActiveChests();
         registerStaticButtons();
+        setupItemsPages();
 
-        setupItemsPagination();
+        autoSaveTask = Bukkit.getScheduler().runTaskTimer(plugin, this::saveToCloudData, 100L, 100L);
 
         openPage(0);
 
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            loadPageFromCloudData();
+            isInitialized = true;
+        }, 3L);
+    }
 
+    private void registerToActiveChests() {
+        ACTIVE_CHESTS.computeIfAbsent(clan.getId(), k -> new HashSet<>()).add(this);
+    }
+
+    private void unregisterChest() {
+        Set<Chest> chests = ACTIVE_CHESTS.get(clan.getId());
+        if (chests != null) {
+            chests.remove(this);
+            if (chests.isEmpty()) {
+                ACTIVE_CHESTS.remove(clan.getId());
+            }
+        }
     }
 
     private void registerStaticButtons() {
         Map<Integer, List<Button>> buttonsBySlot = new HashMap<>();
+
         for (Button button : menu.buttons()) {
-            switch (button.type().toLowerCase()) {
-                case "item":
-                case "chest":
-                    continue;
-                case "next_page": {
-                    ItemWrapper item = new ItemWrapper(button.itemStack());
-                    item.enchanted(button.enchanted());
-                    ItemMeta meta = item.itemStack().getItemMeta();
-                    meta.getPersistentDataContainer().set(NAMESPACED_KEY, PersistentDataType.STRING, "menu_item");
-                    item.itemStack().setItemMeta(meta);
-                    registerItem("next_page", b -> b.slots(button.slot())
-                            .defaultItem(item)
-                            .defaultClickHandler((e, gui) -> {
-                                e.setCancelled(true);
-                                List<ItemStack> itemStacks = new ArrayList<>(clan.getChest());
+            String type = button.type().toLowerCase();
 
-                                for (int slot = 0; slot < e.getInventory().getSize(); slot++) {
-                                    ItemStack itemStack = e.getInventory().getItem(slot);
-                                    if (itemStack == null) {
-                                        continue;
-                                    }
-                                    if (itemStack.getItemMeta().getPersistentDataContainer().has(NAMESPACED_KEY, PersistentDataType.STRING))
-                                        continue;
-                                    itemStacks.add(itemStack);
-                                }
-                                clan.setChest(itemStacks);
-                                nextPage();
-                            }));
-                    continue;
-                }
-                case "prev_page": {
-                    ItemWrapper item = new ItemWrapper(button.itemStack());
-                    item.enchanted(button.enchanted());
-                    ItemMeta meta = item.itemStack().getItemMeta();
-                    meta.getPersistentDataContainer().set(NAMESPACED_KEY, PersistentDataType.STRING, "menu_item");
-                    item.itemStack().setItemMeta(meta);
-                    registerItem("prev_page", b -> b.slots(button.slot())
-                            .defaultItem(item)
-                            .defaultClickHandler((e, gui) -> {
-                                e.setCancelled(true);
-                                List<ItemStack> itemStacks = new ArrayList<>(clan.getChest());
-
-                                for (int slot = 0; slot < e.getInventory().getSize(); slot++) {
-                                    ItemStack itemStack = e.getInventory().getItem(slot);
-                                    if (itemStack == null) {
-                                        continue;
-                                    }
-                                    if (itemStack.getItemMeta().getPersistentDataContainer().has(NAMESPACED_KEY, PersistentDataType.STRING))
-                                        continue;
-                                    itemStacks.add(itemStack);
-                                }
-                                clan.setChest(itemStacks);
-                                previousPage();
-                            }));
-                    continue;
-                }
+            if ("item".equals(type) || "chest".equals(type)) {
+                continue;
             }
+
+            if ("next_page".equals(type)) {
+                registerItem("next_page", builder -> {
+                    builder.slots(button.slot());
+                    ItemWrapper wrapper = new ItemWrapper(button.itemStack().clone());
+                    wrapper.displayName(Colorize.text(Papi.setPapi(player, button.displayName())));
+                    wrapper.enchanted(button.enchanted());
+                    builder.defaultItem(wrapper);
+                    builder.defaultClickHandler((e, gui) -> {
+                        e.setCancelled(true);
+                        if (currentPage < getTotalPages() - 1) {
+                            saveToCloudData();
+                            currentPage++;
+                            nextPage();
+                            Bukkit.getScheduler().runTaskLater(plugin, this::loadPageFromCloudData, 1L);
+                        }
+                    });
+                });
+                continue;
+            }
+
+            if ("prev_page".equals(type)) {
+                registerItem("prev_page", builder -> {
+                    builder.slots(button.slot());
+                    ItemWrapper wrapper = new ItemWrapper(button.itemStack().clone());
+                    wrapper.displayName(Colorize.text(Papi.setPapi(player, button.displayName())));
+                    wrapper.enchanted(button.enchanted());
+                    builder.defaultItem(wrapper);
+                    builder.defaultClickHandler((e, gui) -> {
+                        e.setCancelled(true);
+                        if (currentPage > 0) {
+                            saveToCloudData();
+                            currentPage--;
+                            previousPage();
+                            Bukkit.getScheduler().runTaskLater(plugin, this::loadPageFromCloudData, 1L);
+                        }
+                    });
+                });
+                continue;
+            }
+
             buttonsBySlot.computeIfAbsent(button.slot(), k -> new ArrayList<>()).add(button);
         }
 
@@ -143,97 +156,67 @@ public class Chest extends TGui {
             slotButtons.sort(Comparator.comparingInt(Button::priority).reversed());
 
             Button selectedButton = null;
-            boolean anyFreeSlot = false;
-
             for (Button button : slotButtons) {
                 boolean visible = true;
-                boolean freeSlotFromRequirements = false;
-
                 if (!button.viewRequirements().isEmpty()) {
                     for (ViewRequirement requirement : button.viewRequirements()) {
-                        boolean passed = Requirements.check(player, requirement);
-                        if (!passed) {
-                            if (requirement.freeSlot()) {
-                                freeSlotFromRequirements = true;
-                            } else {
-                                visible = false;
-                                break;
-                            }
+                        if (!Requirements.check(player, requirement)) {
+                            visible = false;
+                            break;
                         }
                     }
                 }
-
                 if (visible) {
                     selectedButton = button;
                     break;
-                } else if (freeSlotFromRequirements) {
-                    anyFreeSlot = true;
                 }
-            }
-            if (selectedButton == null && anyFreeSlot) {
-                freeSlots.add(slot);
-                registerItem("free_slot_" + slot, builder -> {
-                    builder.slots(slot);
-                    builder.defaultClickHandler((event, controller) -> {
-                        event.setCancelled(false);
-                    });
-                });
-                continue;
             }
 
             if (selectedButton != null) {
-                Button finalSelectedButton = selectedButton;
-                registerItem(finalSelectedButton.id() + finalSelectedButton.slot(), builder -> {
-                    builder.slots(finalSelectedButton.slot());
+                Button finalButton = selectedButton;
+                registerItem(finalButton.id() + "_" + slot, builder -> {
+                    builder.slots(slot);
 
-                    ItemStack itemStack = finalSelectedButton.itemStack().clone();
+                    ItemStack itemStack = finalButton.itemStack().clone();
                     ItemWrapper wrapper = new ItemWrapper(itemStack);
+                    wrapper.displayName(Colorize.text(Papi.setPapi(player, finalButton.displayName())));
 
-                    String rawDisplayName = finalSelectedButton.displayName();
-                    String processedDisplayName = Papi.setPapi(player, rawDisplayName);
-                    wrapper.displayName(Colorize.text(processedDisplayName));
-
-                    List<String> rawLore = finalSelectedButton.lore();
-                    List<String> processedLore = rawLore.stream()
-                            .map(l -> Papi.setPapi(player, l))
-                            .map(Colorize::text)
+                    List<String> lore = finalButton.lore().stream()
+                            .map(l -> Colorize.text(Papi.setPapi(player, l)))
                             .collect(Collectors.toList());
-                    wrapper.lore(processedLore);
-
-                    wrapper.customModelData(finalSelectedButton.customModelData());
-                    wrapper.enchanted(finalSelectedButton.enchanted());
+                    wrapper.lore(lore);
+                    wrapper.customModelData(finalButton.customModelData());
+                    wrapper.enchanted(finalButton.enchanted());
                     wrapper.update();
 
-                    ItemMeta itemMeta = itemStack.getItemMeta();
-                    if (itemMeta != null) {
-                        itemMeta.getPersistentDataContainer().set(NAMESPACED_KEY, PersistentDataType.STRING, "menu_item");
-                        itemStack.setItemMeta(itemMeta);
+                    ItemMeta meta = itemStack.getItemMeta();
+                    if (meta != null) {
+                        meta.getPersistentDataContainer().set(NAMESPACED_KEY, PersistentDataType.STRING, "static_button");
+                        itemStack.setItemMeta(meta);
                     }
 
                     builder.defaultItem(wrapper);
-
                     builder.defaultClickHandler((event, controller) -> {
                         event.setCancelled(true);
-                        ClickType clickType = event.getClick();
 
-                        for (Command cmd : finalSelectedButton.commands()) {
+                        ClickType clickType = event.getClick();
+                        for (Command cmd : finalButton.commands()) {
                             if (cmd.clickType() == clickType || cmd.anyClick()) {
-                                boolean allRequirementsPassed = true;
-                                if (!cmd.clickRequirements().isEmpty()) {
-                                    for (ClickRequirement clickRequirement : cmd.clickRequirements()) {
-                                        if ((clickRequirement.anyClick() || clickRequirement.clickType() == clickType)) {
-                                            if (!Requirements.check(player, clickRequirement)) {
-                                                Requirements.runDenyCommands(player, clickRequirement.deny_commands(), finalSelectedButton);
-                                                allRequirementsPassed = false;
-                                                break;
-                                            }
+                                boolean allPassed = true;
+
+                                for (ClickRequirement req : cmd.clickRequirements()) {
+                                    if (req.anyClick() || req.clickType() == clickType) {
+                                        if (!Requirements.check(player, req)) {
+                                            Requirements.runDenyCommands(player, req.deny_commands(), finalButton);
+                                            allPassed = false;
+                                            break;
                                         }
                                     }
                                 }
 
-                                if (allRequirementsPassed) {
+                                if (allPassed) {
                                     ActionContext ctx = new ActionContext(player);
-                                    ctx.put("button", finalSelectedButton);
+                                    ctx.put("button", finalButton);
                                     ActionExecutor.execute(ctx, ActionRegistry.transform(cmd.actions()));
                                     break;
                                 }
@@ -245,22 +228,21 @@ public class Chest extends TGui {
         }
     }
 
-    private void setupItemsPagination() {
+    private void setupItemsPages() {
         List<Button> itemButtons = menu.buttons().stream()
                 .filter(b -> "item".equals(b.type()) || "chest".equals(b.type()))
                 .toList();
 
         if (itemButtons.isEmpty()) return;
 
-        List<Integer> itemSlots = itemButtons.stream()
+        List<Integer> configSlots = itemButtons.stream()
                 .map(Button::slot)
                 .sorted()
+                .distinct()
                 .toList();
 
-        int slotsPerPage = itemSlots.size();
+        int slotsPerPage = configSlots.size();
         int maxChestSlots = clan.getLevel().chest();
-        List<ItemStack> items = clan.getChest();
-
         int totalPages = (int) Math.ceil((double) maxChestSlots / slotsPerPage);
         if (totalPages == 0) totalPages = 1;
 
@@ -268,43 +250,36 @@ public class Chest extends TGui {
             Consumer<GuiItemController.Builder>[] consumers = new Consumer[slotsPerPage];
 
             for (int i = 0; i < slotsPerPage; i++) {
-                int globalSlotIndex = page * slotsPerPage + i;
-                int slot = itemSlots.get(i);
+                int globalIndex = page * slotsPerPage + i;
+                int guiSlot = configSlots.get(i);
 
-                if (globalSlotIndex >= maxChestSlots) {
+                if (globalIndex >= maxChestSlots) {
                     consumers[i] = builder -> {
-                        builder.slots(slot);
+                        builder.slots(guiSlot);
                         ItemWrapper barrier = ItemWrapper.builder(Material.BARRIER)
-                                .displayName("§cСлот недоступен")
-                                .lore(Arrays.asList("§7Увеличьте уровень клана", "§7чтобы разблокировать этот слот"))
+                                .displayName("§c§lСлот заблокирован")
+                                .lore(Arrays.asList(
+                                        "§7Этот слот недоступен.",
+                                        "§7Повысьте уровень клана,",
+                                        "§7чтобы разблокировать больше слотов."
+                                ))
                                 .build();
 
                         ItemMeta meta = barrier.itemStack().getItemMeta();
-                        meta.getPersistentDataContainer().set(NAMESPACED_KEY, PersistentDataType.STRING, "menu_item");
-                        barrier.itemStack().setItemMeta(meta);
+                        if (meta != null) {
+                            meta.getPersistentDataContainer().set(NAMESPACED_KEY, PersistentDataType.STRING, "locked_slot");
+                            barrier.itemStack().setItemMeta(meta);
+                        }
 
-                        builder.defaultItem(barrier);
-                        builder.defaultClickHandler((event, ctrl) -> event.setCancelled(true));
-                    };
-                    continue;
-                }
-
-                if (globalSlotIndex < items.size() && items.get(globalSlotIndex) != null) {
-                    consumers[i] = builder -> {
-                        builder.slots(slot);
-                        freeSlots.add(slot);
-                        builder.defaultItem(new ItemWrapper(items.get(globalSlotIndex)));
-                        builder.defaultClickHandler((event, ctrl) -> {
-                            event.setCancelled(false);
-                        });
+                        builder.defaultItem(new ItemWrapper(barrier.itemStack()));
+                        builder.defaultClickHandler((e, ctrl) -> e.setCancelled(true));
                     };
                 } else {
                     consumers[i] = builder -> {
-                        builder.slots(slot);
-                        freeSlots.add(slot);
+                        builder.slots(guiSlot);
                         builder.defaultItem(ItemWrapper.builder(Material.AIR).build());
-                        builder.defaultClickHandler((event, ctrl) -> {
-                            event.setCancelled(false);
+                        builder.defaultClickHandler((e, ctrl) -> {
+                            e.setCancelled(false);
                         });
                     };
                 }
@@ -314,61 +289,200 @@ public class Chest extends TGui {
         }
     }
 
+    private int getTotalPages() {
+        List<Button> itemButtons = menu.buttons().stream()
+                .filter(b -> "item".equals(b.type()) || "chest".equals(b.type()))
+                .toList();
+
+        if (itemButtons.isEmpty()) return 1;
+
+        int slotsPerPage = (int) itemButtons.stream().map(Button::slot).distinct().count();
+        int maxChestSlots = clan.getLevel().chest();
+        return (int) Math.ceil((double) maxChestSlots / slotsPerPage);
+    }
+
+    private void saveToCloudData() {
+        if (!isInitialized) return;
+
+        Inventory inv = holder().getInventory();
+
+        List<ItemStack> chestData = clan.getChest();
+
+        updateSlotMapping();
+
+        int maxIndex = slotToGlobalIndex.values().stream()
+                .max(Integer::compare)
+                .orElse(-1);
+
+        while (chestData.size() <= maxIndex) {
+            chestData.add(null);
+        }
+
+        for (Map.Entry<Integer, Integer> entry : slotToGlobalIndex.entrySet()) {
+            int guiSlot = entry.getKey();
+            int globalIndex = entry.getValue();
+
+            ItemStack item = inv.getItem(guiSlot);
+
+            if (item != null && item.hasItemMeta()) {
+                ItemMeta meta = item.getItemMeta();
+                if (meta != null && meta.getPersistentDataContainer().has(NAMESPACED_KEY, PersistentDataType.STRING)) {
+                    continue;
+                }
+            }
+
+            if (item == null || item.getType() == Material.AIR) {
+                chestData.set(globalIndex, null);
+            } else {
+                chestData.set(globalIndex, item.clone());
+            }
+        }
+
+        while (!chestData.isEmpty() && chestData.get(chestData.size() - 1) == null) {
+            chestData.remove(chestData.size() - 1);
+        }
+
+        notifyOtherViewers();
+    }
+
+    private void updateSlotMapping() {
+        slotToGlobalIndex.clear();
+
+        List<Button> itemButtons = menu.buttons().stream()
+                .filter(b -> "item".equals(b.type()) || "chest".equals(b.type()))
+                .toList();
+
+        if (itemButtons.isEmpty()) return;
+
+        List<Integer> configSlots = itemButtons.stream()
+                .map(Button::slot)
+                .sorted()
+                .distinct()
+                .toList();
+
+        int slotsPerPage = configSlots.size();
+
+        for (int i = 0; i < slotsPerPage; i++) {
+            int globalIndex = currentPage * slotsPerPage + i;
+            int guiSlot = configSlots.get(i);
+
+            if (globalIndex < clan.getLevel().chest()) {
+                slotToGlobalIndex.put(guiSlot, globalIndex);
+            }
+        }
+    }
+
+    private void loadPageFromCloudData() {
+        Inventory inv = holder().getInventory();
+
+        List<ItemStack> chestData = clan.getChest();
+
+        updateSlotMapping();
+
+        for (Map.Entry<Integer, Integer> entry : slotToGlobalIndex.entrySet()) {
+            int guiSlot = entry.getKey();
+            int globalIndex = entry.getValue();
+
+            ItemStack item = globalIndex < chestData.size() ? chestData.get(globalIndex) : null;
+
+            if (item == null || item.getType() == Material.AIR) {
+                inv.setItem(guiSlot, null);
+            } else {
+                inv.setItem(guiSlot, item.clone());
+            }
+        }
+    }
+
+    private void notifyOtherViewers() {
+        Set<Chest> chests = ACTIVE_CHESTS.get(clan.getId());
+        if (chests == null) return;
+
+        for (Chest chest : chests) {
+            if (chest != this && chest.currentPage == this.currentPage) {
+                Bukkit.getScheduler().runTask(plugin, chest::loadPageFromCloudData);
+            }
+        }
+    }
+
     @EventHandler
     public void click(InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player p)) return;
+        if (!p.equals(player)) return;
 
-        Inventory topInventory = p.getOpenInventory().getTopInventory();
+        Inventory topInv = e.getView().getTopInventory();
+        if (!topInv.equals(holder().getInventory())) return;
+
         Inventory clickedInv = e.getClickedInventory();
         int rawSlot = e.getRawSlot();
         ClickType click = e.getClick();
 
-        if (inventory == null || !inventory.equals(topInventory)) return;
-
-        if (clickedInv != null && clickedInv.equals(topInventory)) {
-            if (!freeSlots.contains(rawSlot)) {
-                if (click == ClickType.SHIFT_LEFT || click == ClickType.SHIFT_RIGHT) {
-                } else {
-                    e.setCancelled(true);
-                }
+        if (clickedInv != null && clickedInv.equals(topInv)) {
+            if (!slotToGlobalIndex.containsKey(rawSlot)) {
+                e.setCancelled(true);
                 return;
             }
+
+            ItemStack cursor = e.getCursor();
+            if (cursor != null && cursor.hasItemMeta()) {
+                ItemMeta meta = cursor.getItemMeta();
+                if (meta != null && meta.getPersistentDataContainer().has(NAMESPACED_KEY, PersistentDataType.STRING)) {
+                    e.setCancelled(true);
+                    return;
+                }
+            }
+
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                saveToCloudData();
+                notifyOtherViewers();
+            }, 2L);
+            return;
         }
 
         if ((click == ClickType.SHIFT_LEFT || click == ClickType.SHIFT_RIGHT)
-                && (clickedInv == null || clickedInv.equals(p.getInventory()))) {
-            e.setCancelled(true);
+                && clickedInv != null && clickedInv.equals(p.getInventory())) {
 
             ItemStack clicked = e.getCurrentItem();
-            if (clicked == null || clicked.getType().isAir()) {
+            if (clicked == null || clicked.getType() == Material.AIR) {
                 return;
             }
 
+            if (clicked.hasItemMeta()) {
+                ItemMeta meta = clicked.getItemMeta();
+                if (meta != null && meta.getPersistentDataContainer().has(NAMESPACED_KEY, PersistentDataType.STRING)) {
+                    e.setCancelled(true);
+                    return;
+                }
+            }
+
+            e.setCancelled(true);
+
             int remaining = clicked.getAmount();
+            List<Integer> availableSlots = new ArrayList<>(slotToGlobalIndex.keySet());
+            availableSlots.sort(Integer::compare);
 
-            for (int slot : freeSlots) {
-                ItemStack slotItem = inventory.getItem(slot);
+            for (int guiSlot : availableSlots) {
+                ItemStack slotItem = topInv.getItem(guiSlot);
 
-                if (slotItem == null || slotItem.getType().isAir()) {
-                    ItemStack toPut = clicked.clone();
-                    int putAmount = Math.min(remaining, toPut.getMaxStackSize());
-                    toPut.setAmount(putAmount);
-                    inventory.setItem(slot, toPut);
-                    remaining -= putAmount;
+                if (slotItem == null || slotItem.getType() == Material.AIR) {
+                    int toPlace = Math.min(remaining, clicked.getMaxStackSize());
+                    ItemStack toSet = clicked.clone();
+                    toSet.setAmount(toPlace);
+                    topInv.setItem(guiSlot, toSet);
+                    remaining -= toPlace;
+
                     if (remaining <= 0) {
                         e.setCurrentItem(null);
                         break;
-                    } else {
-                        continue;
                     }
+                    continue;
                 }
 
                 if (slotItem.isSimilar(clicked) && slotItem.getAmount() < slotItem.getMaxStackSize()) {
                     int space = slotItem.getMaxStackSize() - slotItem.getAmount();
                     int toAdd = Math.min(space, remaining);
                     slotItem.setAmount(slotItem.getAmount() + toAdd);
-                    inventory.setItem(slot, slotItem);
                     remaining -= toAdd;
+
                     if (remaining <= 0) {
                         e.setCurrentItem(null);
                         break;
@@ -376,20 +490,16 @@ public class Chest extends TGui {
                 }
             }
 
-            if (remaining > 0) {
-                ItemStack left = clicked.clone();
-                left.setAmount(remaining);
-                e.setCurrentItem(left);
-            } else {
-                e.setCurrentItem(null);
+            if (remaining > 0 && remaining < clicked.getAmount()) {
+                ItemStack leftover = clicked.clone();
+                leftover.setAmount(remaining);
+                e.setCurrentItem(leftover);
             }
 
-            return;
-        }
-
-        if (rawSlot < inventory.getSize() && !freeSlots.contains(rawSlot)) {
-            e.setCancelled(true);
-            return;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                saveToCloudData();
+                notifyOtherViewers();
+            }, 2L);
         }
     }
 

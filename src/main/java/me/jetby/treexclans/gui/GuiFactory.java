@@ -18,7 +18,7 @@ public class GuiFactory {
         return switch (menu.type()) {
             case QUESTS -> new Quests(plugin, menu, player, clan);
             case MEMBERS -> new Members(plugin, menu, player, clan);
-            case CHEST -> getChest(plugin, menu, player, clan);
+            case CHEST -> new Chest(plugin, menu, player, clan);
             case CHOOSE_COLOR -> new ChooseColor(plugin, menu, player, clan);
             default -> new Default(plugin, menu, player, clan);
         };
