@@ -47,7 +47,6 @@ public class QuestsListeners implements Listener {
     public void onBlockPlace(BlockPlaceEvent e) {
         Player player = e.getPlayer();
         run(player, QuestType.BLOCK_PLACE, e.getBlock().getType().name());
-
     }
 
     @EventHandler
@@ -59,7 +58,7 @@ public class QuestsListeners implements Listener {
     public void run(Player player, QuestType questType, String property) {
         if (plugin.getClanManager().isInClan(player.getUniqueId())) {
             Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
-            questManager.addProgress(player, clan, questType, property, 1);
+            questManager.addProgressViaChecks(player, clan, questType, property, 1);
         }
     }
 }

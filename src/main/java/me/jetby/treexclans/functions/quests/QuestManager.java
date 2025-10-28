@@ -61,10 +61,11 @@ public record QuestManager(TreexClans plugin) {
         return false;
     }
 
-    public void addProgress(Player player, Clan clan, QuestType type, @Nullable String property, int progress) {
+    public void addProgressViaChecks(Player player, Clan clan, QuestType type, @Nullable String property, int progress) {
         if (clan == null) return;
         for (Map.Entry<String, Quest> entry : plugin.getQuestsLoader().getQuests().entrySet()) {
             Quest quest = entry.getValue();
+            if (quest.disabledWorlds().contains(player.getWorld().getName())) return;
             if (!isQuestPassable(clan, quest)) continue;
             if (isQuestCompleted(clan, quest)) continue;
             if (quest.questType() != type) continue;
@@ -72,7 +73,7 @@ public record QuestManager(TreexClans plugin) {
                 if (!property.equals(quest.questProperty())) continue;
             }
 
-            if (getProgress(clan, quest)+progress >= quest.target()) {
+            if (getProgress(clan, quest) + progress >= quest.target()) {
                 ActionContext ctx = new ActionContext(player);
                 ctx.put("clan", clan);
                 ActionExecutor.execute(ctx, quest.rewards());
@@ -86,7 +87,7 @@ public record QuestManager(TreexClans plugin) {
 
     }
 
-    public void addProgress(Player player, Clan clan, Quest quest, @Nullable String property, int progress) {
+    public void addProgressViaChecks(Player player, Clan clan, Quest quest, @Nullable String property, int progress) {
         if (clan == null) return;
         if (property != null) {
             if (!property.equals(quest.questProperty())) return;

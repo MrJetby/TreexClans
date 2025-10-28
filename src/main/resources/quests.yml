@@ -11,17 +11,27 @@ quest1:
   # BLOCK_BREAK;BLOCK_TYPE (example: BLOCK_BREAK;DIAMOND_ORE)
   # BLOCK_PLACE;BLOCK_TYPE (example: BLOCK_PLACE;OAK_LOG)
   type: PLAYER_KILL
+  # Если global - то прогресс будет выполнен всем одинаково и rewards будет выполнен для всех
+  # Если individual - то прогресс будет индивидуальным и rewards будет выполнен только для завершившего квест
+  progress: global
   target: 10
   name: "Киллер"
   description: "Выполните 10 убийств игроков"
   disabled-worlds:
     - duel-1
     - duel-2
+  # Работает только если progress стоит на global
+  global-rewards:
+    - "[clan_coin_add] 5" # Коины
   rewards:
     - "[money_add] 1000"
-    - "[clan_coin_add] 5" # Коины
-    - "[clan_exp_add] 100" # Опыт клана
-    - "[message] &aВы выполнили квест &eКиллер &aи получили &a1000 монет &aи &a5 коинов! &7(+&a100 опыта&7)"
+    - "[message] {prefix} &7Ваш клан выполнил квест &e{name}&7, поэтому вы все получают награду."
+    - "[message] &6&m                    "
+    - "[message] {prefix} &aНаграды:"
+    - "[message] {prefix} &a+ 5 клан коинов"
+    - "[message] {prefix} &a+ 100 опыта"
+    - "[message] {prefix} &a+ 1000 монет"
+    - "[message] &6&m                    "
 
 
 quest2:

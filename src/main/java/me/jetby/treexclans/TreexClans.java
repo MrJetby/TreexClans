@@ -127,11 +127,13 @@ public final class TreexClans extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new QuestsListeners(this), this);
 
     }
-
     @Override
     public void onDisable() {
         if (storage != null) storage.save();
+        disableGlowForAll();
+    }
 
+    private void disableGlowForAll() {
         for (Clan clan : cfg.getClans().values()) {
             Set<Member> members = new HashSet<>(clan.getMembers());
             members.add(clan.getLeader());

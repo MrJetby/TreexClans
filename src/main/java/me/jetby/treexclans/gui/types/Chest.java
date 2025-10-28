@@ -1,18 +1,22 @@
 package me.jetby.treexclans.gui.types;
 
 import com.jodexindustries.jguiwrapper.api.item.ItemWrapper;
+import com.jodexindustries.jguiwrapper.gui.advanced.GuiItemController;
 import lombok.Getter;
 import me.jetby.treex.actions.ActionContext;
 import me.jetby.treex.actions.ActionExecutor;
 import me.jetby.treex.actions.ActionRegistry;
+import me.jetby.treex.text.Colorize;
 import me.jetby.treex.text.Papi;
 import me.jetby.treexclans.TreexClans;
+import me.jetby.treexclans.clan.Clan;
+import me.jetby.treexclans.clan.Member;
 import me.jetby.treexclans.gui.*;
 import me.jetby.treexclans.gui.requirements.ClickRequirement;
 import me.jetby.treexclans.gui.requirements.Requirements;
 import me.jetby.treexclans.gui.requirements.ViewRequirement;
-import me.jetby.treexclans.clan.Clan;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.ClickType;
@@ -23,51 +27,67 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static me.jetby.treexclans.TreexClans.NAMESPACED_KEY;
 
-public class Default extends TGui {
+public class Chest extends TGui {
     private final List<Integer> freeSlots = new ArrayList<>();
 
     private final Menu menu;
     private final Player player;
-    private final Inventory inventory;
     private final Clan clan;
 
-    public Default(TreexClans plugin, Menu menu, Player player, Clan clan) {
+    public Chest(TreexClans plugin, Menu menu, Player player, Clan clan) {
         super(plugin, menu, player, clan);
         this.menu = menu;
         this.player = player;
-        this.inventory = holder().getInventory();
         this.clan = clan;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
 
         size(menu.size());
         type(menu.inventoryType());
+        title(Papi.setPapi(player, menu.title()));
 
+        onDrag(event -> event.setCancelled(true));
 
-        registerButtons();
+        registerStaticButtons();
 
-        onDrag(event -> {
-            int topSize = inventory.getSize();
-            for (int rawSlot : event.getRawSlots()) {
-                if (rawSlot >= topSize) continue;
+        setupItemsPagination();
 
-                if (!freeSlots.contains(rawSlot)) {
-                    event.setCancelled(true);
-                    return;
-                }
-            }
-            event.setCancelled(false);
-        });
-
+        openPage(0);
     }
 
-    private void registerButtons() {
-        freeSlots.clear();
-
+    private void registerStaticButtons() {
         Map<Integer, List<Button>> buttonsBySlot = new HashMap<>();
         for (Button button : menu.buttons()) {
+            switch (button.type().toLowerCase()) {
+                case "members":
+                    continue;
+                case "next_page": {
+                    ItemWrapper item = new ItemWrapper(button.itemStack());
+                    item.enchanted(button.enchanted());
+                    registerItem("next_page", b -> b.slots(button.slot())
+                            .defaultItem(item)
+                            .defaultClickHandler((e, gui) -> {
+                                e.setCancelled(true);
+                                nextPage();
+                            }));
+                    continue;
+                }
+                case "prev_page": {
+                    ItemWrapper item = new ItemWrapper(button.itemStack());
+                    item.enchanted(button.enchanted());
+                    registerItem("prev_page", b -> b.slots(button.slot())
+                            .defaultItem(item)
+                            .defaultClickHandler((e, gui) -> {
+                                e.setCancelled(true);
+                                previousPage();
+                            }));
+                    continue;
+                }
+            }
             buttonsBySlot.computeIfAbsent(button.slot(), k -> new ArrayList<>()).add(button);
         }
 
@@ -105,7 +125,6 @@ public class Default extends TGui {
                     anyFreeSlot = true;
                 }
             }
-
             if (selectedButton == null && anyFreeSlot) {
                 freeSlots.add(slot);
                 registerItem("free_slot_" + slot, builder -> {
@@ -119,40 +138,37 @@ public class Default extends TGui {
 
             if (selectedButton != null) {
                 Button finalSelectedButton = selectedButton;
-                registerItem(selectedButton.id() + selectedButton.slot(), builder -> {
+                registerItem(finalSelectedButton.id() + finalSelectedButton.slot(), builder -> {
                     builder.slots(finalSelectedButton.slot());
 
-                    boolean isFreeSlot = finalSelectedButton.freeSlot();
-                    if (!isFreeSlot) {
-                        for (ViewRequirement requirement : finalSelectedButton.viewRequirements()) {
-                            boolean passed = Requirements.check(player, requirement);
-                            if (!passed && requirement.freeSlot()) {
-                                isFreeSlot = true;
-                                break;
-                            }
-                        }
-                    }
+                    ItemStack itemStack;
+                    ItemWrapper wrapper;
 
-                    if (isFreeSlot) {
-                        freeSlots.add(finalSelectedButton.slot());
-                        builder.defaultClickHandler((event, controller) -> {
-                            event.setCancelled(false);
-                        });
-                        return;
-                    }
 
-                    ItemStack itemStack = finalSelectedButton.itemStack().clone();
-                    ItemWrapper wrapper = new ItemWrapper(itemStack);
+                        itemStack = finalSelectedButton.itemStack().clone();
+                        wrapper = new ItemWrapper(itemStack);
 
-                    wrapper.displayName(Papi.setPapi(player, finalSelectedButton.displayName()));
-                    wrapper.lore(Papi.setPapi(player, finalSelectedButton.lore()));
+                        String rawDisplayName = finalSelectedButton.displayName();
+                        String processedDisplayName = Papi.setPapi(player, rawDisplayName);
+                        wrapper.displayName(Colorize.text(processedDisplayName));
+
+                        List<String> rawLore = finalSelectedButton.lore();
+                        List<String> processedLore = rawLore.stream()
+                                .map(l -> Papi.setPapi(player, l))
+                                .map(Colorize::text)
+                                .collect(Collectors.toList());
+                        wrapper.lore(processedLore);
+
+
                     wrapper.customModelData(finalSelectedButton.customModelData());
                     wrapper.enchanted(finalSelectedButton.enchanted());
                     wrapper.update();
 
                     ItemMeta itemMeta = itemStack.getItemMeta();
-                    itemMeta.getPersistentDataContainer().set(NAMESPACED_KEY, PersistentDataType.STRING, "menu_item");
-                    itemStack.setItemMeta(itemMeta);
+                    if (itemMeta!=null) {
+                        itemMeta.getPersistentDataContainer().set(NAMESPACED_KEY, PersistentDataType.STRING, "menu_item");
+                        itemStack.setItemMeta(itemMeta);
+                    }
 
                     builder.defaultItem(wrapper);
 
@@ -189,18 +205,69 @@ public class Default extends TGui {
         }
     }
 
+    private void setupItemsPagination() {
+        List<Button> itemButtons = menu.buttons().stream()
+                .filter(b -> "item".equals(b.type()))
+                .toList();
+
+        if (itemButtons.isEmpty()) return;
+
+        List<Integer> itemSlots = itemButtons.stream()
+                .map(Button::slot)
+                .sorted()
+                .toList();
+
+        int itemsPerPage = itemSlots.size();
+
+        List<ItemStack> items = clan.getChest();
+
+        int totalPages = (int) Math.ceil((double) items.size() / itemsPerPage);
+
+
+        for (int page = 0; page < totalPages; page++) {
+            int start = page * itemsPerPage;
+            int end = Math.min(start + itemsPerPage, items.size());
+
+            Consumer<GuiItemController.Builder>[] consumers = new Consumer[itemsPerPage];
+
+            for (int i = 0; i < itemsPerPage; i++) {
+                int itemIndex = start + i;
+                int slot = itemSlots.get(i);
+
+                if (itemIndex >= end) {
+                    consumers[i] = builder -> {
+                        builder.slots(slot);
+                        builder.defaultItem(ItemWrapper.builder(Material.BARRIER).build());
+                        builder.defaultClickHandler((event, ctrl) -> event.setCancelled(true));
+                    };
+                    continue;
+                }
+
+
+                consumers[i] = builder -> {
+                    builder.slots(slot);
+                    builder.defaultItem(new ItemWrapper(items.get(itemIndex)));
+                    builder.defaultClickHandler((event, ctrl) -> event.setCancelled(false));
+                };
+            }
+
+            addPage(consumers);
+        }
+    }
+
+
 
 
     @EventHandler
     public void click(InventoryClickEvent e) {
-        if (!(e.getWhoClicked( ) instanceof Player p)) return;
+        if (!(e.getWhoClicked() instanceof Player p)) return;
 
-        Inventory topInventory = p.getOpenInventory( ).getTopInventory( );
-        Inventory clickedInv = e.getClickedInventory( );
-        int rawSlot = e.getRawSlot( );
-        ClickType click = e.getClick( );
+        Inventory topInventory = p.getOpenInventory().getTopInventory();
+        Inventory clickedInv = e.getClickedInventory();
+        int rawSlot = e.getRawSlot();
+        ClickType click = e.getClick();
 
-        if (inventory == null || !inventory.equals(topInventory)) return;
+        if (!holder().getInventory().equals(topInventory)) return;
 
         if (clickedInv != null && clickedInv.equals(topInventory)) {
             if (!freeSlots.contains(rawSlot)) {
@@ -213,24 +280,24 @@ public class Default extends TGui {
         }
 
         if ((click == ClickType.SHIFT_LEFT || click == ClickType.SHIFT_RIGHT)
-                && (clickedInv == null || clickedInv.equals(p.getInventory( )))) {
+                && (clickedInv == null || clickedInv.equals(p.getInventory()))) {
             e.setCancelled(true);
 
-            ItemStack clicked = e.getCurrentItem( );
-            if (clicked == null || clicked.getType( ).isAir( )) {
+            ItemStack clicked = e.getCurrentItem();
+            if (clicked == null || clicked.getType().isAir()) {
                 return;
             }
 
-            int remaining = clicked.getAmount( );
+            int remaining = clicked.getAmount();
 
             for (int slot : freeSlots) {
-                ItemStack slotItem = inventory.getItem(slot);
+                ItemStack slotItem = holder().getInventory().getItem(slot);
 
-                if (slotItem == null || slotItem.getType( ).isAir( )) {
-                    ItemStack toPut = clicked.clone( );
-                    int putAmount = Math.min(remaining, toPut.getMaxStackSize( ));
+                if (slotItem == null || slotItem.getType().isAir()) {
+                    ItemStack toPut = clicked.clone();
+                    int putAmount = Math.min(remaining, toPut.getMaxStackSize());
                     toPut.setAmount(putAmount);
-                    inventory.setItem(slot, toPut);
+                    holder().getInventory().setItem(slot, toPut);
                     remaining -= putAmount;
                     if (remaining <= 0) {
                         e.setCurrentItem(null);
@@ -240,11 +307,11 @@ public class Default extends TGui {
                     }
                 }
 
-                if (slotItem.isSimilar(clicked) && slotItem.getAmount( ) < slotItem.getMaxStackSize( )) {
-                    int space = slotItem.getMaxStackSize( ) - slotItem.getAmount( );
+                if (slotItem.isSimilar(clicked) && slotItem.getAmount() < slotItem.getMaxStackSize()) {
+                    int space = slotItem.getMaxStackSize() - slotItem.getAmount();
                     int toAdd = Math.min(space, remaining);
-                    slotItem.setAmount(slotItem.getAmount( ) + toAdd);
-                    inventory.setItem(slot, slotItem);
+                    slotItem.setAmount(slotItem.getAmount() + toAdd);
+                    holder().getInventory().setItem(slot, slotItem);
                     remaining -= toAdd;
                     if (remaining <= 0) {
                         e.setCurrentItem(null);
@@ -254,7 +321,7 @@ public class Default extends TGui {
             }
 
             if (remaining > 0) {
-                ItemStack left = clicked.clone( );
+                ItemStack left = clicked.clone();
                 left.setAmount(remaining);
                 e.setCurrentItem(left);
             } else {
@@ -264,7 +331,7 @@ public class Default extends TGui {
             return;
         }
 
-        if (rawSlot < inventory.getSize( ) && !freeSlots.contains(rawSlot)) {
+        if (rawSlot < holder().getInventory().getSize() && !freeSlots.contains(rawSlot)) {
             e.setCancelled(true);
             return;
         }
@@ -272,7 +339,6 @@ public class Default extends TGui {
 
     @Override
     public GuiType guiType() {
-        return GuiType.DEFAULT;
+        return GuiType.MEMBERS;
     }
-
 }

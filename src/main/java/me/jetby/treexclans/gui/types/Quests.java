@@ -46,6 +46,7 @@ public class Quests extends TGui {
         this.player = player;
         this.clan = clan;
         this.plugin = plugin;
+
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
 
         size(menu.size());
@@ -102,16 +103,22 @@ public class Quests extends TGui {
             slotButtons.sort(Comparator.comparingInt(Button::priority).reversed());
 
             Button selectedButton = null;
+            boolean anyFreeSlot = false;
 
             for (Button button : slotButtons) {
                 boolean visible = true;
+                boolean freeSlotFromRequirements = false;
 
                 if (!button.viewRequirements().isEmpty()) {
                     for (ViewRequirement requirement : button.viewRequirements()) {
                         boolean passed = Requirements.check(player, requirement);
                         if (!passed) {
-                            visible = false;
-                            break;
+                            if (requirement.freeSlot()) {
+                                freeSlotFromRequirements = true;
+                            } else {
+                                visible = false;
+                                break;
+                            }
                         }
                     }
                 }
@@ -119,9 +126,21 @@ public class Quests extends TGui {
                 if (visible) {
                     selectedButton = button;
                     break;
+                } else if (freeSlotFromRequirements) {
+                    anyFreeSlot = true;
                 }
             }
 
+            if (selectedButton == null && anyFreeSlot) {
+                freeSlots.add(slot);
+                registerItem("free_slot_" + slot, builder -> {
+                    builder.slots(slot);
+                    builder.defaultClickHandler((event, controller) -> {
+                        event.setCancelled(false);
+                    });
+                });
+                continue;
+            }
             if (selectedButton != null) {
                 Button finalSelectedButton = selectedButton;
                 registerItem(finalSelectedButton.id() + finalSelectedButton.slot(), builder -> {
@@ -185,27 +204,26 @@ public class Quests extends TGui {
     }
 
     private void setupQuestsPagination() {
-        Optional<Button> questButtonOpt = menu.buttons().stream().filter(b -> b.type().equals("all_quests") || b.type().startsWith("category-")).findFirst();
-        if (questButtonOpt.isEmpty()) return;
-        Button questButton = questButtonOpt.get();
-        List<Integer> questSlots = questButtonOpt.map(Button::slot).stream().toList();
+        List<Button> questButtons = menu.buttons().stream()
+                .filter(b -> b.type().equals("all_quests") || b.type().startsWith("category-"))
+                .toList();
+        if (questButtons.isEmpty()) return;
+        List<Integer> questSlots = questButtons.stream()
+                .map(Button::slot)
+                .toList();
+        Button questButton = questButtons.get(0);
         int itemsPerPage = questSlots.size();
-        QuestManager qm = plugin.getQuestManager();
-        List<Quest> questsList;
+        List<Quest> questsList = new ArrayList<>();
         if ("all_quests".equals(questButton.type())) {
-            questsList = new ArrayList<>();
-            for (Set<Quest> catQuests : plugin.getQuestsLoader().getCategories().values()) {
-                for (Quest q : catQuests) {
-                    if (!qm.isQuestCompleted(clan, q) && qm.isQuestPassable(clan, q)) {
-                        questsList.add(q);
-                    }
-                }
+            for (Set<Quest> quests : plugin.getQuestsLoader().getCategories().values()) {
+                questsList.addAll(quests);
             }
+
         } else {
             String catId = questButton.type().substring(9);
             Set<Quest> cat = plugin.getQuestsLoader().getCategories().get(catId);
             if (cat == null) return;
-            questsList = cat.stream().filter(q -> !qm.isQuestCompleted(clan, q) && qm.isQuestPassable(clan, q)).toList();
+            questsList = cat.stream().toList();
         }
         int totalPages = (int) Math.ceil((double) questsList.size() / itemsPerPage);
         for (int page = 0; page < totalPages; page++) {
@@ -255,6 +273,7 @@ public class Quests extends TGui {
 
     private String replaceQuestPlaceholders(String text, Quest quest, Clan clan) {
         int progress = plugin.getQuestManager().getProgress(clan, quest);
+        text = text.replace("%status%", status(quest));
         text = text.replace("%quest_name%", quest.name());
         text = text.replace("%quest_description%", quest.description());
         text = text.replace("%quest_progress%", String.valueOf(progress));
@@ -262,6 +281,13 @@ public class Quests extends TGui {
         return text;
     }
 
+    private String status(Quest quest) {
+        if (plugin.getQuestManager().isQuestCompleted(clan, quest)) {
+            return plugin.getLang().getMessage("quest-status-completed");
+        } else {
+            return plugin.getLang().getMessage("quest-status-uncompleted");
+        }
+    }
     @EventHandler
     public void click(InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player p)) return;

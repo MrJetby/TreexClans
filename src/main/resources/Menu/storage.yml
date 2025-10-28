@@ -1,0 +1,21 @@
+id: storage
+title: "&0&lClan storage"
+size: 27
+open_permission: none
+open_args:
+  - 'storage'
+  - 'chest'
+
+listen: chest
+# Available types
+# all_quests
+# category-<id>
+Items:
+
+
+  free-slots:
+    slot:
+      - 10-16
+    material: BOOK
+    free-slot: true
+    type: chest

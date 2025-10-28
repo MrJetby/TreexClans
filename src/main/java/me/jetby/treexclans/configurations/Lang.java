@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.jetby.treex.actions.ActionContext;
 import me.jetby.treex.actions.ActionExecutor;
 import me.jetby.treex.actions.ActionRegistry;
+import me.jetby.treex.text.Colorize;
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.clan.Clan;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -95,6 +96,9 @@ public class Lang {
         ActionExecutor.execute(ctx, ActionRegistry.transform(actions));
     }
 
+    public String getMessage(String path) {
+        return Colorize.text(config.getString(path, path));
+    }
     public List<String> getMessageList(String path) {
         return config.getStringList(path);
     }

@@ -12,6 +12,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
@@ -88,7 +89,7 @@ public class YAML implements Storage {
             }
 
             Location base = LocationHandler.deserialize(clan.getString("base-location"));
-
+            Map<String, ItemStack> chest = new HashMap<>();
             Map<String, Integer> questsProgress = new HashMap<>();
             ConfigurationSection progress = clan.getConfigurationSection("quests-progress");
             if (progress != null) {
@@ -100,8 +101,8 @@ public class YAML implements Storage {
             List<String> completedQuests = new ArrayList<>(clan.getStringList("quests-completed"));
 
 
-            plugin.getCfg().getClans().put(clanId, new Clan(clanId, prefix, leader, memberSet, ranks, new ArrayList<>(),
-                    new Level(Integer.parseInt(level)), balance, base, clanExp, pvp, questsProgress, completedQuests));
+            plugin.getCfg().getClans().put(clanId, new Clan(clanId, prefix, leader, memberSet, ranks,
+                    new Level(Integer.parseInt(level), 0, 0,30, new ArrayList<>()), balance, base, clanExp, pvp, questsProgress, completedQuests, new ArrayList<>()));
         }
     }
 

@@ -89,8 +89,8 @@ public record ClanManager(TreexClans plugin) implements Listener {
      */
     public boolean createClan(@NotNull String clanName, @NotNull Member leader) {
         if (!clanExists(clanName)) {
-            Clan clan = new Clan(clanName, null, leader, new HashSet<>(), plugin.getCfg().getDefaultRanks(), new ArrayList<>(),
-                    new Level(1), 0.0, null, 0, false, new HashMap<>(), new ArrayList<>());
+            Clan clan = new Clan(clanName, null, leader, new HashSet<>(), plugin.getCfg().getDefaultRanks(),
+                    new Level(1, 0, 0, 1, new ArrayList<>()), 0.0, null, 0, false, new HashMap<>(), new ArrayList<>(), new ArrayList<>());
             plugin.getCfg().getClans().put(clanName, clan);
             return true;
         }
