@@ -41,13 +41,13 @@ public class CommandRegistrar extends BukkitCommand implements CommandExecutor {
             return true;
         }
 
-        GuiFactory.create(plugin, plugin.getMenuLoader().getMenus().get(menuId), player, clan).open(player);
+        GuiFactory.create(plugin, plugin.getMenuGuiLoader().getMenus().get(menuId), player, clan).open(player);
         return true;
     }
 
     public static void createCommands(TreexClans plugin) {
         Map<String, List<String>> commands = new HashMap<>();
-        plugin.getMenuLoader().getMenus().forEach((key, item) -> commands.put(key, item.openCommands()));
+        plugin.getMenuGuiLoader().getMenus().forEach((key, item) -> commands.put(key, item.openCommands()));
 
         for (String menuId : commands.keySet()) {
             for (String command : commands.get(menuId)) {

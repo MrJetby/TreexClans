@@ -17,7 +17,7 @@ import me.jetby.treexclans.configurations.QuestsLoader;
 import me.jetby.treexclans.functions.glow.Glow;
 import me.jetby.treexclans.functions.quests.QuestManager;
 import me.jetby.treexclans.gui.CommandRegistrar;
-import me.jetby.treexclans.gui.Loader;
+import me.jetby.treexclans.gui.GuiLoader;
 import me.jetby.treexclans.listeners.ClanListeners;
 import me.jetby.treexclans.listeners.QuestsListeners;
 import me.jetby.treexclans.storage.Storage;
@@ -58,7 +58,7 @@ public final class TreexClans extends JavaPlugin {
     public static Logger LOGGER;
     public static final NamespacedKey NAMESPACED_KEY = new NamespacedKey("treexclans", "item");
 
-    private Loader menuLoader;
+    private GuiLoader menuGuiLoader;
 
     private QuestsLoader questsLoader;
     private QuestManager questManager;
@@ -97,8 +97,8 @@ public final class TreexClans extends JavaPlugin {
         clanManager = new ClanManager(this);
 
         JGuiInitializer.init(this, false);
-        menuLoader = new Loader(this, getDataFolder());
-        menuLoader.load();
+        menuGuiLoader = new GuiLoader(this, getDataFolder());
+        menuGuiLoader.load();
         CommandRegistrar.createCommands(this);
 
         PluginCommand xClanCommand = this.getCommand("xclan");

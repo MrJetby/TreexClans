@@ -5,7 +5,7 @@ import org.bukkit.event.inventory.ClickType;
 
 import java.util.List;
 
-public record Command(
+public record ButtonCommand(
         boolean anyClick,
         ClickType clickType,
         List<String> actions,

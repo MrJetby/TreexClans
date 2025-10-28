@@ -27,7 +27,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
 
     public ClanCommand(TreexClans plugin) {
         this.plugin = plugin;
-        plugin.getMenuLoader().getMenus().forEach((key, item) -> menuArgs.put(key, item.openArgs()));
+        plugin.getMenuGuiLoader().getMenus().forEach((key, item) -> menuArgs.put(key, item.openArgs()));
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
                 Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
                 for (Map.Entry<String, List<String>> entry : menuArgs.entrySet()) {
                     if (entry.getValue().contains(args[0])) {
-                        GuiFactory.create(plugin, plugin.getMenuLoader().getMenus().get(entry.getKey()), player, clan).open(player);
+                        GuiFactory.create(plugin, plugin.getMenuGuiLoader().getMenus().get(entry.getKey()), player, clan).open(player);
                         return true;
                     }
                 }
@@ -82,8 +82,8 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
 
             for (Map.Entry<String, List<String>> entry : menuArgs.entrySet()) {
                 if (entry.getValue().contains(args[0])) {
-                    Menu menu = plugin.getMenuLoader().getMenus().get(entry.getKey());
-                    if (menu.type() == GuiType.DEFAULT) {
+                    Menu menu = plugin.getMenuGuiLoader().getMenus().get(entry.getKey());
+                    if (GuiType.valueOf(menu.type()) == GuiType.DEFAULT) {
                         if (player.hasPermission(menu.permission())) {
                             completions.addAll(entry.getValue());
                         }
@@ -119,8 +119,8 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
             completions.remove("accept");
             completions.remove("setrank");
             for (Map.Entry<String, List<String>> entry : menuArgs.entrySet()) {
-                Menu menu = plugin.getMenuLoader().getMenus().get(entry.getKey());
-                if (menu.type() != GuiType.DEFAULT && player.hasPermission(menu.permission())) {
+                Menu menu = plugin.getMenuGuiLoader().getMenus().get(entry.getKey());
+                if (GuiType.valueOf(menu.type()) != GuiType.DEFAULT && player.hasPermission(menu.permission())) {
                     completions.addAll(entry.getValue().stream()
                             .filter(str -> str.toLowerCase().startsWith(args[0].toLowerCase()))
                             .toList());

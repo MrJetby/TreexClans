@@ -78,8 +78,7 @@ you-haven-not-enough-money:
   - "[message] {prefix} &cУ вас недостаточно средств!"
 pvp-disabled:
   # Если вам не нужно это сообщение то просто оставьте эту строку пустым pvp-disabled: {}
-  - "[message] {prefix} &7Вы не можете ударить соклановца так как в вашем клане отключён pvp"
-
+  - "[actionbar] &cPvP против со-клана отключено"
 
 you-cant-do-that-with-leader:
   - "[message] {prefix} &cВы не можете выполнить данное действие против лидера клана"

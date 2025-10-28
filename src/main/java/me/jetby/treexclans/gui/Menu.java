@@ -7,7 +7,7 @@ import java.util.List;
 public record Menu(
     String id,
     String title,
-    GuiType type,
+    String type,
     int size,
     InventoryType inventoryType,
     String permission,

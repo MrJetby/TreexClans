@@ -4,6 +4,8 @@ import me.jetby.treex.actions.ActionContext;
 import me.jetby.treex.actions.ActionExecutor;
 import me.jetby.treex.actions.ActionRegistry;
 import me.jetby.treex.text.Colorize;
+import me.jetby.treexclans.api.events.OnClanCreate;
+import me.jetby.treexclans.api.events.OnClanDelete;
 import me.jetby.treexclans.clan.Clan;
 import me.jetby.treexclans.clan.Level;
 import me.jetby.treexclans.clan.Member;
@@ -75,6 +77,7 @@ public record ClanManager(TreexClans plugin) implements Listener {
     public boolean createClan(@NotNull String clanName, @NotNull Clan clan) {
         if (!clanExists(clanName)) {
             plugin.getCfg().getClans().put(clanName, clan);
+            Bukkit.getPluginManager().callEvent(new OnClanCreate(clan));
             return true;
         }
         return false;
@@ -92,6 +95,7 @@ public record ClanManager(TreexClans plugin) implements Listener {
             Clan clan = new Clan(clanName, null, leader, new HashSet<>(), plugin.getCfg().getDefaultRanks(),
                     new Level(1, 0, 0, 1, new ArrayList<>()), 0.0, null, 0, false, new HashMap<>(), new ArrayList<>(), new ArrayList<>());
             plugin.getCfg().getClans().put(clanName, clan);
+            Bukkit.getPluginManager().callEvent(new OnClanCreate(clan));
             return true;
         }
         return false;
@@ -135,6 +139,7 @@ public record ClanManager(TreexClans plugin) implements Listener {
 //            }
 //        }
         plugin.getCfg().getClans().remove(clan.getId());
+        Bukkit.getPluginManager().callEvent(new OnClanDelete(clan));
     }
 
     public boolean deleteClan(@NotNull String clanName) {
@@ -149,6 +154,7 @@ public record ClanManager(TreexClans plugin) implements Listener {
             }
         }
         plugin.getCfg().getClans().remove(clan.getId());
+        Bukkit.getPluginManager().callEvent(new OnClanDelete(clan));
         return true;
     }
 

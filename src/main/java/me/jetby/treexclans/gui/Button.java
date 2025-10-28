@@ -18,7 +18,7 @@ public record Button(
         boolean freeSlot,
         ItemStack itemStack,
         List<ViewRequirement> viewRequirements,
-        List<Command> commands,
+        List<ButtonCommand> buttonCommands,
         int priority,
         String type
 

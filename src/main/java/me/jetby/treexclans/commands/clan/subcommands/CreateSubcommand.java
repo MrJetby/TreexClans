@@ -2,7 +2,7 @@ package me.jetby.treexclans.commands.clan.subcommands;
 
 import me.jetby.treexclans.ClanManager;
 import me.jetby.treexclans.TreexClans;
-import me.jetby.treexclans.api.OnClanCreate;
+import me.jetby.treexclans.api.events.OnClanCreate;
 import me.jetby.treexclans.commands.Subcommand;
 import me.jetby.treexclans.configurations.Lang;
 import me.jetby.treexclans.clan.Clan;
@@ -54,7 +54,6 @@ public class CreateSubcommand implements Subcommand {
 
                 if (clanManager.createClan(clanName, leader)) {
                     Clan clan = plugin.getClanManager().getClan(clanName);
-                    Bukkit.getPluginManager().callEvent(new OnClanCreate(clan));
                     plugin.getLang().sendMessage(player, clan, "clan-create", new Lang.ReplaceString("{clan}", clanName));
                 }
             }

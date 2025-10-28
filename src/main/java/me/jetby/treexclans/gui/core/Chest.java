@@ -1,22 +1,17 @@
-package me.jetby.treexclans.gui.types;
+package me.jetby.treexclans.gui.core;
 
 import com.jodexindustries.jguiwrapper.api.item.ItemWrapper;
 import com.jodexindustries.jguiwrapper.gui.advanced.GuiItemController;
-import me.jetby.treex.actions.ActionContext;
-import me.jetby.treex.actions.ActionExecutor;
-import me.jetby.treex.actions.ActionRegistry;
 import me.jetby.treex.text.Colorize;
 import me.jetby.treex.text.Papi;
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.clan.Clan;
-import me.jetby.treexclans.gui.*;
-import me.jetby.treexclans.gui.requirements.ClickRequirement;
-import me.jetby.treexclans.gui.requirements.Requirements;
-import me.jetby.treexclans.gui.requirements.ViewRequirement;
+import me.jetby.treexclans.gui.Button;
+import me.jetby.treexclans.gui.Menu;
+import me.jetby.treexclans.gui.Gui;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -24,42 +19,22 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static me.jetby.treexclans.TreexClans.NAMESPACED_KEY;
 
-public class Chest extends TGui {
+public class Chest extends Gui {
     private static final Map<String, Set<Chest>> ACTIVE_CHESTS = new HashMap<>();
-
-    private final TreexClans plugin;
-    private final Menu menu;
-    private final Player player;
-    private final Clan clan;
-
     private final Map<Integer, Integer> slotToGlobalIndex = new HashMap<>();
-
     private int currentPage = 0;
     private BukkitTask autoSaveTask;
     private boolean isInitialized = false;
 
-    public Chest(TreexClans plugin, Menu menu, Player player, Clan clan) {
+    public Chest(TreexClans plugin, @Nullable Menu menu, Player player, Clan clan) {
         super(plugin, menu, player, clan);
-        this.plugin = plugin;
-        this.menu = menu;
-        this.player = player;
-        this.clan = clan;
-
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
-
-        size(menu.size());
-        type(menu.inventoryType());
-        title(Papi.setPapi(player, menu.title()));
-
-        onDrag(event -> event.setCancelled(true));
-
         onClose(event -> {
             if (autoSaveTask != null) {
                 autoSaveTask.cancel();
@@ -69,7 +44,6 @@ public class Chest extends TGui {
         });
 
         registerToActiveChests();
-        registerStaticButtons();
         setupItemsPages();
 
         autoSaveTask = Bukkit.getScheduler().runTaskTimer(plugin, this::saveToCloudData, 100L, 100L);
@@ -79,157 +53,26 @@ public class Chest extends TGui {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             loadPageFromCloudData();
             isInitialized = true;
-        }, 3L);
+        }, 1L);
+
     }
 
     private void registerToActiveChests() {
-        ACTIVE_CHESTS.computeIfAbsent(clan.getId(), k -> new HashSet<>()).add(this);
+        ACTIVE_CHESTS.computeIfAbsent(getClan().getId(), k -> new HashSet<>()).add(this);
     }
 
     private void unregisterChest() {
-        Set<Chest> chests = ACTIVE_CHESTS.get(clan.getId());
+        Set<Chest> chests = ACTIVE_CHESTS.get(getClan().getId());
         if (chests != null) {
             chests.remove(this);
             if (chests.isEmpty()) {
-                ACTIVE_CHESTS.remove(clan.getId());
-            }
-        }
-    }
-
-    private void registerStaticButtons() {
-        Map<Integer, List<Button>> buttonsBySlot = new HashMap<>();
-
-        for (Button button : menu.buttons()) {
-            String type = button.type().toLowerCase();
-
-            if ("item".equals(type) || "chest".equals(type)) {
-                continue;
-            }
-
-            if ("next_page".equals(type)) {
-                registerItem("next_page", builder -> {
-                    builder.slots(button.slot());
-                    ItemWrapper wrapper = new ItemWrapper(button.itemStack().clone());
-                    wrapper.displayName(Colorize.text(Papi.setPapi(player, button.displayName())));
-                    wrapper.enchanted(button.enchanted());
-                    builder.defaultItem(wrapper);
-                    builder.defaultClickHandler((e, gui) -> {
-                        e.setCancelled(true);
-                        if (currentPage < getTotalPages() - 1) {
-                            saveToCloudData();
-                            currentPage++;
-                            nextPage();
-                            Bukkit.getScheduler().runTaskLater(plugin, this::loadPageFromCloudData, 1L);
-                        }
-                    });
-                });
-                continue;
-            }
-
-            if ("prev_page".equals(type)) {
-                registerItem("prev_page", builder -> {
-                    builder.slots(button.slot());
-                    ItemWrapper wrapper = new ItemWrapper(button.itemStack().clone());
-                    wrapper.displayName(Colorize.text(Papi.setPapi(player, button.displayName())));
-                    wrapper.enchanted(button.enchanted());
-                    builder.defaultItem(wrapper);
-                    builder.defaultClickHandler((e, gui) -> {
-                        e.setCancelled(true);
-                        if (currentPage > 0) {
-                            saveToCloudData();
-                            currentPage--;
-                            previousPage();
-                            Bukkit.getScheduler().runTaskLater(plugin, this::loadPageFromCloudData, 1L);
-                        }
-                    });
-                });
-                continue;
-            }
-
-            buttonsBySlot.computeIfAbsent(button.slot(), k -> new ArrayList<>()).add(button);
-        }
-
-        for (Map.Entry<Integer, List<Button>> entry : buttonsBySlot.entrySet()) {
-            int slot = entry.getKey();
-            List<Button> slotButtons = entry.getValue();
-
-            slotButtons.sort(Comparator.comparingInt(Button::priority).reversed());
-
-            Button selectedButton = null;
-            for (Button button : slotButtons) {
-                boolean visible = true;
-                if (!button.viewRequirements().isEmpty()) {
-                    for (ViewRequirement requirement : button.viewRequirements()) {
-                        if (!Requirements.check(player, requirement)) {
-                            visible = false;
-                            break;
-                        }
-                    }
-                }
-                if (visible) {
-                    selectedButton = button;
-                    break;
-                }
-            }
-
-            if (selectedButton != null) {
-                Button finalButton = selectedButton;
-                registerItem(finalButton.id() + "_" + slot, builder -> {
-                    builder.slots(slot);
-
-                    ItemStack itemStack = finalButton.itemStack().clone();
-                    ItemWrapper wrapper = new ItemWrapper(itemStack);
-                    wrapper.displayName(Colorize.text(Papi.setPapi(player, finalButton.displayName())));
-
-                    List<String> lore = finalButton.lore().stream()
-                            .map(l -> Colorize.text(Papi.setPapi(player, l)))
-                            .collect(Collectors.toList());
-                    wrapper.lore(lore);
-                    wrapper.customModelData(finalButton.customModelData());
-                    wrapper.enchanted(finalButton.enchanted());
-                    wrapper.update();
-
-                    ItemMeta meta = itemStack.getItemMeta();
-                    if (meta != null) {
-                        meta.getPersistentDataContainer().set(NAMESPACED_KEY, PersistentDataType.STRING, "static_button");
-                        itemStack.setItemMeta(meta);
-                    }
-
-                    builder.defaultItem(wrapper);
-                    builder.defaultClickHandler((event, controller) -> {
-                        event.setCancelled(true);
-
-                        ClickType clickType = event.getClick();
-                        for (Command cmd : finalButton.commands()) {
-                            if (cmd.clickType() == clickType || cmd.anyClick()) {
-                                boolean allPassed = true;
-
-                                for (ClickRequirement req : cmd.clickRequirements()) {
-                                    if (req.anyClick() || req.clickType() == clickType) {
-                                        if (!Requirements.check(player, req)) {
-                                            Requirements.runDenyCommands(player, req.deny_commands(), finalButton);
-                                            allPassed = false;
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                if (allPassed) {
-                                    ActionContext ctx = new ActionContext(player);
-                                    ctx.put("button", finalButton);
-                                    ActionExecutor.execute(ctx, ActionRegistry.transform(cmd.actions()));
-                                    break;
-                                }
-                            }
-                        }
-                    });
-                });
+                ACTIVE_CHESTS.remove(getClan().getId());
             }
         }
     }
 
     private void setupItemsPages() {
-        List<Button> itemButtons = menu.buttons().stream()
+        List<Button> itemButtons = getMenu().buttons().stream()
                 .filter(b -> "item".equals(b.type()) || "chest".equals(b.type()))
                 .toList();
 
@@ -242,7 +85,7 @@ public class Chest extends TGui {
                 .toList();
 
         int slotsPerPage = configSlots.size();
-        int maxChestSlots = clan.getLevel().chest();
+        int maxChestSlots = getClan().getLevel().chest();
         int totalPages = (int) Math.ceil((double) maxChestSlots / slotsPerPage);
         if (totalPages == 0) totalPages = 1;
 
@@ -289,15 +132,60 @@ public class Chest extends TGui {
         }
     }
 
+    @Override
+    protected void onRegister(Player player, Button button, GuiItemController.Builder builder) {
+        String type = button.type().toLowerCase();
+
+        if ("item".equals(type) || "chest".equals(type)) {
+            return;
+        }
+
+        if ("next_page".equals(type)) {
+            builder.slots(button.slot());
+            ItemWrapper wrapper = new ItemWrapper(button.itemStack().clone());
+            wrapper.displayName(Colorize.text(Papi.setPapi(player, button.displayName())));
+            wrapper.enchanted(button.enchanted());
+            builder.defaultItem(wrapper);
+            builder.defaultClickHandler((e, gui) -> {
+                e.setCancelled(true);
+                if (currentPage < getTotalPages() - 1) {
+                    saveToCloudData();
+                    currentPage++;
+                    nextPage();
+                    Bukkit.getScheduler().runTaskLater(getPlugin(), this::loadPageFromCloudData, 1L);
+                }
+            });
+            return;
+        }
+
+        if ("prev_page".equals(type)) {
+            builder.slots(button.slot());
+            ItemWrapper wrapper = new ItemWrapper(button.itemStack().clone());
+            wrapper.displayName(Colorize.text(Papi.setPapi(player, button.displayName())));
+            wrapper.enchanted(button.enchanted());
+            builder.defaultItem(wrapper);
+            builder.defaultClickHandler((e, gui) -> {
+                e.setCancelled(true);
+                if (currentPage > 0) {
+                    saveToCloudData();
+                    currentPage--;
+                    previousPage();
+                    Bukkit.getScheduler().runTaskLater(getPlugin(), this::loadPageFromCloudData, 1L);
+                }
+            });
+            return;
+        }
+    }
+
     private int getTotalPages() {
-        List<Button> itemButtons = menu.buttons().stream()
+        List<Button> itemButtons = getMenu().buttons().stream()
                 .filter(b -> "item".equals(b.type()) || "chest".equals(b.type()))
                 .toList();
 
         if (itemButtons.isEmpty()) return 1;
 
         int slotsPerPage = (int) itemButtons.stream().map(Button::slot).distinct().count();
-        int maxChestSlots = clan.getLevel().chest();
+        int maxChestSlots = getClan().getLevel().chest();
         return (int) Math.ceil((double) maxChestSlots / slotsPerPage);
     }
 
@@ -306,7 +194,7 @@ public class Chest extends TGui {
 
         Inventory inv = holder().getInventory();
 
-        List<ItemStack> chestData = clan.getChest();
+        List<ItemStack> chestData = getClan().getChest();
 
         updateSlotMapping();
 
@@ -348,7 +236,7 @@ public class Chest extends TGui {
     private void updateSlotMapping() {
         slotToGlobalIndex.clear();
 
-        List<Button> itemButtons = menu.buttons().stream()
+        List<Button> itemButtons = getMenu().buttons().stream()
                 .filter(b -> "item".equals(b.type()) || "chest".equals(b.type()))
                 .toList();
 
@@ -366,7 +254,7 @@ public class Chest extends TGui {
             int globalIndex = currentPage * slotsPerPage + i;
             int guiSlot = configSlots.get(i);
 
-            if (globalIndex < clan.getLevel().chest()) {
+            if (globalIndex < getClan().getLevel().chest()) {
                 slotToGlobalIndex.put(guiSlot, globalIndex);
             }
         }
@@ -375,7 +263,7 @@ public class Chest extends TGui {
     private void loadPageFromCloudData() {
         Inventory inv = holder().getInventory();
 
-        List<ItemStack> chestData = clan.getChest();
+        List<ItemStack> chestData = getClan().getChest();
 
         updateSlotMapping();
 
@@ -394,20 +282,28 @@ public class Chest extends TGui {
     }
 
     private void notifyOtherViewers() {
-        Set<Chest> chests = ACTIVE_CHESTS.get(clan.getId());
+        Set<Chest> chests = ACTIVE_CHESTS.get(getClan().getId());
         if (chests == null) return;
 
         for (Chest chest : chests) {
             if (chest != this && chest.currentPage == this.currentPage) {
-                Bukkit.getScheduler().runTask(plugin, chest::loadPageFromCloudData);
+                Bukkit.getScheduler().runTask(getPlugin(), chest::loadPageFromCloudData);
             }
         }
     }
 
-    @EventHandler
-    public void click(InventoryClickEvent e) {
+    @Override
+    protected boolean cancelRegistration(Player player, @Nullable Button button) {
+        if (button != null) {
+            return button.type().equals("item") || button.type().equals("chest");
+        }
+        return false;
+    }
+
+    @Override
+    public void onInventoryClickEvent(InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player p)) return;
-        if (!p.equals(player)) return;
+        if (!p.equals(getPlayer())) return;
 
         Inventory topInv = e.getView().getTopInventory();
         if (!topInv.equals(holder().getInventory())) return;
@@ -431,10 +327,10 @@ public class Chest extends TGui {
                 }
             }
 
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
                 saveToCloudData();
                 notifyOtherViewers();
-            }, 2L);
+            }, 1L);
             return;
         }
 
@@ -496,15 +392,11 @@ public class Chest extends TGui {
                 e.setCurrentItem(leftover);
             }
 
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
                 saveToCloudData();
                 notifyOtherViewers();
-            }, 2L);
+            }, 1L);
         }
     }
 
-    @Override
-    public GuiType guiType() {
-        return GuiType.CHEST;
-    }
 }

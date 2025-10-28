@@ -1,13 +1,23 @@
-package me.jetby.treexclans.api;
+package me.jetby.treexclans.api.events;
 
+import lombok.Getter;
+import me.jetby.treexclans.clan.Clan;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class OnClanDelete extends Event implements Cancellable {
+@Getter
+public class OnClanCreate extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled = false;
+
+    private final Clan clan;
+
+
+    public OnClanCreate(Clan clan) {
+        this.clan = clan;
+    }
 
     @Override
     public @NotNull HandlerList getHandlers() {

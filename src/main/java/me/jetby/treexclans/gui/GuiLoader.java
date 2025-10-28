@@ -25,12 +25,12 @@ import java.util.*;
 import static me.jetby.treexclans.TreexClans.LOGGER;
 
 @RequiredArgsConstructor
-public class Loader {
+public class GuiLoader {
 
     @Getter
     private final Map<String, Menu> menus = new HashMap<>();
     @Getter
-    private final Map<UUID, TGui> guis = new HashMap<>();
+    private final Map<UUID, Gui> guis = new HashMap<>();
 
     private final JavaPlugin plugin;
     private final File file;
@@ -83,7 +83,7 @@ public class Loader {
             FileConfiguration config = YamlConfiguration.loadConfiguration(file);
 
             String title = Colorize.text(config.getString("title"), true);
-            GuiType type = GuiType.valueOf(config.getString("listen", "default").toUpperCase());
+            String type = config.getString("listen", "default").toUpperCase();
             int size = config.getInt("size", 27);
             String permission = config.getString("open_permission");
             InventoryType inventoryType = InventoryType.valueOf(config.getString("inventory", "CHEST"));
@@ -159,42 +159,42 @@ public class Loader {
         return buttons;
     }
 
-    private List<Command> loadCommands(ConfigurationSection itemSection) {
-        List<Command> commands = new ArrayList<>( );
+    private List<ButtonCommand> loadCommands(ConfigurationSection itemSection) {
+        List<ButtonCommand> buttonCommands = new ArrayList<>( );
 
         if (itemSection.contains("left_click_commands")) {
 
-            commands.add(new Command(false, ClickType.LEFT, itemSection.getStringList("left_click_commands"),
+            buttonCommands.add(new ButtonCommand(false, ClickType.LEFT, itemSection.getStringList("left_click_commands"),
                     requirements(itemSection, "left_click_requirements", ClickType.LEFT, false)));
 
         }
         if (itemSection.contains("right_click_commands")) {
-            commands.add(new Command(false, ClickType.RIGHT, itemSection.getStringList("right_click_commands"),
+            buttonCommands.add(new ButtonCommand(false, ClickType.RIGHT, itemSection.getStringList("right_click_commands"),
                     requirements(itemSection, "right_click_requirements", ClickType.RIGHT, false)));
 
         }
         if (itemSection.contains("shift_left_click_commands")) {
 
-            commands.add(new Command(false, ClickType.SHIFT_LEFT, itemSection.getStringList("shift_left_click_commands"),
+            buttonCommands.add(new ButtonCommand(false, ClickType.SHIFT_LEFT, itemSection.getStringList("shift_left_click_commands"),
                     requirements(itemSection, "shift_left_click_requirements", ClickType.SHIFT_LEFT, false)));
 
         }
         if (itemSection.contains("shift_right_click_commands")) {
-            commands.add(new Command(false, ClickType.SHIFT_RIGHT, itemSection.getStringList("shift_right_click_commands"),
+            buttonCommands.add(new ButtonCommand(false, ClickType.SHIFT_RIGHT, itemSection.getStringList("shift_right_click_commands"),
                     requirements(itemSection, "shift_right_click_requirements", ClickType.SHIFT_RIGHT, false)));
 
         }
         if (itemSection.contains("click_commands")) {
-            commands.add(new Command(true, ClickType.UNKNOWN, itemSection.getStringList("click_commands"),
+            buttonCommands.add(new ButtonCommand(true, ClickType.UNKNOWN, itemSection.getStringList("click_commands"),
                     requirements(itemSection, "click_requirements", ClickType.UNKNOWN, true)));
 
         }
         if (itemSection.contains("drop_commands")) {
-            commands.add(new Command(false, ClickType.DROP, itemSection.getStringList("drop_commands"),
+            buttonCommands.add(new ButtonCommand(false, ClickType.DROP, itemSection.getStringList("drop_commands"),
                     requirements(itemSection, "drop_requirements", ClickType.DROP, false)));
         }
 
-        return commands;
+        return buttonCommands;
     }
 
     private List<ViewRequirement> requirements(ConfigurationSection itemSection, int slot) {
