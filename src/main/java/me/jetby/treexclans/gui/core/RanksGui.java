@@ -184,7 +184,7 @@ public class RanksGui extends Gui {
                 };
             }
 
-            if (consumers.length==0) return;
+            if (consumers[page]==null) continue;
             addPage(consumers);
         }
     }

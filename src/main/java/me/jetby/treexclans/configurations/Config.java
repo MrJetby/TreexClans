@@ -20,11 +20,16 @@ import java.util.*;
 public class Config {
     @Getter(AccessLevel.NONE)
     private final FileConfiguration configuration;
+    @Getter(AccessLevel.NONE)
     private final File file;
+    @Getter(AccessLevel.NONE)
     private final FileConfiguration language;
+    @Getter(AccessLevel.NONE)
     private final String lang;
+    @Getter(AccessLevel.NONE)
+    private final FileConfiguration level;
 
-    private final Set<Level> levels = new HashSet<>();
+    private final Map<Integer, Level> levels = new LinkedHashMap<>();
     private final Map<String, Clan> clans = new HashMap<>();
 
     private final Map<String, Rank> defaultRanks = new HashMap<>();
@@ -44,6 +49,7 @@ public class Config {
 
     public Config(TreexClans plugin) {
         this.configuration = FileLoader.getFileConfiguration("config.yml");
+        this.level = FileLoader.getFileConfiguration("levels.yml");
         this.file = FileLoader.getFile("config.yml");
 
         lang = configuration.getString("lang", "en");
@@ -124,6 +130,17 @@ public class Config {
             minTagLength = clanCreate.getInt("min-clan-tag-length", 3);
             maxTagLength = clanCreate.getInt("max-clan-tag-length", 6);
             blockedTags = clanCreate.getStringList("blocked-tags");
+        }
+
+        for (String id : level.getKeys(false)) {
+            ConfigurationSection lSection = level.getConfigurationSection(id);
+            if (lSection==null) continue;
+            int exp = lSection.getInt("exp", 0);
+            int chest = lSection.getInt("chest", 10);
+            int maxMembers = lSection.getInt("max-members", 1);
+            int maxBalance = lSection.getInt("max-balance", 0);
+            List<String> quests = lSection.getStringList("quests");
+            levels.put(Integer.parseInt(id), new Level(Integer.parseInt(id), exp, chest, maxMembers, maxBalance, quests));
         }
 
         gradualQuest = configuration.getBoolean("gradual-quest", false);

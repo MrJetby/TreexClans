@@ -141,6 +141,7 @@ public class ChoosePlayerColorGui extends Gui {
                     });
                 };
             }
+            if (consumers[page]==null) continue;
             addPage(consumers);
         }
     }

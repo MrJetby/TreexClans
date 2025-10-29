@@ -128,7 +128,6 @@ public class ChestGui extends Gui {
                     };
                 }
             }
-
             addPage(consumers);
         }
     }

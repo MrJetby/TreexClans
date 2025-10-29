@@ -162,7 +162,7 @@ public class YAML implements Storage {
 
 
             plugin.getCfg().getClans().put(clanId, new Clan(clanId, prefix, leader, memberSet, ranks,
-                    new Level(Integer.parseInt(level), 0, 0, 100, new ArrayList<>()),
+                    plugin.getCfg().getLevels().get(Integer.parseInt(level)),
                     balance, base, clanExp, pvp, questsInProgress, completedQuests, chestItems));
         }
     }

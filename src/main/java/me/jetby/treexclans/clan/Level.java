@@ -6,6 +6,7 @@ public record Level(
         int id,
         int minExp,
         int maxMembers,
+        int maxBalance,
         int chest,
         List<String> quests
 ) {
