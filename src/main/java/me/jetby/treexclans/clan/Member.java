@@ -4,6 +4,7 @@ package me.jetby.treexclans.clan;
 import lombok.*;
 import me.jetby.treexclans.clan.rank.Rank;
 import org.bukkit.Color;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.UUID;
@@ -26,4 +27,10 @@ public class Member {
     private int warParticipated;
     private int warLoses;
 
+    public void addCoin(int a) {
+        setCoin(getCoin()-a);
+    }
+    public void takeCoin(int a) {
+        setCoin(getCoin()-a);
+    }
 }

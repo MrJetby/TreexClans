@@ -5,8 +5,6 @@ category:
     - quest3
     - quest4
 
-
-
 quest2:
   type: ENTITY_KILL;CREEPER
   target: 3

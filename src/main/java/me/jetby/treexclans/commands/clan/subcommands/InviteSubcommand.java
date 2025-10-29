@@ -36,18 +36,23 @@ public class InviteSubcommand implements Subcommand {
                 plugin.getLang().sendMessage(player, clan, "your-rank-is-not-allowed-to-do-that");
                 return true;
             }
+            if (clan.getMembers().size()>=clan.getLevel().maxMembers()) {
+                plugin.getLang().sendMessage(player, clan, "clan-invite-limit");
+                return true;
+            }
+
             Player target = player.getServer().getPlayer(args[0]);
             if (target == null) {
-                player.sendMessage("§cPlayer not found.");
+                plugin.getLang().sendMessage(player, clan, "player-not-found");
                 return true;
             }
 
             if (plugin.getClanManager().isInClan(target.getUniqueId())) {
-                player.sendMessage("§cThat player is already in a clan.");
+                plugin.getLang().sendMessage(player, clan, "clan-player-already-in-clan");
                 return true;
             }
             if (Cooldown.isOnCooldown("invite_"+target.getUniqueId()+"_"+clan.getId())) {
-                player.sendMessage("§cYou must wait before inviting that player again.");
+                plugin.getLang().sendMessage(player, clan, "no-invite");
                 return true;
             } else {
                 Cooldown.setCooldown("invite_"+target.getUniqueId()+"_"+clan.getId(), 60);

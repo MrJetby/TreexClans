@@ -1,17 +1,28 @@
 package me.jetby.treexclans.tools.customactions;
 
+import me.jetby.treex.actions.ActionEntry;
 import me.jetby.treex.actions.ActionTypeRegistry;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class Actions {
 
     public void registerCustomActions() {
-        ActionTypeRegistry.register("TREEXCLANS", "CLAN_MESSAGE", new ClanMessageAction());
-        ActionTypeRegistry.register("TREEXCLANS", "MESSAGE_CLAN", new ClanMessageAction());
-        ActionTypeRegistry.register("TREEXCLANS", "TEAM_MESSAGE", new ClanMessageAction());
-        ActionTypeRegistry.register("TREEXCLANS", "TEAM_MSG", new ClanMessageAction());
+        Set<ActionEntry> actions = new HashSet<>();
+        actions.add(new ActionEntry("TREEXCLANS", "CLAN_MESSAGE", new ClanMessageAction()));
+        actions.add(new ActionEntry("TREEXCLANS", "MESSAGE_CLAN", new ClanMessageAction()));
+        actions.add(new ActionEntry("TREEXCLANS", "TEAM_MESSAGE", new ClanMessageAction()));
+        actions.add(new ActionEntry("TREEXCLANS", "TEAM_MSG", new ClanMessageAction()));
 
-        ActionTypeRegistry.register("TREEXCLANS", "OPEN_MENU", new OpenMenuAction());
-        ActionTypeRegistry.register("TREEXCLANS", "OPEN_GUI", new OpenMenuAction());
-        ActionTypeRegistry.register("TREEXCLANS", "MENU", new OpenMenuAction());
+        actions.add(new ActionEntry("TREEXCLANS", "OPEN_MENU", new OpenMenuAction()));
+        actions.add(new ActionEntry("TREEXCLANS", "OPEN_GUI", new OpenMenuAction()));
+        actions.add(new ActionEntry("TREEXCLANS", "MENU", new OpenMenuAction()));
+
+        actions.add(new ActionEntry("TREEXCLANS", "CLAN_EXP_GIVE", new ClanExpGiveAction()));
+        actions.add(new ActionEntry("TREEXCLANS", "CLAN_EXP_TAKE", new ClanExpGiveAction()));
+
+
+        ActionTypeRegistry.register(actions);
     }
 }

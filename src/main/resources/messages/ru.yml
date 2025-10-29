@@ -76,6 +76,8 @@ clan-tag-blocked:
   - "[message] {prefix} &cДанный тег клана запрещен!"
 you-haven-not-enough-money:
   - "[message] {prefix} &cУ вас недостаточно средств!"
+no-invite:
+  - "[message] {prefix} &cДанный клан не отправлял вам приглашение"
 pvp-disabled:
   # Если вам не нужно это сообщение то просто оставьте эту строку пустым pvp-disabled: {}
   - "[actionbar] &cPvP против соклана отключено"
@@ -102,6 +104,10 @@ clan-you-was-kicked:
   - "[message] {prefix} &aИгрок {player} кикнул вас из клана"
 clan-invite:
   - "[message] {prefix} &#17FF35Запрос на вступление в клан игроку &l{target} &r&#17FF35успешно отправлен."
+clan-player-already-in-clan:
+  - "[message} {prefix} &7Этот игрок уже в клане"
+clan-invite-limit:
+  - "[message] {prefix} &cДостигнут лимит участников в клане"
 clan-join-request:
   - "[message] {prefix} &#17FF35Вам поступил запрос на вступление в клан &l{clan} &r&#17FF35от игрока &f&l{player}"
   - "[message] &#17FF35Используйте &l/clan accept {clan} &r&#17FF35чтобы вступить в клан"

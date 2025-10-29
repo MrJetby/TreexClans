@@ -6,6 +6,7 @@ import lombok.Setter;
 import me.jetby.treexclans.clan.rank.Rank;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -17,7 +18,7 @@ public class Clan {
     private final Member leader;
     private final Set<Member> members;
     private final Map<String, Rank> ranks;
-    private final Level level;
+    private Level level;
     private double balance;
     private Location base;
     private int exp;
@@ -46,4 +47,40 @@ public class Clan {
     public void removeMember(Member member) {
         this.members.remove(member);
     }
+
+
+    public void addExp(int a, @NotNull Member member, Map<Integer, Level> levels) {
+        if (level.minExp()<=getExp()+a) {
+            setExp(0);
+            int nextLevel = Integer.parseInt(levels.get(Integer.parseInt(level.id())+1).id());
+            setLevel(levels.get(nextLevel));
+        } else {
+            setExp(getExp()+a);
+        }
+        member.setExp(member.getExp()+a);
+    }
+    public void addExp(int a, Map<Integer, Level> levels) {
+        if (level.minExp()<=getExp()+a) {
+            setExp(0);
+            try {
+                int nextLevel = Integer.parseInt(levels.get(Integer.parseInt(level.id())+1).id());
+                setLevel(levels.get(nextLevel));
+            } catch (NumberFormatException ignored) {}
+        } else {
+            setExp(getExp()+a);
+        }
+    }
+
+    public double getExp(@NotNull Clan clan) {
+        return clan.getBalance();
+    }
+
+    public void takeExp(int a, @NotNull Member member) {
+        setExp(getExp()-a);
+        member.setExp(member.getExp()-a);
+    }
+    public void takeExp(int a) {
+        setExp(getExp()-a);
+    }
+
 }

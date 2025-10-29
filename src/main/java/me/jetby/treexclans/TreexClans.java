@@ -9,8 +9,8 @@ import me.jetby.treex.tools.LogInitialize;
 import me.jetby.treex.tools.log.Logger;
 import me.jetby.treexclans.clan.Clan;
 import me.jetby.treexclans.clan.Member;
-import me.jetby.treexclans.commands.clan.ClanCommand;
 import me.jetby.treexclans.commands.admin.AdminCommand;
+import me.jetby.treexclans.commands.clan.ClanCommand;
 import me.jetby.treexclans.configurations.Config;
 import me.jetby.treexclans.configurations.Lang;
 import me.jetby.treexclans.configurations.QuestsLoader;
@@ -18,19 +18,19 @@ import me.jetby.treexclans.functions.glow.Glow;
 import me.jetby.treexclans.functions.quests.QuestManager;
 import me.jetby.treexclans.gui.CommandRegistrar;
 import me.jetby.treexclans.gui.GuiLoader;
+import me.jetby.treexclans.hooks.TreexInitializer;
+import me.jetby.treexclans.hooks.VaultInitializer;
 import me.jetby.treexclans.listeners.ClanListeners;
 import me.jetby.treexclans.listeners.QuestsListeners;
 import me.jetby.treexclans.storage.Storage;
 import me.jetby.treexclans.storage.YAML;
 import me.jetby.treexclans.tools.FormatTime;
-import me.jetby.treexclans.tools.TreexInitializer;
 import me.jetby.treexclans.tools.customactions.Actions;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -46,11 +46,12 @@ public final class TreexClans extends JavaPlugin {
         return INSTANCE;
     }
 
-    private Economy economy = null;
+    private Economy economy;
     private Config cfg;
     @Setter
     public Lang lang;
     private FormatTime formatTime;
+    @Setter
     private Glow glow;
     private ClanManager clanManager;
     private Storage storage;
@@ -62,7 +63,6 @@ public final class TreexClans extends JavaPlugin {
 
     private QuestsLoader questsLoader;
     private QuestManager questManager;
-
 
     @Override
     public void onLoad() {
@@ -82,11 +82,10 @@ public final class TreexClans extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
-
-
         LOGGER = LogInitialize.getLogger(this);
 
-        setupEconomy();
+
+        economy = new VaultInitializer().getEconomy();
 
         cfg = new Config(this);
         cfg.load();
@@ -97,6 +96,7 @@ public final class TreexClans extends JavaPlugin {
         clanManager = new ClanManager(this);
 
         JGuiInitializer.init(this, false);
+
         guiLoader = new GuiLoader(this, getDataFolder());
         guiLoader.load();
         CommandRegistrar.createCommands(this);
@@ -127,6 +127,7 @@ public final class TreexClans extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new QuestsListeners(this), this);
 
     }
+
     @Override
     public void onDisable() {
         if (storage != null) storage.save();
@@ -147,20 +148,5 @@ public final class TreexClans extends JavaPlugin {
                 }
             }
         }
-    }
-
-    private void setupEconomy() {
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
-            LOGGER.error("Vault was not found!");
-            return;
-        }
-
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
-            LOGGER.error("Vault economy plugin was not found!");
-            return;
-        }
-
-        this.economy = rsp.getProvider();
     }
 }

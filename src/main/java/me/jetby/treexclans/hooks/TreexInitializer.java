@@ -1,4 +1,4 @@
-package me.jetby.treexclans.tools;
+package me.jetby.treexclans.hooks;
 
 import me.jetby.treex.Treex;
 import me.jetby.treex.events.TreexOnPluginDisable;

@@ -160,7 +160,6 @@ public class YAML implements Storage {
             }
 
 
-
             plugin.getCfg().getClans().put(clanId, new Clan(clanId, prefix, leader, memberSet, ranks,
                     plugin.getCfg().getLevels().get(Integer.parseInt(level)),
                     balance, base, clanExp, pvp, questsInProgress, completedQuests, chestItems));
@@ -269,6 +268,8 @@ public class YAML implements Storage {
         configuration.set(clan.getId() + "." + path + ".last-online", member.getLastOnline());
         configuration.set(clan.getId() + "." + path + ".clan-glow", member.isClanGlow());
 
+        configuration.set(clan.getId() + "." + path + ".coin", member.getCoin());
+        configuration.set(clan.getId() + "." + path + ".exp", member.getExp());
         configuration.set(clan.getId() + "." + path + ".kills", member.getKills());
         configuration.set(clan.getId() + "." + path + ".deaths", member.getDeaths());
         configuration.set(clan.getId() + "." + path + ".war-wins", member.getWarWins());

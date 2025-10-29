@@ -3,7 +3,7 @@ package me.jetby.treexclans.clan;
 import java.util.List;
 
 public record Level(
-        int id,
+        String id,
         int minExp,
         int maxMembers,
         int maxBalance,
