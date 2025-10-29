@@ -67,10 +67,6 @@ public abstract class Gui extends PaginatedAdvancedGui implements Listener {
             }
             event.setCancelled(false);
         });
-
-        if (menu != null) {
-            registerButtons();
-        }
     }
 
     protected void registerButtons() {

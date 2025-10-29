@@ -10,5 +10,6 @@ import org.jetbrains.annotations.Nullable;
 public class DefaultGui extends Gui {
     public DefaultGui(TreexClans plugin, @Nullable Menu menu, Player player, Clan clan) {
         super(plugin, menu, player, clan);
+        registerButtons();
     }
 }

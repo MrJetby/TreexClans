@@ -35,6 +35,7 @@ public class ChestGui extends Gui {
 
     public ChestGui(TreexClans plugin, @Nullable Menu menu, Player player, Clan clan) {
         super(plugin, menu, player, clan);
+        registerButtons();
         onClose(event -> {
             if (autoSaveTask != null) {
                 autoSaveTask.cancel();

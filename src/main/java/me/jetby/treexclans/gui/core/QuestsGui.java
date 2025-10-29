@@ -28,6 +28,7 @@ public class QuestsGui extends Gui {
     public QuestsGui(TreexClans plugin, Menu menu, Player player, Clan clan) {
         super(plugin, menu, player, clan);
 
+        registerButtons();
 
         size(menu.size());
         type(menu.inventoryType());

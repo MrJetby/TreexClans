@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static me.jetby.treexclans.TreexClans.LOGGER;
 import static me.jetby.treexclans.TreexClans.NAMESPACED_KEY;
 
 public class RankPermissionsGui extends Gui {
@@ -31,6 +32,7 @@ public class RankPermissionsGui extends Gui {
     public RankPermissionsGui(TreexClans plugin, @Nullable Menu menu, Player player, Clan clan, Rank rank) {
         super(plugin, menu, player, clan);
         this.rank = rank;
+        registerButtons();
 
         openPage(0);
     }

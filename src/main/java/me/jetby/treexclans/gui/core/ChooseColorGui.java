@@ -19,6 +19,7 @@ public class ChooseColorGui extends Gui {
 
         size(menu.size());
         type(menu.inventoryType());
+        registerButtons();
 
     }
 

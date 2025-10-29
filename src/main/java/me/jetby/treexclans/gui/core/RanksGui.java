@@ -31,6 +31,7 @@ import static me.jetby.treexclans.TreexClans.NAMESPACED_KEY;
 public class RanksGui extends Gui {
     public RanksGui(TreexClans plugin, @Nullable Menu menu, Player player, Clan clan) {
         super(plugin, menu, player, clan);
+        registerButtons();
 
         setupRanksPagination();
 
@@ -174,7 +175,6 @@ public class RanksGui extends Gui {
                                         getPlugin().getGuiLoader().getMenus().get(button.openGui()),
                                         getPlayer(), getClan(), rank)
                                         .open(getPlayer()), 1L);
-                        LOGGER.success("da");
 
 
                     });
