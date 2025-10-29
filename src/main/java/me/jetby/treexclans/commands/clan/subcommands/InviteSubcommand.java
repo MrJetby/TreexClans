@@ -1,6 +1,7 @@
 package me.jetby.treexclans.commands.clan.subcommands;
 
 import me.jetby.treexclans.TreexClans;
+import me.jetby.treexclans.clan.rank.RankPerms;
 import me.jetby.treexclans.commands.Subcommand;
 import me.jetby.treexclans.configurations.Lang;
 import me.jetby.treexclans.clan.Clan;
@@ -31,7 +32,7 @@ public class InviteSubcommand implements Subcommand {
                 return true;
             }
             Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
-            if (!clan.getMember(player.getUniqueId()).getRank().rankPermissions().invite()) {
+            if (!clan.getMember(player.getUniqueId()).getRank().perms().contains(RankPerms.INVITE)) {
                 plugin.getLang().sendMessage(player, clan, "your-rank-is-not-allowed-to-do-that");
                 return true;
             }

@@ -4,6 +4,7 @@ import me.jetby.treex.text.Colorize;
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.clan.Clan;
 import me.jetby.treexclans.clan.Member;
+import me.jetby.treexclans.clan.rank.RankPerms;
 import me.jetby.treexclans.gui.GuiFactory;
 import me.jetby.treexclans.gui.GuiType;
 import me.jetby.treexclans.gui.Menu;
@@ -52,7 +53,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
                 Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
                 for (Map.Entry<String, List<String>> entry : menuArgs.entrySet()) {
                     if (entry.getValue().contains(args[0])) {
-                        GuiFactory.create(plugin, plugin.getGuiLoader().getMenus().get(entry.getKey()), player, clan).open(player);
+                        GuiFactory.create(plugin, plugin.getGuiLoader().getMenus().get(entry.getKey()), player, clan, null).open(player);
                         return true;
                     }
                 }
@@ -103,16 +104,16 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
             if (member == null || member.getRank() == null)
                 return List.of();
 
-            var perms = member.getRank().rankPermissions();
+            var perms = member.getRank().perms();
 
             completions.removeIf(cmd -> switch (cmd) {
-                case "setbase" -> !perms.setbase();
-                case "base" -> !perms.base();
-                case "invite" -> !perms.invite();
-                case "withdraw" -> !perms.withdraw() || plugin.getEconomy() == null;
-                case "deposit", "invest" -> !perms.deposit() || plugin.getEconomy() == null;
-                case "kick" -> !perms.kick();
-                case "pvp" -> !perms.pvp();
+                case "setbase" -> !perms.contains(RankPerms.SETBASE);
+                case "base" -> !perms.contains(RankPerms.BASE);
+                case "invite" -> !perms.contains(RankPerms.INVITE);
+                case "withdraw" -> !perms.contains(RankPerms.WITHDRAW) || plugin.getEconomy() == null;
+                case "deposit", "invest" -> !perms.contains(RankPerms.DEPOSIT) || plugin.getEconomy() == null;
+                case "kick" -> !perms.contains(RankPerms.KICK);
+                case "pvp" -> !perms.contains(RankPerms.PVP);
                 default -> false;
             });
             completions.remove("create");

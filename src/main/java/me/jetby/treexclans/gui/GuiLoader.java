@@ -121,6 +121,7 @@ public class GuiLoader {
                     }
 
                     String rgb = itemSection.getString("color", "WHITE");
+                    String openGui = itemSection.getString("open-gui");
                     String material = Papi.setPapi(null, itemSection.getString("material", defaultMaterial));
                     ItemStack itemStack;
                     if (material.startsWith("basehead-")) {
@@ -148,7 +149,7 @@ public class GuiLoader {
 
                     for (Integer slot : slots) {
 
-                        buttons.add(new Button(key, displayName, rgb, lore, slot, amount, customModelData, enchanted, freeSlot, itemStack,
+                        buttons.add(new Button(key, displayName, rgb, openGui, lore, slot, amount, customModelData, enchanted, freeSlot, itemStack,
                                 requirements(itemSection, slot),
                                 loadCommands(itemSection),
                                 priority, type));

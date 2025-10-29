@@ -6,23 +6,26 @@ import me.jetby.treex.text.Colorize;
 import me.jetby.treex.text.Papi;
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.clan.Clan;
-import me.jetby.treexclans.clan.Member;
 import me.jetby.treexclans.clan.rank.Rank;
+import me.jetby.treexclans.clan.rank.RankPerms;
 import me.jetby.treexclans.gui.Button;
 import me.jetby.treexclans.gui.Gui;
+import me.jetby.treexclans.gui.GuiFactory;
 import me.jetby.treexclans.gui.Menu;
-import me.jetby.treexclans.tools.NumberUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static me.jetby.treexclans.TreexClans.LOGGER;
 import static me.jetby.treexclans.TreexClans.NAMESPACED_KEY;
 
 public class RanksGui extends Gui {
@@ -94,7 +97,7 @@ public class RanksGui extends Gui {
 
     @Override
     public boolean cancelRegistration(Player player, @Nullable Button button) {
-        if (button!=null) {
+        if (button != null) {
             return button.type().equals("all_ranks");
         }
         return false;
@@ -111,7 +114,8 @@ public class RanksGui extends Gui {
 
         int itemsPerPage = sortedRankSlots.size();
 
-        Map<String, Rank> ranks = getClan().getRanks();
+        Map<String, Rank> ranks = new HashMap<>(getClan().getRanks());
+        ranks.remove(getClan().getLeader().getRank().id());
         List<String> ranksStr = ranks.keySet().stream().toList();
 
 
@@ -162,7 +166,18 @@ public class RanksGui extends Gui {
 
                     builder.defaultItem(wrapper);
                     builder.slots(slot);
-                    builder.defaultClickHandler((event, ctrl) -> event.setCancelled(true));
+                    builder.defaultClickHandler((event, ctrl) -> {
+                        event.setCancelled(true);
+                        Bukkit.getScheduler().runTaskLater(getPlugin(), () ->
+                                GuiFactory.create(
+                                        getPlugin(),
+                                        getPlugin().getGuiLoader().getMenus().get(button.openGui()),
+                                        getPlayer(), getClan(), rank)
+                                        .open(getPlayer()), 1L);
+                        LOGGER.success("da");
+
+
+                    });
                 };
             }
 
@@ -171,14 +186,14 @@ public class RanksGui extends Gui {
     }
 
     private String replaceMemberPlaceholders(String text, Rank rank) {
-        text = text.replace("%invite_status%", getStatus(rank.rankPermissions().invite()));
-        text = text.replace("%kick_status%", getStatus(rank.rankPermissions().kick()));
-        text = text.replace("%base_status%", getStatus(rank.rankPermissions().base()));
-        text = text.replace("%setrank_status%", getStatus(rank.rankPermissions().setrank()));
-        text = text.replace("%setbase_status%", getStatus(rank.rankPermissions().setbase()));
-        text = text.replace("%deposit_status%", getStatus(rank.rankPermissions().deposit()));
-        text = text.replace("%withdraw_status%", getStatus(rank.rankPermissions().withdraw()));
-        text = text.replace("%pvp_status%", getStatus(rank.rankPermissions().pvp()));
+        text = text.replace("%invite_status%", getStatus(rank.perms().contains(RankPerms.INVITE)));
+        text = text.replace("%kick_status%", getStatus(rank.perms().contains(RankPerms.KICK)));
+        text = text.replace("%base_status%", getStatus(rank.perms().contains(RankPerms.BASE)));
+        text = text.replace("%setrank_status%", getStatus(rank.perms().contains(RankPerms.SETRANK)));
+        text = text.replace("%setbase_status%", getStatus(rank.perms().contains(RankPerms.SETBASE)));
+        text = text.replace("%deposit_status%", getStatus(rank.perms().contains(RankPerms.DEPOSIT)));
+        text = text.replace("%withdraw_status%", getStatus(rank.perms().contains(RankPerms.WITHDRAW)));
+        text = text.replace("%pvp_status%", getStatus(rank.perms().contains(RankPerms.PVP)));
         text = text.replace("%rank%", rank.name());
         return text;
     }

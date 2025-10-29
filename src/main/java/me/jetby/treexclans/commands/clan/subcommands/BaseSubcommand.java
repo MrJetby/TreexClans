@@ -1,6 +1,7 @@
 package me.jetby.treexclans.commands.clan.subcommands;
 
 import me.jetby.treexclans.TreexClans;
+import me.jetby.treexclans.clan.rank.RankPerms;
 import me.jetby.treexclans.commands.Subcommand;
 import me.jetby.treexclans.clan.Clan;
 import org.bukkit.command.Command;
@@ -26,7 +27,7 @@ public class BaseSubcommand implements Subcommand {
                 player.sendMessage("§cClan base not set");
                 return true;
             }
-            if (!clan.getMember(player.getUniqueId()).getRank().rankPermissions().base()) {
+            if (!clan.getMember(player.getUniqueId()).getRank().perms().contains(RankPerms.BASE)) {
                 plugin.getLang().sendMessage(player, clan, "your-rank-is-not-allowed-to-do-that");
                 return true;
             }

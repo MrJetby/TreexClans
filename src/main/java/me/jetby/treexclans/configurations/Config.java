@@ -7,7 +7,7 @@ import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.clan.Clan;
 import me.jetby.treexclans.clan.Level;
 import me.jetby.treexclans.clan.rank.Rank;
-import me.jetby.treexclans.clan.rank.RankPermissions;
+import me.jetby.treexclans.clan.rank.RankPerms;
 import me.jetby.treexclans.gui.requirements.SimpleRequirement;
 import me.jetby.treexclans.tools.FileLoader;
 import org.bukkit.configuration.ConfigurationSection;
@@ -63,20 +63,40 @@ public class Config {
                 if (rank == null) continue;
                 String name = rank.getString("display-name");
                 ConfigurationSection permission = rank.getConfigurationSection("permissions");
-                RankPermissions rankPermissions = null;
+                Set<RankPerms> perms = new HashSet<>();
                 if (permission != null) {
-                    rankPermissions = new RankPermissions(
-                            permission.getBoolean("invite", false),
-                            permission.getBoolean("kick", false),
-                            permission.getBoolean("base", false),
-                            permission.getBoolean("setbase", false),
-                            permission.getBoolean("setrank", false),
-                            permission.getBoolean("deposit", false),
-                            permission.getBoolean("withdraw", false),
-                            permission.getBoolean("pvp", false)
-                    );
+                    for (String perm : permission.getKeys(false)) {
+                        switch (perm.toLowerCase()) {
+                            case "invite" -> {
+                                if (permission.getBoolean(perm)) perms.add(RankPerms.INVITE);
+                            }
+                            case "kick" -> {
+                                if (permission.getBoolean(perm)) perms.add(RankPerms.KICK);
+                            }
+                            case "base" -> {
+                                if (permission.getBoolean(perm)) perms.add(RankPerms.BASE);
+                            }
+                            case "setbase" -> {
+                                if (permission.getBoolean(perm)) perms.add(RankPerms.SETBASE);
+                            }
+                            case "setrank" -> {
+                                if (permission.getBoolean(perm)) perms.add(RankPerms.SETRANK);
+                            }
+                            case "deposit" -> {
+                                if (permission.getBoolean(perm)) perms.add(RankPerms.DEPOSIT);
+                            }
+                            case "withdraw" -> {
+                                if (permission.getBoolean(perm)) perms.add(RankPerms.WITHDRAW);
+                            }
+                            case "pvp" -> {
+                                if (permission.getBoolean(perm)) perms.add(RankPerms.PVP);
+                            }
+                        }
+
+                    }
+
                 }
-                defaultRanks.put(key, new Rank(key, name, rankPermissions));
+                defaultRanks.put(key, new Rank(key, name, perms));
             }
         }
 

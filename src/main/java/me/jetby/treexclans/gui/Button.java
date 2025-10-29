@@ -10,6 +10,7 @@ public record Button(
         String id,
         String displayName,
         String rgb,
+        String openGui,
         List<String> lore,
         int slot,
         int amount,

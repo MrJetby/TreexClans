@@ -6,7 +6,7 @@ import me.jetby.treexclans.clan.Clan;
 import me.jetby.treexclans.clan.Level;
 import me.jetby.treexclans.clan.Member;
 import me.jetby.treexclans.clan.rank.Rank;
-import me.jetby.treexclans.clan.rank.RankPermissions;
+import me.jetby.treexclans.clan.rank.RankPerms;
 import me.jetby.treexclans.tools.FileLoader;
 import me.jetby.treexclans.tools.ItemSerializer;
 import org.bukkit.Color;
@@ -61,19 +61,40 @@ public class YAML implements Storage {
 
                 for (String key : ranksSection.getKeys(false)) {
                     String displayName = ranksSection.getString(key + ".display-name");
-                    ConfigurationSection perm = ranksSection.getConfigurationSection(key + ".permissions");
-                    if (perm == null) continue;
-                    RankPermissions rankPermissions = new RankPermissions(
-                            perm.getBoolean("invite", false),
-                            perm.getBoolean("kick", false),
-                            perm.getBoolean("base", false),
-                            perm.getBoolean("setbase", false),
-                            perm.getBoolean("setrank", false),
-                            perm.getBoolean("deposit", false),
-                            perm.getBoolean("withdraw", false),
-                            perm.getBoolean("pvp", false)
-                    );
-                    ranks.put(key, new Rank(key, displayName, rankPermissions));
+                    ConfigurationSection permission = ranksSection.getConfigurationSection(key + ".permissions");
+                    if (permission == null) continue;
+                    Set<RankPerms> perms = new HashSet<>();
+                    for (String perm : permission.getKeys(false)) {
+                        switch (perm.toLowerCase()) {
+                            case "invite" -> {
+                                if (permission.getBoolean(perm)) perms.add(RankPerms.INVITE);
+                            }
+                            case "kick" -> {
+                                if (permission.getBoolean(perm)) perms.add(RankPerms.KICK);
+                            }
+                            case "base" -> {
+                                if (permission.getBoolean(perm)) perms.add(RankPerms.BASE);
+                            }
+                            case "setbase" -> {
+                                if (permission.getBoolean(perm)) perms.add(RankPerms.SETBASE);
+                            }
+                            case "setrank" -> {
+                                if (permission.getBoolean(perm)) perms.add(RankPerms.SETRANK);
+                            }
+                            case "deposit" -> {
+                                if (permission.getBoolean(perm)) perms.add(RankPerms.DEPOSIT);
+                            }
+                            case "withdraw" -> {
+                                if (permission.getBoolean(perm)) perms.add(RankPerms.WITHDRAW);
+                            }
+                            case "pvp" -> {
+                                if (permission.getBoolean(perm)) perms.add(RankPerms.PVP);
+                            }
+                        }
+
+
+                    }
+                    ranks.put(key, new Rank(key, displayName, perms));
                 }
             } else {
                 ranks.putAll(plugin.getCfg().getDefaultRanks());
@@ -104,12 +125,11 @@ public class YAML implements Storage {
             }
 
 
-
             Map<String, Integer> questsProgress = new HashMap<>();
             ConfigurationSection progress = clan.getConfigurationSection("quests-progress");
             if (progress != null) {
                 for (String key : progress.getKeys(false)) {
-                    if (plugin.getQuestsLoader().getQuests().get(key)==null) continue;
+                    if (plugin.getQuestsLoader().getQuests().get(key) == null) continue;
                     questsProgress.put(key, progress.getInt(key, 0));
                 }
             }
@@ -117,7 +137,7 @@ public class YAML implements Storage {
 
 
             plugin.getCfg().getClans().put(clanId, new Clan(clanId, prefix, leader, memberSet, ranks,
-                    new Level(Integer.parseInt(level), 0, 0,100, new ArrayList<>()),
+                    new Level(Integer.parseInt(level), 0, 0, 100, new ArrayList<>()),
                     balance, base, clanExp, pvp, questsProgress, completedQuests, chestItems));
         }
     }
@@ -135,15 +155,10 @@ public class YAML implements Storage {
                 for (String key : clan.getRanks().keySet()) {
                     Rank rank = clan.getRanks().get(key);
                     configuration.set(clanId + ".ranks." + rank.id() + ".display-name", rank.name());
-                    RankPermissions perm = rank.rankPermissions();
-                    configuration.set(clanId + ".ranks." + rank.id() + ".permissions.invite", perm.invite());
-                    configuration.set(clanId + ".ranks." + rank.id() + ".permissions.kick", perm.kick());
-                    configuration.set(clanId + ".ranks." + rank.id() + ".permissions.base", perm.base());
-                    configuration.set(clanId + ".ranks." + rank.id() + ".permissions.setbase", perm.setbase());
-                    configuration.set(clanId + ".ranks." + rank.id() + ".permissions.setrank", perm.setrank());
-                    configuration.set(clanId + ".ranks." + rank.id() + ".permissions.deposit", perm.deposit());
-                    configuration.set(clanId + ".ranks." + rank.id() + ".permissions.withdraw", perm.withdraw());
-                    configuration.set(clanId + ".ranks." + rank.id() + ".permissions.pvp", perm.pvp());
+                    Set<RankPerms> perms = rank.perms();
+                    for (RankPerms perm : perms) {
+                        configuration.set(clanId + ".ranks." + rank.id() + ".permissions." + perm.name(), true);
+                    }
                 }
 
                 configuration.set(clanId + ".balance", clan.getBalance());

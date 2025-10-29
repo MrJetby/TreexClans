@@ -10,6 +10,7 @@ import me.jetby.treex.actions.ActionRegistry;
 import me.jetby.treex.text.Papi;
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.clan.Clan;
+import me.jetby.treexclans.gui.core.RanksGui;
 import me.jetby.treexclans.gui.requirements.ClickRequirement;
 import me.jetby.treexclans.gui.requirements.Requirements;
 import me.jetby.treexclans.gui.requirements.ViewRequirement;

@@ -2,6 +2,7 @@ package me.jetby.treexclans.commands.clan.subcommands;
 
 import me.jetby.treex.text.Colorize;
 import me.jetby.treexclans.TreexClans;
+import me.jetby.treexclans.clan.rank.RankPerms;
 import me.jetby.treexclans.commands.Subcommand;
 import me.jetby.treexclans.configurations.Lang;
 import me.jetby.treexclans.clan.Clan;
@@ -35,7 +36,7 @@ public class WithdrawSubcommand implements Subcommand {
             }
 
             Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
-            if (!clan.getMember(player.getUniqueId()).getRank().rankPermissions().deposit()) {
+            if (!clan.getMember(player.getUniqueId()).getRank().perms().contains(RankPerms.DEPOSIT)) {
                 plugin.getLang().sendMessage(player, clan, "your-rank-is-not-allowed-to-do-that");
                 return true;
             }
