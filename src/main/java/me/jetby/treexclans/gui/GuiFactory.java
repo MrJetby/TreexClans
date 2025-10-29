@@ -15,10 +15,11 @@ public class GuiFactory {
 
     public Gui create(TreexClans plugin, Menu menu, Player player, Clan clan) {
         return switch (GuiType.valueOf(menu.type())) {
-            case MEMBERS -> new Members(plugin, menu, player, clan);
-            case CHOOSE_COLOR -> new ChooseColor(plugin, menu, player, clan);
-            case CHEST -> new Chest(plugin, menu, player, clan);
-            case QUESTS -> new Quests(plugin, menu, player, clan);
+            case MEMBERS -> new MembersGui(plugin, menu, player, clan);
+            case CHOOSE_COLOR -> new ChooseColorGui(plugin, menu, player, clan);
+            case CHEST -> new ChestGui(plugin, menu, player, clan);
+            case QUESTS -> new QuestsGui(plugin, menu, player, clan);
+            case RANKS -> new RanksGui(plugin, menu, player, clan);
             default -> getCustomGuiOrDefault(plugin, menu, player, clan, menu.type());
         };
     }
@@ -27,7 +28,7 @@ public class GuiFactory {
         var gui = customGuis.get(type);
         if (gui!=null) return gui;
 
-        return new Default(plugin, menu, player, clan);
+        return new DefaultGui(plugin, menu, player, clan);
     }
 
     public void registerCustomGui(String type, Gui gui) {

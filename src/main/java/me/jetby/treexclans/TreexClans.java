@@ -58,7 +58,7 @@ public final class TreexClans extends JavaPlugin {
     public static Logger LOGGER;
     public static final NamespacedKey NAMESPACED_KEY = new NamespacedKey("treexclans", "item");
 
-    private GuiLoader menuGuiLoader;
+    private GuiLoader guiLoader;
 
     private QuestsLoader questsLoader;
     private QuestManager questManager;
@@ -97,8 +97,8 @@ public final class TreexClans extends JavaPlugin {
         clanManager = new ClanManager(this);
 
         JGuiInitializer.init(this, false);
-        menuGuiLoader = new GuiLoader(this, getDataFolder());
-        menuGuiLoader.load();
+        guiLoader = new GuiLoader(this, getDataFolder());
+        guiLoader.load();
         CommandRegistrar.createCommands(this);
 
         PluginCommand xClanCommand = this.getCommand("xclan");

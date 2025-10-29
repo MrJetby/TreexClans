@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 
 import static me.jetby.treexclans.TreexClans.NAMESPACED_KEY;
 
-public class Quests extends Gui {
+public class QuestsGui extends Gui {
 
 
-    public Quests(TreexClans plugin, Menu menu, Player player, Clan clan) {
+    public QuestsGui(TreexClans plugin, Menu menu, Player player, Clan clan) {
         super(plugin, menu, player, clan);
 
 

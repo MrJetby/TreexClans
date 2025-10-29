@@ -221,19 +221,6 @@ public record ClanManager(TreexClans plugin) implements Listener {
                 .orElse(null);
     }
 
-    /**
-     * Retrieves the last online timestamp for a specific player.
-     *
-     * @param uuid the player's unique identifier
-     * @return the timestamp of the player's last online moment, or -1 if not found
-     */
-    public long getLastOnline(@NotNull UUID uuid) {
-        if (isInClan(uuid)) {
-            return getClanByMember(uuid).getMember(uuid).getLastOnline();
-        }
-        return -1;
-    }
-
     public String getLastOnlineFormatted(@NotNull UUID uuid) {
         if (isInClan(uuid)) {
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);

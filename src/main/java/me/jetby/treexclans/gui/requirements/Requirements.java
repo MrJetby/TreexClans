@@ -5,6 +5,7 @@ import me.jetby.treex.actions.ActionContext;
 import me.jetby.treex.actions.ActionExecutor;
 import me.jetby.treex.actions.ActionRegistry;
 import me.jetby.treex.text.Papi;
+import me.jetby.treexclans.clan.Clan;
 import me.jetby.treexclans.gui.Button;
 import org.bukkit.entity.Player;
 
@@ -78,9 +79,10 @@ public class Requirements {
         }
         ActionExecutor.execute(ctx, ActionRegistry.transform(commands));
     }
-    public void runDenyCommands(Player player, List<String> denyCommands, Button button) {
+    public void runDenyCommands(Player player, List<String> denyCommands, Button button, Clan clan) {
         ActionContext ctx = new ActionContext(player);
         ctx.put("button", button);
+        ctx.put("clan", clan);
         List<String> commands = new ArrayList<>();
         for (String str : denyCommands) {
             commands.add(setPlaceholders(player, str));

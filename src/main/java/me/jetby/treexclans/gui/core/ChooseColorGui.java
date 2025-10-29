@@ -12,9 +12,9 @@ import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public class ChooseColor extends Gui {
+public class ChooseColorGui extends Gui {
 
-    public ChooseColor(TreexClans plugin, Menu menu, Player player, Clan clan) {
+    public ChooseColorGui(TreexClans plugin, Menu menu, Player player, Clan clan) {
         super(plugin, menu, player, clan);
 
         size(menu.size());

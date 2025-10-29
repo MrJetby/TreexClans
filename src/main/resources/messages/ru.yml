@@ -121,7 +121,16 @@ clan-disband:
 clan-disband-confirm:
   - '[message] {prefix} &c&lПодтвердите что вы хотите удалить ваш клан без возможного восстановления прописав команду ещё раз.'
 
+
+
+
+rank-perm-yes: "&a✔"
+rank-perm-no: "&c✘"
+
+
+
 quest-status-progress: "&eВ прогрессе"
 quest-status-uncompleted: "&cНе выполнен"
 quest-status-completed: "&aВыполнено"
 quest-status-gradual: "&eВыполните предыдущий"
+

@@ -6,7 +6,7 @@ import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.clan.Clan;
 import org.jetbrains.annotations.NotNull;
 
-public class ClanMessage implements Action {
+public class ClanMessageAction implements Action {
     private final TreexClans plugin = TreexClans.getInstance();
     @Override
     public void execute(@NotNull ActionContext ctx) {

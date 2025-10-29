@@ -8,8 +8,6 @@ public enum GuiType {
     CHEST,
     CHOOSE_COLOR,
     CHOOSE_PLAYER_COLOR,
-    WAR_HISTORY,
-    WAR,
     MEMBERS,
     CLAN_LIST
 }

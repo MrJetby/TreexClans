@@ -26,14 +26,14 @@ import java.util.function.Consumer;
 
 import static me.jetby.treexclans.TreexClans.NAMESPACED_KEY;
 
-public class Chest extends Gui {
-    private static final Map<String, Set<Chest>> ACTIVE_CHESTS = new HashMap<>();
+public class ChestGui extends Gui {
+    private static final Map<String, Set<ChestGui>> ACTIVE_CHESTS = new HashMap<>();
     private final Map<Integer, Integer> slotToGlobalIndex = new HashMap<>();
     private int currentPage = 0;
     private BukkitTask autoSaveTask;
     private boolean isInitialized = false;
 
-    public Chest(TreexClans plugin, @Nullable Menu menu, Player player, Clan clan) {
+    public ChestGui(TreexClans plugin, @Nullable Menu menu, Player player, Clan clan) {
         super(plugin, menu, player, clan);
         onClose(event -> {
             if (autoSaveTask != null) {
@@ -62,7 +62,7 @@ public class Chest extends Gui {
     }
 
     private void unregisterChest() {
-        Set<Chest> chests = ACTIVE_CHESTS.get(getClan().getId());
+        Set<ChestGui> chests = ACTIVE_CHESTS.get(getClan().getId());
         if (chests != null) {
             chests.remove(this);
             if (chests.isEmpty()) {
@@ -282,10 +282,10 @@ public class Chest extends Gui {
     }
 
     private void notifyOtherViewers() {
-        Set<Chest> chests = ACTIVE_CHESTS.get(getClan().getId());
+        Set<ChestGui> chests = ACTIVE_CHESTS.get(getClan().getId());
         if (chests == null) return;
 
-        for (Chest chest : chests) {
+        for (ChestGui chest : chests) {
             if (chest != this && chest.currentPage == this.currentPage) {
                 Bukkit.getScheduler().runTask(getPlugin(), chest::loadPageFromCloudData);
             }

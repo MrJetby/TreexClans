@@ -184,7 +184,7 @@ public abstract class Gui extends PaginatedAdvancedGui implements Listener {
                                         for (ClickRequirement clickRequirement : cmd.clickRequirements()) {
                                             if ((clickRequirement.anyClick() || clickRequirement.clickType() == clickType)) {
                                                 if (!Requirements.check(player, clickRequirement)) {
-                                                    Requirements.runDenyCommands(player, clickRequirement.deny_commands(), finalSelectedButton);
+                                                    Requirements.runDenyCommands(player, clickRequirement.deny_commands(), finalSelectedButton, clan);
                                                     allRequirementsPassed = false;
                                                     break;
                                                 }
@@ -195,6 +195,7 @@ public abstract class Gui extends PaginatedAdvancedGui implements Listener {
                                     if (allRequirementsPassed) {
                                         ActionContext ctx = new ActionContext(player);
                                         ctx.put("button", finalSelectedButton);
+                                        ctx.put("clan", clan);
                                         ActionExecutor.execute(ctx, ActionRegistry.transform(cmd.actions()));
                                         break;
                                     }

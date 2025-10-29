@@ -27,11 +27,11 @@ import java.util.stream.Collectors;
 
 import static me.jetby.treexclans.TreexClans.NAMESPACED_KEY;
 
-public class Members extends Gui {
+public class MembersGui extends Gui {
 
 
 
-    public Members(TreexClans plugin, Menu menu, Player player, Clan clan) {
+    public MembersGui(TreexClans plugin, Menu menu, Player player, Clan clan) {
         super(plugin, menu, player, clan);
 
         size(menu.size());
