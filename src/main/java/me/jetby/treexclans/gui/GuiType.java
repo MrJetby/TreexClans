@@ -2,6 +2,7 @@ package me.jetby.treexclans.gui;
 
 public enum GuiType {
     DEFAULT,
+    MENU,
     QUESTS,
     RANKS,
     RANK_PERMISSIONS,

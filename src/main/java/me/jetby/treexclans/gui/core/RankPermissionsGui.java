@@ -12,21 +12,19 @@ import me.jetby.treexclans.gui.Button;
 import me.jetby.treexclans.gui.Gui;
 import me.jetby.treexclans.gui.Menu;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static me.jetby.treexclans.TreexClans.LOGGER;
-import static me.jetby.treexclans.TreexClans.NAMESPACED_KEY;
+
+// TODO: Пофиксить дубликат ролей /clan menu -> ранги
 
 public class RankPermissionsGui extends Gui {
-
     private final Rank rank;
 
     public RankPermissionsGui(TreexClans plugin, @Nullable Menu menu, Player player, Clan clan, Rank rank) {
@@ -38,30 +36,39 @@ public class RankPermissionsGui extends Gui {
     }
 
     @Override
-    protected void onRegister(Player player, Button button, GuiItemController.Builder builder) {
+    public void onRegister(Player player, Button button, GuiItemController.Builder builder) {
         if (button == null) return;
         if (!button.type().startsWith("perm-")) return;
         build(button, builder, RankPerms.valueOf(button.type().replace("perm-", "").toUpperCase()));
     }
 
     @Override
-    protected void onClick(Player player, Button button, InventoryClickEvent event, GuiItemController controller) {
-        String perm = button.type().replace("perm-", "").toUpperCase();
+    public void onClick(Player player, Button button, GuiItemController controller) {
+
+        String permName = button.type().replace("perm-", "").toUpperCase();
+        RankPerms perm = RankPerms.valueOf(permName);
+
+        if (!getClan().getLeader().getRank().perms().contains(perm)) return;
+        if (!getClan().getMember(player.getUniqueId()).getRank().perms().contains(perm)) return;
+
+        if (rank.perms().contains(perm)) {
+            rank.perms().remove(perm);
+        } else {
+            rank.perms().add(perm);
+        }
 
         controller.updateItems(wrapper -> {
-            if (rank.perms().contains(RankPerms.valueOf(perm))) {
-                wrapper = ItemWrapper.builder(Material.LIME_DYE).build();
-            } else {
-                wrapper = ItemWrapper.builder(Material.RED_DYE).build();
-            }
+            Material material = rank.perms().contains(perm) ? Material.LIME_DYE : Material.RED_DYE;
+            wrapper.material(material);
+
             String rawDisplayName = button.displayName();
-            String processedDisplayName = replaceMemberPlaceholders(rawDisplayName, perm);
+            String processedDisplayName = replaceMemberPlaceholders(rawDisplayName, rank.id());
             processedDisplayName = Papi.setPapi(getPlayer(), processedDisplayName);
             wrapper.displayName(Colorize.text(processedDisplayName));
 
             List<String> rawLore = button.lore();
             List<String> processedLore = rawLore.stream()
-                    .map(l -> replaceMemberPlaceholders(l, perm))
+                    .map(l -> replaceMemberPlaceholders(l, rank.id()))
                     .map(l -> Papi.setPapi(getPlayer(), l))
                     .map(Colorize::text)
                     .collect(Collectors.toList());
@@ -69,26 +76,22 @@ public class RankPermissionsGui extends Gui {
 
             wrapper.customModelData(button.customModelData());
             wrapper.enchanted(button.enchanted());
-            wrapper.update();
+            wrapper.update((HumanEntity) player);
         });
     }
 
     private void build(Button button, GuiItemController.Builder builder, RankPerms perm) {
-        ItemWrapper wrapper;
-        if (rank.perms().contains(perm)) {
-            wrapper = ItemWrapper.builder(Material.LIME_DYE).build();
-        } else {
-            wrapper = ItemWrapper.builder(Material.RED_DYE).build();
-        }
+        Material material = rank.perms().contains(perm) ? Material.LIME_DYE : Material.RED_DYE;
+        ItemWrapper wrapper = ItemWrapper.builder(material).build();
 
         String rawDisplayName = button.displayName();
-        String processedDisplayName = replaceMemberPlaceholders(rawDisplayName, rank.name());
+        String processedDisplayName = replaceMemberPlaceholders(rawDisplayName, rank.id());
         processedDisplayName = Papi.setPapi(getPlayer(), processedDisplayName);
         wrapper.displayName(Colorize.text(processedDisplayName));
 
         List<String> rawLore = button.lore();
         List<String> processedLore = rawLore.stream()
-                .map(l -> replaceMemberPlaceholders(l, rank.name()))
+                .map(l -> replaceMemberPlaceholders(l, rank.id()))
                 .map(l -> Papi.setPapi(getPlayer(), l))
                 .map(Colorize::text)
                 .collect(Collectors.toList());
@@ -96,13 +99,7 @@ public class RankPermissionsGui extends Gui {
 
         wrapper.customModelData(button.customModelData());
         wrapper.enchanted(button.enchanted());
-        wrapper.update();
-
-        ItemMeta itemMeta = button.itemStack().getItemMeta();
-        if (itemMeta != null) {
-            itemMeta.getPersistentDataContainer().set(NAMESPACED_KEY, PersistentDataType.STRING, "menu_item");
-            button.itemStack().setItemMeta(itemMeta);
-        }
+        wrapper.update((HumanEntity) getPlayer());
 
         builder.defaultItem(wrapper);
     }
@@ -111,16 +108,10 @@ public class RankPermissionsGui extends Gui {
         Rank rank = getClan().getRanks().get(rankName);
         if (rank == null) return text;
 
-        Set<RankPerms> perms = rank.perms();
-
-        text = text.replace("%invite_status%", getStatus(perms.contains(RankPerms.INVITE)));
-        text = text.replace("%kick_status%", getStatus(perms.contains(RankPerms.KICK)));
-        text = text.replace("%base_status%", getStatus(perms.contains(RankPerms.BASE)));
-        text = text.replace("%setrank_status%", getStatus(perms.contains(RankPerms.SETRANK)));
-        text = text.replace("%setbase_status%", getStatus(perms.contains(RankPerms.SETBASE)));
-        text = text.replace("%deposit_status%", getStatus(perms.contains(RankPerms.DEPOSIT)));
-        text = text.replace("%withdraw_status%", getStatus(perms.contains(RankPerms.WITHDRAW)));
-        text = text.replace("%pvp_status%", getStatus(perms.contains(RankPerms.PVP)));
+        Set<RankPerms> perms = EnumSet.allOf(RankPerms.class);
+        for (RankPerms perm : perms) {
+            text = text.replace("%" + perm.name().toLowerCase() + "_status%", getStatus(rank.perms().contains(perm)));
+        }
         text = text.replace("%rank%", rank.name());
         return text;
     }

@@ -46,7 +46,7 @@ public abstract class Gui extends PaginatedAdvancedGui implements Listener {
     private final TreexClans plugin;
 
     public Gui(TreexClans plugin, @Nullable Menu menu, Player player, Clan clan) {
-        super(menu.title());
+        super(menu.size(), menu.title());
         this.menu = menu;
         this.player = player;
         this.inventory = holder().getInventory();
@@ -119,7 +119,7 @@ public abstract class Gui extends PaginatedAdvancedGui implements Listener {
                         builder.slots(slot);
                         builder.defaultClickHandler((event, controller) -> {
                             event.setCancelled(false);
-                            onClick(player, null, event, controller);
+                            onClick(player, null, controller);
                         });
 
                         onRegister(player, null, builder);
@@ -150,7 +150,7 @@ public abstract class Gui extends PaginatedAdvancedGui implements Listener {
                             freeSlots.add(finalSelectedButton.slot());
                             builder.defaultClickHandler((event, controller) -> {
                                 event.setCancelled(false);
-                                onClick(player, finalSelectedButton, event, controller);
+                                onClick(player, finalSelectedButton, controller);
                             });
                             return;
                         }
@@ -198,7 +198,7 @@ public abstract class Gui extends PaginatedAdvancedGui implements Listener {
                                     }
                                 }
                             }
-                            onClick(player, finalSelectedButton, event, controller);
+                            onClick(player, finalSelectedButton, controller);
 
                         });
                         onRegister(player, finalSelectedButton, builder);
@@ -209,7 +209,7 @@ public abstract class Gui extends PaginatedAdvancedGui implements Listener {
         }
     }
 
-    protected void onClick(Player player, Button button, InventoryClickEvent event, GuiItemController controller) {
+    protected void onClick(Player player, Button button, GuiItemController controller) {
     }
 
     protected void onRegister(Player player, Button button, GuiItemController.Builder builder) {

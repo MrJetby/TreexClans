@@ -58,7 +58,7 @@ public class QuestsListeners implements Listener {
     public void run(Player player, QuestType questType, String property) {
         if (plugin.getClanManager().isInClan(player.getUniqueId())) {
             Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
-            questManager.addProgressViaChecks(player, clan, questType, property, 1);
+            questManager.addProgressViaChecks(player, clan.getMember(player.getUniqueId()), questType, property, 1);
         }
     }
 }

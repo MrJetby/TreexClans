@@ -93,7 +93,7 @@ public record ClanManager(TreexClans plugin) implements Listener {
     public boolean createClan(@NotNull String clanName, @NotNull Member leader) {
         if (!clanExists(clanName)) {
             Clan clan = new Clan(clanName, null, leader, new HashSet<>(), plugin.getCfg().getDefaultRanks(),
-                    new Level(1, 0, 0, 1, new ArrayList<>()), 0.0, null, 0, false, new HashMap<>(), new ArrayList<>(), new ArrayList<>());
+                    new Level(1, 0, 0, 1, new ArrayList<>()), 0.0, null, 0, false, new HashMap<>(), new HashMap<>(), new ArrayList<>());
             plugin.getCfg().getClans().put(clanName, clan);
             Bukkit.getPluginManager().callEvent(new OnClanCreate(clan));
             return true;
@@ -291,6 +291,9 @@ public record ClanManager(TreexClans plugin) implements Listener {
             colors.put(target.getUuid(), color);
         }
         member.setGlowColors(colors);
+    }
+    public void setColor(@NotNull Member member, @NotNull Member target, @NotNull Color color) {
+        member.getGlowColors().put(target.getUuid(), color);
     }
 
     @EventHandler

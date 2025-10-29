@@ -6,6 +6,7 @@ import me.jetby.treex.text.Colorize;
 import me.jetby.treex.text.Papi;
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.clan.Clan;
+import me.jetby.treexclans.clan.Member;
 import me.jetby.treexclans.functions.quests.Quest;
 import me.jetby.treexclans.gui.*;
 import me.jetby.treexclans.gui.Gui;
@@ -91,12 +92,12 @@ public class QuestsGui extends Gui {
                     ItemStack itemStack = questButton.itemStack().clone();
                     ItemWrapper wrapper = new ItemWrapper(itemStack);
                     String rawDisplayName = questButton.displayName();
-                    String processedDisplayName = replaceQuestPlaceholders(rawDisplayName, quest, getClan());
+                    String processedDisplayName = replaceQuestPlaceholders(rawDisplayName, quest, getClan().getMember(getPlayer().getUniqueId()));
                     processedDisplayName = Papi.setPapi(getPlayer(), processedDisplayName);
                     wrapper.displayName(Colorize.text(processedDisplayName));
                     List<String> rawLore = questButton.lore();
                     List<String> processedLore = rawLore.stream()
-                            .map(l -> replaceQuestPlaceholders(l, quest, getClan()))
+                            .map(l -> replaceQuestPlaceholders(l, quest, getClan().getMember(getPlayer().getUniqueId())))
                             .map(l -> Papi.setPapi(getPlayer(), l))
                             .map(Colorize::text)
                             .collect(Collectors.toList());
@@ -116,9 +117,9 @@ public class QuestsGui extends Gui {
         }
     }
 
-    private String replaceQuestPlaceholders(String text, Quest quest, Clan clan) {
-        int progress = getPlugin().getQuestManager().getProgress(clan, quest);
-        text = text.replace("%status%", status(quest));
+    private String replaceQuestPlaceholders(String text, Quest quest, Member member) {
+        int progress = getPlugin().getQuestManager().getProgress(member, quest);
+        text = text.replace("%status%", status(member, quest));
         text = text.replace("%quest_name%", quest.name());
         text = text.replace("%quest_description%", quest.description());
         text = text.replace("%quest_progress%", String.valueOf(progress));
@@ -126,8 +127,8 @@ public class QuestsGui extends Gui {
         return text;
     }
 
-    private String status(Quest quest) {
-        if (getPlugin().getQuestManager().isQuestCompleted(getClan(), quest)) {
+    private String status(Member member, Quest quest) {
+        if (getPlugin().getQuestManager().isQuestCompleted(member, quest)) {
             return getPlugin().getLang().getMessage("quest-status-completed");
         } else {
             return getPlugin().getLang().getMessage("quest-status-uncompleted");

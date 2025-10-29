@@ -125,20 +125,45 @@ public class YAML implements Storage {
             }
 
 
-            Map<String, Integer> questsProgress = new HashMap<>();
+            Map<UUID, Map<String, Integer>> questsInProgress = new HashMap<>();
             ConfigurationSection progress = clan.getConfigurationSection("quests-progress");
             if (progress != null) {
-                for (String key : progress.getKeys(false)) {
-                    if (plugin.getQuestsLoader().getQuests().get(key) == null) continue;
-                    questsProgress.put(key, progress.getInt(key, 0));
+                for (String questId : progress.getKeys(false)) {
+                    if (plugin.getQuestsLoader().getQuests().get(questId) == null) continue;
+                    try {
+                        ConfigurationSection playersInProgress = progress.getConfigurationSection(questId);
+                        if (playersInProgress != null) {
+                            for (String id : playersInProgress.getKeys(false)) {
+
+                                Map<String, Integer> map = new HashMap<>();
+                                map.put(questId, playersInProgress.getInt(id, 0));
+
+                                questsInProgress.put(UUID.fromString(id), map);
+                            }
+                        }
+                    } catch (Exception ignored) {
+                    }
                 }
             }
-            List<String> completedQuests = new ArrayList<>(clan.getStringList("quests-completed"));
+
+            Map<UUID, List<String>> completedQuests = new HashMap<>();
+            ConfigurationSection quests = clan.getConfigurationSection("quests-completed");
+            if (quests!=null) {
+                for (String uid : quests.getKeys(false)) {
+                    try {
+                        completedQuests.put(UUID.fromString(uid), clan.getStringList(uid));
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+            }
+
 
 
             plugin.getCfg().getClans().put(clanId, new Clan(clanId, prefix, leader, memberSet, ranks,
                     new Level(Integer.parseInt(level), 0, 0, 100, new ArrayList<>()),
-                    balance, base, clanExp, pvp, questsProgress, completedQuests, chestItems));
+                    balance, base, clanExp, pvp, questsInProgress, completedQuests, chestItems));
         }
     }
 
@@ -156,6 +181,7 @@ public class YAML implements Storage {
                     Rank rank = clan.getRanks().get(key);
                     configuration.set(clanId + ".ranks." + rank.id() + ".display-name", rank.name());
                     Set<RankPerms> perms = rank.perms();
+                    configuration.set(clanId + ".ranks." + rank.id() + ".permissions.ALWAYS", true);
                     for (RankPerms perm : perms) {
                         configuration.set(clanId + ".ranks." + rank.id() + ".permissions." + perm.name(), true);
                     }
@@ -166,10 +192,20 @@ public class YAML implements Storage {
                 configuration.set(clanId + ".exp", clan.getExp());
                 configuration.set(clanId + ".pvp", clan.isPvp());
 
-                for (Map.Entry<String, Integer> entry : clan.getQuestsProgress().entrySet()) {
-                    configuration.set(clanId + ".quests-progress." + entry.getKey(), entry.getValue());
+                for (UUID uuid : clan.getQuestsProgress().keySet()) {
+                    Map<String, Integer> map = clan.getQuestsProgress().get(uuid);
+                    if (map != null) {
+                        for (String key : map.keySet()) {
+                            configuration.set(clanId + ".quests-progress." + key + "." + uuid.toString(), map.get(key));
+                        }
+
+                    }
                 }
-                configuration.set(clanId + ".quests-completed", clan.getCompletedQuest());
+
+                for (Map.Entry<UUID, List<String>> entry : clan.getCompletedQuest().entrySet()) {
+                    configuration.set(clanId + ".quests-completed."+entry.getKey().toString(), entry.getValue());
+                }
+
 
                 Member leader = clan.getLeader();
                 configuration.set(clan.getId() + ".leader.uuid", leader.getUuid().toString());

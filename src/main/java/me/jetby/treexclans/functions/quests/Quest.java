@@ -9,9 +9,11 @@ public record Quest(
         String id,
         String name,
         String description,
+        QuestProgressType progressType,
         QuestType questType,
         @Nullable String questProperty,
         int target,
+        List<ActionRegistry.RegistryActionEntry> globalRewards,
         List<ActionRegistry.RegistryActionEntry> rewards,
         List<String> disabledWorlds
 

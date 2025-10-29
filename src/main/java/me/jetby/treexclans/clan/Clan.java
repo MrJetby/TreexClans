@@ -7,10 +7,7 @@ import me.jetby.treexclans.clan.rank.Rank;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @AllArgsConstructor
 @Getter @Setter
@@ -25,8 +22,8 @@ public class Clan {
     private Location base;
     private int exp;
     private boolean pvp;
-    private Map<String, Integer> questsProgress;
-    private List<String> completedQuest;
+    private Map<UUID, Map<String, Integer>> questsProgress;
+    private Map<UUID, List<String>> completedQuest;
     private List<ItemStack> chest;
 
     public void addMember(Member member) {
@@ -40,6 +37,11 @@ public class Clan {
                 .filter(member -> member.getUuid().equals(uuid))
                 .findFirst()
                 .orElse(null);
+    }
+    public Set<Member> getMembersWithLeader() {
+        Set<Member> list = new HashSet<>(members);
+        list.add(leader);
+        return list;
     }
     public void removeMember(Member member) {
         this.members.remove(member);

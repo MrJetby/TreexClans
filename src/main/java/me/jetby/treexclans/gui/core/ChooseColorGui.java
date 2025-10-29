@@ -14,8 +14,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class ChooseColorGui extends Gui {
 
-    public ChooseColorGui(TreexClans plugin, Menu menu, Player player, Clan clan) {
+    private final Member target;
+    public ChooseColorGui(TreexClans plugin, Menu menu, Player player, Clan clan, Member target) {
         super(plugin, menu, player, clan);
+        this.target = target;
 
         size(menu.size());
         type(menu.inventoryType());
@@ -24,15 +26,19 @@ public class ChooseColorGui extends Gui {
     }
 
     @Override
-    public void onClick(Player player, Button button, InventoryClickEvent event, GuiItemController controller) {
+    public void onClick(Player player, Button button, GuiItemController controller) {
 
-        event.setCancelled(true);
         if (!controller.slots().contains(button.slot())) return;
 
         if (button.type().startsWith("color-")) {
             Member member = getClan().getMember(player.getUniqueId());
-
             Color color = Equipment.getColorByName(button.type().replace("color-", ""));
+
+            if (target!=null) {
+                getPlugin().getClanManager().setColor(member, target, color);
+                return;
+            }
+
             getPlugin().getClanManager().setColor(getClan(), member, color);
             if (getPlugin().getGlow().hasObserver(player)) {
                 getPlugin().getGlow().removeObserver(player);

@@ -3,6 +3,7 @@ package me.jetby.treexclans.gui;
 import lombok.experimental.UtilityClass;
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.clan.Clan;
+import me.jetby.treexclans.clan.Member;
 import me.jetby.treexclans.clan.rank.Rank;
 import me.jetby.treexclans.gui.core.*;
 import org.bukkit.entity.Player;
@@ -15,14 +16,16 @@ import java.util.Map;
 public class GuiFactory {
     private final Map<String, Gui> customGuis = new HashMap<>();
 
-    public Gui create(TreexClans plugin, Menu menu, Player player, Clan clan, @Nullable Rank rank) {
+    public Gui create(TreexClans plugin, Menu menu, Player player, Clan clan, @Nullable Rank rank, @Nullable Member target) {
         return switch (GuiType.valueOf(menu.type())) {
             case MEMBERS -> new MembersGui(plugin, menu, player, clan);
-            case CHOOSE_COLOR -> new ChooseColorGui(plugin, menu, player, clan);
+            case CHOOSE_COLOR -> new ChooseColorGui(plugin, menu, player, clan, target);
             case CHEST -> new ChestGui(plugin, menu, player, clan);
             case QUESTS -> new QuestsGui(plugin, menu, player, clan);
             case RANKS -> new RanksGui(plugin, menu, player, clan);
             case RANK_PERMISSIONS -> new RankPermissionsGui(plugin, menu, player, clan, rank);
+            case CHOOSE_PLAYER_COLOR -> new ChoosePlayerColorGui(plugin, menu, player, clan, target);
+            case MENU -> new DefaultGui(plugin, menu, player, clan);
             default -> getCustomGuiOrDefault(plugin, menu, player, clan, menu.type());
         };
     }

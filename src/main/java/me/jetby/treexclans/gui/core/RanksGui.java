@@ -14,6 +14,7 @@ import me.jetby.treexclans.gui.GuiFactory;
 import me.jetby.treexclans.gui.Menu;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -25,7 +26,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static me.jetby.treexclans.TreexClans.LOGGER;
 import static me.jetby.treexclans.TreexClans.NAMESPACED_KEY;
 
 public class RanksGui extends Gui {
@@ -131,10 +131,10 @@ public class RanksGui extends Gui {
             Consumer<GuiItemController.Builder>[] consumers = new Consumer[itemsPerPage];
 
             for (int i = 0; i < itemsPerPage; i++) {
-                int memberIndex = start + i;
+                int rankIndex = start + i;
                 int slot = sortedRankSlots.get(i);
 
-                if (memberIndex >= end) {
+                if (rankIndex >= end) {
                     consumers[i] = builder -> {
                         builder.slots(slot);
                         builder.defaultItem(ItemWrapper.builder(Material.AIR).build());
@@ -143,7 +143,7 @@ public class RanksGui extends Gui {
                     continue;
                 }
 
-                Rank rank = ranks.get(ranksStr.get(memberIndex));
+                Rank rank = ranks.get(ranksStr.get(rankIndex));
 
                 consumers[i] = builder -> {
                     ItemWrapper wrapper = new ItemWrapper(button.itemStack());
@@ -163,7 +163,6 @@ public class RanksGui extends Gui {
 
                     wrapper.customModelData(button.customModelData());
                     wrapper.enchanted(button.enchanted());
-                    wrapper.update();
 
                     builder.defaultItem(wrapper);
                     builder.slots(slot);
@@ -173,11 +172,11 @@ public class RanksGui extends Gui {
                                 GuiFactory.create(
                                         getPlugin(),
                                         getPlugin().getGuiLoader().getMenus().get(button.openGui()),
-                                        getPlayer(), getClan(), rank)
+                                        getPlayer(), getClan(), rank, null)
                                         .open(getPlayer()), 1L);
-
-
                     });
+                    wrapper.update((HumanEntity) getPlayer());
+
                 };
             }
 

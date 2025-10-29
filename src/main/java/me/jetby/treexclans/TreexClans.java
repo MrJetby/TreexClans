@@ -131,6 +131,7 @@ public final class TreexClans extends JavaPlugin {
     public void onDisable() {
         if (storage != null) storage.save();
         disableGlowForAll();
+        // TODO: закрытие гуи для игроков у которых открыто
     }
 
     private void disableGlowForAll() {

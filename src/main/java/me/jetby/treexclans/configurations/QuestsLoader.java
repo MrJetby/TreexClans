@@ -3,6 +3,7 @@ package me.jetby.treexclans.configurations;
 import lombok.Getter;
 import me.jetby.treex.actions.ActionRegistry;
 import me.jetby.treexclans.functions.quests.Quest;
+import me.jetby.treexclans.functions.quests.QuestProgressType;
 import me.jetby.treexclans.functions.quests.QuestType;
 import me.jetby.treexclans.tools.FileLoader;
 import org.bukkit.configuration.ConfigurationSection;
@@ -41,11 +42,13 @@ public class QuestsLoader {
 
                 String name = quest.getString("name");
                 String description = quest.getString("description");
+                QuestProgressType progressType = QuestProgressType.valueOf(quest.getString("progress", "GLOBAL").toUpperCase());
                 int target = quest.getInt("target");
+                List<ActionRegistry.RegistryActionEntry> globalRewards = ActionRegistry.transform(quest.getStringList("global-rewards"));
                 List<ActionRegistry.RegistryActionEntry> rewards = ActionRegistry.transform(quest.getStringList("rewards"));
                 List<String> disabledWorlds = quest.getStringList("disabled-worlds");
 
-                quests.put(key, new Quest(key, name, description, questType, questProperty, target, rewards, disabledWorlds));
+                quests.put(key, new Quest(key, name, description, progressType, questType, questProperty, target, globalRewards, rewards, disabledWorlds));
 
             }
         }

@@ -10,6 +10,8 @@ clan-id:
   quests-progress:
     id: 1
     id2: 50
+    id3:
+      uuid: 1
   leader:
     uuid: uuid
     rank: leader
