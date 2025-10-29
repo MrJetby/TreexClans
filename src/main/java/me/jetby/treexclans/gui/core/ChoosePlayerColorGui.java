@@ -66,7 +66,7 @@ public class ChoosePlayerColorGui extends Gui {
     private void setupMembersPagination() {
 
         List<Button> memberButtons = getMenu().buttons().stream()
-                .filter(b -> "players".equals(b.type().toLowerCase()))
+                .filter(b -> "players".equalsIgnoreCase(b.type()))
                 .toList();
 
         List<Integer> sortedMemberSlots = memberButtons.stream().map(Button::slot).toList();
@@ -141,7 +141,6 @@ public class ChoosePlayerColorGui extends Gui {
                     });
                 };
             }
-
             addPage(consumers);
         }
     }

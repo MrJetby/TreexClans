@@ -177,6 +177,7 @@ public class MembersGui extends Gui {
                     builder.defaultClickHandler((event, ctrl) -> event.setCancelled(true));
                 };
             }
+            if (consumers.length==0) return;
 
             addPage(consumers);
         }

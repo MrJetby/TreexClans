@@ -1,24 +1,33 @@
-id: storage
-title: "&0&lClan storage"
+id: choose_player_color
+title: "&0&lВыберите участника"
 size: 54
 open_permission: none
-open_args:
-  - 'storage'
-  - 'chest'
 
-listen: chest
+
+listen: choose_player_color
+
 # Available types
-# all_quests
-# category-<id>
+# members
 Items:
 
+  everyone:
+    material: ARMOR_STAND
+    slot: 13
+    display_name: "&aВсем"
+    click_commands:
+      - '[open_menu] glow_color'
 
-  free-slots:
+
+  members:
+    open-gui: glow_color
+    type: players
     slot:
-      - 9-44
-    type: item
-    free-slot: true
-
+      - '19-25'
+      - '28-34'
+      - '37-43'
+    display_name: "&6%player_name%"
+    lore:
+      - "&7▶ Нажмите чтобы выбрать цвет"
 
   next_page:
     material: SPECTRAL_ARROW
@@ -31,7 +40,6 @@ Items:
     slot: 46
     type: prev_page
     display_name: "&c◀ Предыдущая страница"
-
 
   orange:
     material: ORANGE_STAINED_GLASS_PANE
@@ -61,12 +69,14 @@ Items:
     display_name: " "
 
 
+
   menu:
     material: DARK_OAK_DOOR
     slot: 49
     display_name: "&6Вернуться в меню"
     click_commands:
       - "[open_menu] main"
+
 
 
 

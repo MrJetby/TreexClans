@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-// TODO: Пофиксить дубликат ролей /clan menu -> ранги
 
 public class RankPermissionsGui extends Gui {
     private final Rank rank;

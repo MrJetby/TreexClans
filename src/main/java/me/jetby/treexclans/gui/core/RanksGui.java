@@ -42,7 +42,7 @@ public class RanksGui extends Gui {
     protected void onRegister(Player player, Button button, GuiItemController.Builder builder) {
         if (button == null) return;
         switch (button.type().toLowerCase()) {
-            case "all_rank": {
+            case "all_ranks": {
                 break;
             }
             case "leader_rank": {
@@ -110,7 +110,11 @@ public class RanksGui extends Gui {
                 .filter(b -> "all_ranks".equals(b.type()))
                 .toList();
 
-        List<Integer> sortedRankSlots = buttons.stream().map(Button::slot).toList();
+        List<Integer> sortedRankSlots = buttons.stream()
+                .map(Button::slot)
+                .distinct()
+                .sorted()
+                .toList();
         if (buttons.isEmpty()) return;
 
         int itemsPerPage = sortedRankSlots.size();
@@ -180,6 +184,7 @@ public class RanksGui extends Gui {
                 };
             }
 
+            if (consumers.length==0) return;
             addPage(consumers);
         }
     }

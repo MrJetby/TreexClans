@@ -65,7 +65,7 @@ public class KickSubcommand implements Subcommand {
             clan.removeMember(member);
             plugin.getLang().sendMessage(player, clan, "clan-player-kick", new Lang.ReplaceString("{target}", targetName));
             if (target!=null && target.isOnline()) {
-                plugin.getLang().sendMessage(player, clan, "clan-you-was-kicked", new Lang.ReplaceString("{player}", player.getName()));
+                plugin.getLang().sendMessage(target, clan, "clan-you-was-kicked", new Lang.ReplaceString("{player}", player.getName()));
             }
         }
         return true;

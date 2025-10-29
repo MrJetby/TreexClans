@@ -1,9 +1,8 @@
 id: glow_color
-title: "&6&lChoose color"
+title: "&0&lChoose color"
 size: 36
 open_permission: none
-open_args:
-  - 'glow-color'
+open_args: {}
 
 listen: choose_color
 Items:
@@ -119,3 +118,38 @@ Items:
     type: color-ORANGE
     color: ORANGE
     display_name: "&6Выбрать цвет"
+
+
+  ORANGE_BACKGROUND:
+    material: ORANGE_STAINED_GLASS_PANE
+    slot:
+      - 0-2
+      - 6-8
+      - 27-29
+      - 33-35
+    display_name: " "
+
+  black_BACKGROUND:
+    material: BLACK_STAINED_GLASS_PANE
+    slot:
+      - 3
+      - 5
+      - 30
+      - 32
+    display_name: " "
+
+
+  gray_BACKGROUND:
+    material: GRAY_STAINED_GLASS_PANE
+    slot:
+      - 4
+    display_name: " "
+
+
+
+  menu:
+    material: DARK_OAK_DOOR
+    slot: 31
+    display_name: "&6Вернуться в меню"
+    click_commands:
+      - "[open_menu] choose_player_color"

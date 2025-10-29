@@ -1,16 +1,8 @@
 
 lang: ru
 
+
 clan-create:
-  requirements:
-    example:
-      type: math
-      input: "%vault_eco_balance_fixed% >= 5000"
-      actions:
-        - "[money_take] 5000"
-      deny_actions:
-        - "[message] &cНедостаточно денег на создание клана! Минимум 5000 монет"
-    "example2": {}
 
   min-clan-tag-length: 3
   max-clan-tag-length: 6
@@ -26,23 +18,34 @@ chat-format: "<#FFE259>&l[TreexClans]</#FFA751> &e&l{player} &7▶ &f{message}"
 
 # Если true то квесты будут выполнятся постепенно, то есть нельзя перейти на другой квесты пока не выполнишь предыдущий
 # Если false то можно выполнить любой квест не смотря на очерёдность
-gradual-quest: false
+gradual-quest: true
 
 ranks:
   # можно создавать неограниченное количество рангов
   MEMBER:
-    display-name: Участник
+    display-name: "&7Участник"
     permissions:
-      invite: false
+      invite: true
       kick: false
-      base: false
+      base: true
       setbase: false
       setrank: false
       deposit: true
       withdraw: false
       pvp: false
+  CONTROL:
+    display-name: "&3Управляющий"
+    permissions:
+      invite: true
+      kick: true
+      base: true
+      setbase: true
+      setrank: false
+      deposit: true
+      withdraw: true
+      pvp: true
   LEADER:
-    display-name: Лидер
+    display-name: "&4&lЛидер"
     permissions:
       invite: true
       kick: true
@@ -52,3 +55,6 @@ ranks:
       deposit: true
       withdraw: true
       pvp: true
+
+
+placeholder-show-format: "%weeks% %days% %hours% %minutes%"

@@ -2,8 +2,7 @@ id: members
 title: "&0&lУчастники клана"
 size: 54
 open_permission: none
-open_args:
-  - "members"
+open_args: {}
 
 listen: members
 
@@ -94,8 +93,18 @@ Items:
     material: GRAY_STAINED_GLASS_PANE
     slot:
       - 4
-      - 49
     display_name: " "
+
+
+
+  menu:
+    material: DARK_OAK_DOOR
+    slot: 49
+    display_name: "&6Вернуться в меню"
+    click_commands:
+      - "[open_menu] main"
+
+
 
 
 

@@ -4,11 +4,11 @@ lang: ru
 prefix: "<#FFE259>&lTreexClans</#FFA751> &7>"
 
 formattedTime:
-  weeks: [ "неделя", "недели", "недель" ]
-  days: [ "день", "дня", "дней" ]
-  hours: [ "час", "часа", "часов" ]
-  minutes: [ "минута", "минуты", "минут" ]
-  seconds: [ "секунда", "секунды", "секунд" ]
+  weeks: [ "нед.", "нед.", "нед." ]
+  days: [ "дн.", "дн.", "дн." ]
+  hours: [ "ч.", "ч.", "ч." ]
+  minutes: [ "мин.", "мин.", "мин." ]
+  seconds: [ "сек.", "сек.", "сек." ]
 
 
 null-economy: "Для этой функции требуется плагин на экономику"
@@ -78,13 +78,14 @@ you-haven-not-enough-money:
   - "[message] {prefix} &cУ вас недостаточно средств!"
 pvp-disabled:
   # Если вам не нужно это сообщение то просто оставьте эту строку пустым pvp-disabled: {}
-  - "[actionbar] &cPvP против со-клана отключено"
+  - "[actionbar] &cPvP против соклана отключено"
+
 
 you-cant-do-that-with-leader:
   - "[message] {prefix} &cВы не можете выполнить данное действие против лидера клана"
 
 your-rank-is-not-allowed-to-do-that:
-  - "[message] {prefix} &cВаш ранг не позволяет вам это сделать! Пожалуйста, обратитесь к лидеру клана за выдаче прав."
+  - "[message] {prefix} &cYou are not allowed to do that! Please ask your clan leader to give you permission"
 
 
 clan-create:
@@ -121,16 +122,10 @@ clan-disband:
 clan-disband-confirm:
   - '[message] {prefix} &c&lПодтвердите что вы хотите удалить ваш клан без возможного восстановления прописав команду ещё раз.'
 
-
-
-
-rank-perm-yes: "&a✔"
-rank-perm-no: "&c✘"
-
-
-
 quest-status-progress: "&eВ прогрессе"
 quest-status-uncompleted: "&cНе выполнен"
 quest-status-completed: "&aВыполнено"
 quest-status-gradual: "&eВыполните предыдущий"
 
+rank-perm-yes: "&a✔"
+rank-perm-no: "&c✘"

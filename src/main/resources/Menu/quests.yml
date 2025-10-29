@@ -1,14 +1,11 @@
 id: quests
-title: "&6&lQuests Menu"
+title: "&0&lКвесты"
 size: 54
 open_permission: none
 open_args:
   - 'quests'
 
 listen: quests
-# Available types
-# all_quests
-# category-<id>
 Items:
 
 
@@ -53,8 +50,18 @@ Items:
     material: GRAY_STAINED_GLASS_PANE
     slot:
       - 4
-      - 49
     display_name: " "
+
+
+
+  menu:
+    material: DARK_OAK_DOOR
+    slot: 49
+    display_name: "&6Вернуться в меню"
+    click_commands:
+      - "[open_menu] main"
+
+
 
 
 

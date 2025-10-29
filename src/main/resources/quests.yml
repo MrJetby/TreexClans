@@ -1,45 +1,60 @@
 
 category:
   example:
-    - quest1
     - quest2
+    - quest3
+    - quest4
 
-quest1:
-  # PLAYER_KILL
-  # UNIQUE_PLAYER_KILL
-  # ENTITY_KILL;ENTITY_TYPE (example: ENTITY_KILL;ZOMBIE)
-  # BLOCK_BREAK;BLOCK_TYPE (example: BLOCK_BREAK;DIAMOND_ORE)
-  # BLOCK_PLACE;BLOCK_TYPE (example: BLOCK_PLACE;OAK_LOG)
-  type: PLAYER_KILL
-  # Если global - то прогресс будет выполнен всем одинаково и rewards будет выполнен для всех
-  # Если individual - то прогресс будет индивидуальным и rewards будет выполнен только для завершившего квест
-  progress: global
-  target: 10
-  name: "Киллер"
-  description: "Выполните 10 убийств игроков"
-  disabled-worlds:
-    - duel-1
-    - duel-2
-  # Работает только если progress стоит на global
-  global-rewards:
-    - "[clan_coin_add] 5" # Коины
-  rewards:
-    - "[money_add] 1000"
-    - "[message] {prefix} &7Ваш клан выполнил квест &e{name}&7, поэтому вы все получают награду."
-    - "[message] &6&m                    "
-    - "[message] {prefix} &aНаграды:"
-    - "[message] {prefix} &a+ 5 клан коинов"
-    - "[message] {prefix} &a+ 100 опыта"
-    - "[message] {prefix} &a+ 1000 монет"
-    - "[message] &6&m                    "
 
 
 quest2:
-  type: ENTITY_KILL;ZOMBIE
-  target: 10
+  type: ENTITY_KILL;CREEPER
+  target: 3
   name: "Охотник на монстров"
   description: "Убейте 10 зомби"
+  progress: global
   rewards:
-    - "[money_add] 5000"
-    - "[message] &aВы выполнили квест &eКиллер &aи получили &a5000 монет!"
+    - "[sound] ENTITY_PLAYER_LEVELUP"
+    - "[message] &6&m                                      &r"
+    - "[message] &e&l⭐ &7Ваш клан выполнил квест &e{name}&7, поэтому все получают награду."
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lНаграды:"
+    - "[message] &a+ &e5 клан коинов"
+    - "[message] &a+ &e100 опыта"
+    - "[message] &a+ &e1000 монет"
+    - "[message] &6&m                                      &r"
+quest3:
+  type: BLOCK_BREAK;DIRT
+  target: 3
+  progress: individual
+  name: "DIRTY"
+  description: ""
+  rewards:
+    - "[sound] ENTITY_PLAYER_LEVELUP"
+    - "[message] &6&m                                      &r"
+    - "[message] &e&l⭐ &7Ваш клан выполнил квест &e{name}&7, поэтому все получают награду."
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lНаграды:"
+    - "[message] &a+ &e5 клан коинов"
+    - "[message] &a+ &e100 опыта"
+    - "[message] &a+ &e1000 монет"
+    - "[message] &6&m                                      &r"
+
+
+quest4:
+  type: BLOCK_PLACE;STONE
+  target: 5
+  progress: individual
+  name: "STONE"
+  description: ""
+  rewards:
+    - "[sound] ENTITY_PLAYER_LEVELUP"
+    - "[message] &6&m                                      &r"
+    - "[message] &e&l⭐ &7Ваш клан выполнил квест &e{name}&7, поэтому все получают награду."
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lНаграды:"
+    - "[message] &a+ &e5 клан коинов"
+    - "[message] &a+ &e100 опыта"
+    - "[message] &a+ &e1000 монет"
+    - "[message] &6&m                                      &r"
 
