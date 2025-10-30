@@ -26,6 +26,8 @@ public class Equipment {
         CHEST_PLATE(EquipmentSlot.CHEST_PLATE, org.bukkit.inventory.EquipmentSlot.CHEST),
         LEGGINGS(EquipmentSlot.LEGGINGS, org.bukkit.inventory.EquipmentSlot.LEGS),
         BOOTS(EquipmentSlot.BOOTS, org.bukkit.inventory.EquipmentSlot.FEET);
+//        OFFHAND(EquipmentSlot.OFF_HAND, org.bukkit.inventory.EquipmentSlot.OFF_HAND),
+//        HAND(EquipmentSlot.MAIN_HAND, org.bukkit.inventory.EquipmentSlot.HAND);
 
         public static final Equip[] VALUES = values();
 

@@ -22,6 +22,11 @@ public class Actions {
         actions.add(new ActionEntry("TREEXCLANS", "CLAN_EXP_GIVE", new ClanExpGiveAction()));
         actions.add(new ActionEntry("TREEXCLANS", "CLAN_EXP_TAKE", new ClanExpGiveAction()));
 
+        actions.add(new ActionEntry("TREEXCLANS", "MONEY_GIVE", new MoneyGiveAction()));
+        actions.add(new ActionEntry("TREEXCLANS", "MONEY_TAKE", new MoneyTakeAction()));
+
+        actions.add(new ActionEntry("TREEXCLANS", "COIN_GIVE", new CoinAddAction()));
+        actions.add(new ActionEntry("TREEXCLANS", "COIN_TAKE", new CoinTakeAction()));
 
         ActionTypeRegistry.register(actions);
     }

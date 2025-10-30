@@ -10,6 +10,5 @@ public enum GuiType {
     CHOOSE_COLOR,
     CHOOSE_PLAYER_COLOR,
     MEMBERS,
-    CLAN_LIST,
-    TOP
+    TOP_CLANS
 }

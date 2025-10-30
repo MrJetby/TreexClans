@@ -140,7 +140,8 @@ public class Config {
             int maxMembers = lSection.getInt("max-members", 1);
             int maxBalance = lSection.getInt("max-balance", 0);
             List<String> quests = lSection.getStringList("quests");
-            levels.put(Integer.parseInt(id), new Level(id, exp, maxMembers, maxBalance, chest, quests));
+            List<String> levelUpActions = lSection.getStringList("level-up-actions");
+            levels.put(Integer.parseInt(id), new Level(id, exp, maxMembers, maxBalance, chest, quests, levelUpActions));
         }
 
         gradualQuest = configuration.getBoolean("gradual-quest", false);

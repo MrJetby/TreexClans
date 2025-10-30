@@ -26,6 +26,7 @@ public class GuiFactory {
             case RANK_PERMISSIONS -> new RankPermissionsGui(plugin, menu, player, clan, rank);
             case CHOOSE_PLAYER_COLOR -> new ChoosePlayerColorGui(plugin, menu, player, clan, target);
             case MENU -> new DefaultGui(plugin, menu, player, clan);
+            case TOP_CLANS -> new TopClansGui(plugin, menu, player, clan);
             default -> getCustomGuiOrDefault(plugin, menu, player, clan, menu.type());
         };
     }

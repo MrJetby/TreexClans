@@ -96,6 +96,10 @@ clan-balance:
   - "[message] {prefix} &fБаланс клана составляет: &#17FF35&l${balance}"
 clan-balance-deposit:
   - "[message] {prefix} &#17FF35Вы успешно &eпополнили &#17FF35баланс клана на сумму: &l${sum}"
+clan-balance-limit:
+  - "[message] {prefix} &cДостигнут лимит денег в балансе клана! &7(Лимит: {max-balance})"
+clan-deposit-no-money:
+  - '[message] {prefix} &cУ вас недостаточно средств чтобы пополнить на эту сумму'
 clan-balance-withdraw:
   - "[message] {prefix} &#17FF35Вы успешно &cсняли &#17FF35с баланса банка на сумму: &l${sum}"
 clan-player-kick:

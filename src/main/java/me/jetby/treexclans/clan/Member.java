@@ -28,9 +28,9 @@ public class Member {
     private int warLoses;
 
     public void addCoin(int a) {
-        setCoin(getCoin()-a);
+        coin = coin+a;
     }
     public void takeCoin(int a) {
-        setCoin(getCoin()-a);
+        coin = coin-a;
     }
 }

@@ -7,6 +7,7 @@ import lombok.Getter;
 import me.jetby.treex.actions.ActionContext;
 import me.jetby.treex.actions.ActionExecutor;
 import me.jetby.treex.actions.ActionRegistry;
+import me.jetby.treex.text.Colorize;
 import me.jetby.treex.text.Papi;
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.clan.Clan;
@@ -14,6 +15,7 @@ import me.jetby.treexclans.gui.requirements.ClickRequirement;
 import me.jetby.treexclans.gui.requirements.Requirements;
 import me.jetby.treexclans.gui.requirements.ViewRequirement;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,6 +28,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static me.jetby.treexclans.TreexClans.NAMESPACED_KEY;
 
@@ -66,6 +69,39 @@ public abstract class Gui extends PaginatedAdvancedGui implements Listener {
             }
             event.setCancelled(false);
         });
+    }
+
+    public String applyDefaultPlaceholders(String text) {
+        if (text==null) return null;
+        text = text.replace("%player_name%", player.getName());
+        text = text.replace("%clan_tag%", clan.getId());
+        if (clan.getPrefix()!=null) {
+            text = text.replace("%clan_prefix%", clan.getPrefix());
+        } else {
+            text = text.replace("%clan_prefix%", clan.getId().toUpperCase());
+        }
+        Player leader = Bukkit.getPlayer(clan.getLeader().getUuid());
+        if (leader!=null) {
+            text = text.replace("%clan_leader_name%", leader.getName());
+        } else {
+            OfflinePlayer offlineLeader = Bukkit.getOfflinePlayer(clan.getLeader().getUuid());
+            text = text.replace("%clan_leader_name%", offlineLeader.getName());
+        }
+        text = text.replace("%clan_exp%", String.valueOf(clan.getExp()));
+        text = text.replace("%clan_exp_max%", String.valueOf(clan.getLevel().minExp()));
+        text = text.replace("%clan_level%", clan.getLevel().id());
+        text = text.replace("%clan_balance%", String.valueOf(clan.getBalance()));
+        text = text.replace("%clan_coin%", String.valueOf(getClan().getMember(player.getUniqueId()).getCoin()));
+        for (Map.Entry<String, String> entry : customPlaceholders.entrySet()) {
+            text = text.replace(entry.getKey(), entry.getValue());
+            customPlaceholders.remove(entry.getKey());
+        }
+        return text;
+    }
+    private final Map<String, String> customPlaceholders = new HashMap<>();
+    public Map<String, String> setCustomPlaceholder(String target, String replacement) {
+        customPlaceholders.put(target, replacement);
+        return customPlaceholders;
     }
 
     protected void registerButtons() {
@@ -157,8 +193,13 @@ public abstract class Gui extends PaginatedAdvancedGui implements Listener {
                         ItemStack itemStack = finalSelectedButton.itemStack().clone();
                         ItemWrapper wrapper = new ItemWrapper(itemStack);
 
-                        wrapper.displayName(Papi.setPapi(player, finalSelectedButton.displayName()));
-                        wrapper.lore(Papi.setPapi(player, finalSelectedButton.lore()));
+                        wrapper.displayName(Papi.setPapi(player, applyDefaultPlaceholders(finalSelectedButton.displayName())));
+                        List<String> processedLore = finalSelectedButton.lore().stream()
+                                .map(this::applyDefaultPlaceholders)
+                                .map(l -> Papi.setPapi(player, l))
+                                .map(Colorize::text)
+                                .collect(Collectors.toList());
+                        wrapper.lore(processedLore);
                         wrapper.customModelData(finalSelectedButton.customModelData());
                         wrapper.enchanted(finalSelectedButton.enchanted());
                         wrapper.update();
@@ -180,7 +221,16 @@ public abstract class Gui extends PaginatedAdvancedGui implements Listener {
                                         for (ClickRequirement clickRequirement : cmd.clickRequirements()) {
                                             if ((clickRequirement.anyClick() || clickRequirement.clickType() == clickType)) {
                                                 if (!Requirements.check(player, clickRequirement)) {
-                                                    Requirements.runDenyCommands(player, clickRequirement.deny_commands(), finalSelectedButton, clan);
+                                                    ActionContext ctx = new ActionContext(player);
+                                                    ctx.put("button", finalSelectedButton);
+                                                    ctx.put("clan", clan);
+                                                    List<String> commands = new ArrayList<>(clickRequirement.deny_commands());
+                                                    commands = commands.stream()
+                                                            .map(this::applyDefaultPlaceholders)
+                                                            .map(l -> Papi.setPapi(player, l))
+                                                            .map(Colorize::text)
+                                                            .toList();
+                                                    ActionExecutor.execute(ctx, ActionRegistry.transform(commands));
                                                     allRequirementsPassed = false;
                                                     break;
                                                 }
@@ -192,7 +242,13 @@ public abstract class Gui extends PaginatedAdvancedGui implements Listener {
                                         ActionContext ctx = new ActionContext(player);
                                         ctx.put("button", finalSelectedButton);
                                         ctx.put("clan", clan);
-                                        ActionExecutor.execute(ctx, ActionRegistry.transform(cmd.actions()));
+                                        List<String> commands = new ArrayList<>(cmd.actions());
+                                        commands = commands.stream()
+                                                .map(this::applyDefaultPlaceholders)
+                                                .map(l -> Papi.setPapi(player, l))
+                                                .map(Colorize::text)
+                                                .toList();
+                                        ActionExecutor.execute(ctx, ActionRegistry.transform(commands));
                                         break;
                                     }
                                 }

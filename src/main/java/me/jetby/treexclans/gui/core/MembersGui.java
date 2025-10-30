@@ -35,10 +35,6 @@ public class MembersGui extends Gui {
         super(plugin, menu, player, clan);
         registerButtons();
 
-        size(menu.size());
-        type(menu.inventoryType());
-        title(Papi.setPapi(player, menu.title()));
-
         setupMembersPagination();
 
         openPage(0);

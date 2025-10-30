@@ -76,7 +76,7 @@ public class ChoosePlayerColorGui extends Gui {
 
         List<Member> members = new ArrayList<>(getClan().getMembers());
         members.add(getClan().getLeader());
-        members.removeIf(m -> !m.equals(getClan().getLeader()));
+        members.removeIf(m -> m.getUuid().equals(getPlayer().getUniqueId()));
 
 
         int totalPages = (int) Math.ceil((double) members.size() / itemsPerPage);
@@ -141,7 +141,6 @@ public class ChoosePlayerColorGui extends Gui {
                     });
                 };
             }
-            if (consumers[page]==null) continue;
             addPage(consumers);
         }
     }

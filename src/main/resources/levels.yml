@@ -1,11 +1,26 @@
 '1':
   exp: 100
+  chest: 1
+  max-members: 2
+  max-balance: 150000
+  quests:
+    - example # Категория квестов
+'2':
+  exp: 250
   chest: 15
   max-members: 3
   max-balance: 250000
   quests:
     - example # Категория квестов
-'2':
-  exp: 200
-  max-members: 3
-  max-balance: 250000
+  level-up-actions:
+    - "[message] &7"
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lLEVEL-UP"
+    - "[message] &7Ваш клан достиг &e2-го уровня"
+    - "[message] &7"
+    - "[message] &6&lБонусы:"
+    - "[message] &a+ &fСлотов в хранилище: &615"
+    - "[message] &a+ &fМаксимум участников в клане: &63"
+    - "[message] &a+ &fМаксимальный баланс клана: &6250,000"
+    - "[message] &7"
+    - "[message] &6&m                                      &r"

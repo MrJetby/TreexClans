@@ -33,7 +33,7 @@ public class CreateSubcommand implements Subcommand {
                     sender.sendMessage("§cUsage: /clan create <clanName>");
                     return true;
                 }
-                String clanName = args[0];
+                String clanName = args[0].toLowerCase();
                 if (clanManager.clanExists(clanName)) {
                     plugin.getLang().sendMessage(player, null, "clan-is-already-exists");
                     return true;

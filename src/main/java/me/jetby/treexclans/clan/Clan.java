@@ -3,7 +3,11 @@ package me.jetby.treexclans.clan;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import me.jetby.treex.actions.ActionContext;
+import me.jetby.treex.actions.ActionExecutor;
+import me.jetby.treex.actions.ActionRegistry;
 import me.jetby.treexclans.clan.rank.Rank;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -52,8 +56,15 @@ public class Clan {
     public void addExp(int a, @NotNull Member member, Map<Integer, Level> levels) {
         if (level.minExp()<=getExp()+a) {
             setExp(0);
-            int nextLevel = Integer.parseInt(levels.get(Integer.parseInt(level.id())+1).id());
-            setLevel(levels.get(nextLevel));
+            Level nextLevel = levels.get(Integer.parseInt(level.id())+1);
+            for (Member m : getMembersWithLeader()) {
+                ActionContext ctx = new ActionContext(Bukkit.getPlayer(m.getUuid()));
+                ctx.put("clan", this);
+                ctx.put("member", m);
+                ActionExecutor.execute(ctx, ActionRegistry.transform(nextLevel.levelUpActions()));
+            }
+            setLevel(levels.get(Integer.parseInt(nextLevel.id())));
+
         } else {
             setExp(getExp()+a);
         }
@@ -63,16 +74,22 @@ public class Clan {
         if (level.minExp()<=getExp()+a) {
             setExp(0);
             try {
-                int nextLevel = Integer.parseInt(levels.get(Integer.parseInt(level.id())+1).id());
-                setLevel(levels.get(nextLevel));
+                Level nextLevel = levels.get(Integer.parseInt(level.id())+1);
+                for (Member m : getMembersWithLeader()) {
+                    ActionContext ctx = new ActionContext(Bukkit.getPlayer(m.getUuid()));
+                    ctx.put("clan", this);
+                    ctx.put("member", m);
+                    ActionExecutor.execute(ctx, ActionRegistry.transform(nextLevel.levelUpActions()));
+                }
+                setLevel(levels.get(Integer.parseInt(nextLevel.id())));
             } catch (NumberFormatException ignored) {}
         } else {
             setExp(getExp()+a);
         }
     }
 
-    public double getExp(@NotNull Clan clan) {
-        return clan.getBalance();
+    public int getExpToNextLevel() {
+        return level.minExp()-exp;
     }
 
     public void takeExp(int a, @NotNull Member member) {

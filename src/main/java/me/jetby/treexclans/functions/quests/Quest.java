@@ -1,7 +1,5 @@
 package me.jetby.treexclans.functions.quests;
 
-import me.jetby.treex.actions.ActionRegistry;
-
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -13,8 +11,8 @@ public record Quest(
         QuestType questType,
         @Nullable String questProperty,
         int target,
-        List<ActionRegistry.RegistryActionEntry> globalRewards,
-        List<ActionRegistry.RegistryActionEntry> rewards,
+        List<String> globalRewards,
+        List<String> rewards,
         List<String> disabledWorlds
 
 ) {

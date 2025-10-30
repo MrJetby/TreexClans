@@ -51,10 +51,10 @@ public class AcceptSubcommand implements Subcommand {
                         0, 0, new HashMap<>(),
                         0,0,0,0,0
                 );
-                plugin.getLang().sendMessage(player, clan, "clan-join", List.of(
+                plugin.getLang().sendMessage(player, clan, "clan-join",
                         new Lang.ReplaceString("{player}", player.getName()),
                         new Lang.ReplaceString("{clan}", clan.getId())
-                ));
+                );
                 clan.addMember(member);
             }
             return true;

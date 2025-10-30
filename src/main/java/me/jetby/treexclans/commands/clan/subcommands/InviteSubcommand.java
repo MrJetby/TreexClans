@@ -58,10 +58,10 @@ public class InviteSubcommand implements Subcommand {
                 Cooldown.setCooldown("invite_"+target.getUniqueId()+"_"+clan.getId(), 60);
                 plugin.getLang().sendMessage(player, clan, "clan-invite", new Lang.ReplaceString("{target}", target.getName()));
 
-                plugin.getLang().sendMessage(target, null, "clan-join-request", List.of(
+                plugin.getLang().sendMessage(target, null, "clan-join-request",
                         new Lang.ReplaceString("{clan}", clan.getId()),
                         new Lang.ReplaceString("{player}", player.getName())
-                ));
+                );
 
             }
             return true;

@@ -8,6 +8,7 @@ public record Level(
         int maxMembers,
         int maxBalance,
         int chest,
-        List<String> quests
+        List<String> quests,
+        List<String> levelUpActions
 ) {
 }

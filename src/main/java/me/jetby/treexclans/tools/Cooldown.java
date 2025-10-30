@@ -6,37 +6,40 @@ import me.jetby.treexclans.TreexClans;
 import java.util.HashMap;
 import java.util.Map;
 
+import static me.jetby.treexclans.TreexClans.LOGGER;
+
+ /**
+  * Simple cooldown system.
+  * <p>
+  * The idea is to get the cooldown info only when you call the method.
+  *
+  * @author MrJetby
+  **/
+
 @UtilityClass
 public class Cooldown {
-
-    private final TreexClans plugin = TreexClans.getInstance();
-
-    private final Map<String, Integer> cooldowns = new HashMap<>();
+    private final Map<String, Cooldowns> cooldowns = new HashMap<>();
 
     public boolean isOnCooldown(String key) {
-        return cooldowns.containsKey(key);
+        var cd = cooldowns.get(key);
+        if (cd!=null) {
+            int sec = cd.seconds();
+            int goal = ((int) (System.currentTimeMillis()-cd.timestamp())/1000);
+            if (sec>=goal) {
+                cooldowns.remove(key);
+                return true;
+            }
+        }
+        return false;
     }
     public void setCooldown(String key, int seconds) {
-        cooldowns.put(key, seconds);
-        plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, task -> {
-            var cd = cooldowns.get(key);
-            if (cd==null) {
-                task.cancel();
-                return;
-            }
-            int timeLeft = cd - 1;
-            if (timeLeft <= 0) {
-                cooldowns.remove(key);
-                task.cancel();
-            } else {
-                cooldowns.put(key, timeLeft);
-            }
-        }, 20L, 20L);
+        cooldowns.put(key, new Cooldowns(seconds, System.currentTimeMillis()));
+
     }
     public void removeCooldown(String key) {
         cooldowns.remove(key);
     }
-    public int getCooldown(String key) {
-        return cooldowns.getOrDefault(key, 0) / 20;
-    }
+
+
+    private record Cooldowns(int seconds, long timestamp) {}
 }

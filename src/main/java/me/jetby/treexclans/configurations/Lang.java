@@ -66,20 +66,7 @@ public class Lang {
         ActionExecutor.execute(ctx, ActionRegistry.transform(actions));
     }
 
-    public void sendMessage(Player player, Clan clan, String path, ReplaceString replace) {
-        ActionContext ctx = new ActionContext(player);
-        ctx.put("clan", clan);
-
-        List<String> actions = config.getStringList(path).stream()
-                .map(str -> str
-                        .replace("{prefix}", config.getString("prefix", ""))
-                        .replace(replace.target(), replace.replacement()))
-                .toList();
-
-        ActionExecutor.execute(ctx, ActionRegistry.transform(actions));
-    }
-
-    public void sendMessage(Player player, Clan clan, String path, List<ReplaceString> replaceStrings) {
+    public void sendMessage(Player player, Clan clan, String path, ReplaceString... replaceStrings) {
         ActionContext ctx = new ActionContext(player);
         ctx.put("clan", clan);
 

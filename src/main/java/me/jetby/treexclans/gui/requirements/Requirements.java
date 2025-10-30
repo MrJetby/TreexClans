@@ -46,8 +46,8 @@ public class Requirements {
         String[] args = input.split(" ");
         if (args.length < 3) return false;
 
-        args[0] = setPlaceholders(player, args[0]);
-        args[2] = setPlaceholders(player, args[2]);
+        args[0] = Papi.setPapi(player, args[0]);
+        args[2] = Papi.setPapi(player, args[2]);
 
         try {
             double x = Double.parseDouble(args[0]);
@@ -68,32 +68,5 @@ public class Requirements {
                 default -> false;
             };
         }
-    }
-
-
-    public void runDenyCommands(Player player, List<String> denyCommands) {
-        ActionContext ctx = new ActionContext(player);
-        List<String> commands = new ArrayList<>();
-        for (String str : denyCommands) {
-            commands.add(setPlaceholders(player, str));
-        }
-        ActionExecutor.execute(ctx, ActionRegistry.transform(commands));
-    }
-    public void runDenyCommands(Player player, List<String> denyCommands, Button button, Clan clan) {
-        ActionContext ctx = new ActionContext(player);
-        ctx.put("button", button);
-        ctx.put("clan", clan);
-        List<String> commands = new ArrayList<>();
-        for (String str : denyCommands) {
-            commands.add(setPlaceholders(player, str));
-        }
-        ActionExecutor.execute(ctx, ActionRegistry.transform(commands));
-    }
-
-    private String setPlaceholders(Player player, String string) {
-        return Papi.setPapi(player, string
-//                .replace("%sell_pay%", df.format(totalPrice))
-//                .replace("%sell_score%", df.format(totalScore))
-        );
     }
 }

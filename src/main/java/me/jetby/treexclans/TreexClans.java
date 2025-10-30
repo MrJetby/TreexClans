@@ -18,6 +18,7 @@ import me.jetby.treexclans.functions.glow.Glow;
 import me.jetby.treexclans.functions.quests.QuestManager;
 import me.jetby.treexclans.gui.CommandRegistrar;
 import me.jetby.treexclans.gui.GuiLoader;
+import me.jetby.treexclans.hooks.TreexClansPlaceholders;
 import me.jetby.treexclans.hooks.TreexInitializer;
 import me.jetby.treexclans.hooks.VaultInitializer;
 import me.jetby.treexclans.listeners.ClanListeners;
@@ -63,6 +64,7 @@ public final class TreexClans extends JavaPlugin {
 
     private QuestsLoader questsLoader;
     private QuestManager questManager;
+    private TreexClansPlaceholders treexClansPlaceholders;
 
     @Override
     public void onLoad() {
@@ -84,6 +86,10 @@ public final class TreexClans extends JavaPlugin {
         }
         LOGGER = LogInitialize.getLogger(this);
 
+        treexClansPlaceholders = new TreexClansPlaceholders(this);
+        if (treexClansPlaceholders.isPapi()) {
+            treexClansPlaceholders.register();
+        }
 
         economy = new VaultInitializer().getEconomy();
 
@@ -132,7 +138,13 @@ public final class TreexClans extends JavaPlugin {
     public void onDisable() {
         if (storage != null) storage.save();
         disableGlowForAll();
+        if (treexClansPlaceholders!=null) {
+            if (treexClansPlaceholders.isPapi()) {
+                treexClansPlaceholders.unregister();
+            }
+        }
         // TODO: закрытие гуи для игроков у которых открыто
+
     }
 
     private void disableGlowForAll() {
