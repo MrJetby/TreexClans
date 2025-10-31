@@ -53,7 +53,7 @@ commands:
     - "&#FC835C• /clan disband &7- &fРасформировать клан (удаление клана)"
     - ""
     - "&#FFE259◀&m                                       &#FFE259▶ "
-
+you-cant-leave-leader: "§cYou can't leave this clan because you are the leader. If you want disband this clan you can use /clan disband"
 player-not-found:
   - "[message] {prefix} &cИгрок не найден"
 clan-does-not-exist:
@@ -74,6 +74,8 @@ clan-tag-too-long:
   - "[message] {prefix} &cТег длинный! Максимальная длина: {max_length} символов."
 clan-tag-blocked:
   - "[message] {prefix} &cДанный тег клана запрещен!"
+clan-you-cant-kick-yourself:
+  - '[message] {prefix} &cВы не можете кикнуть самого себя'
 you-haven-not-enough-money:
   - "[message] {prefix} &cУ вас недостаточно средств!"
 no-invite:
@@ -131,6 +133,9 @@ clan-disband:
   - '[team_msg] {prefix} &c&lВаш клан был расформирован лидером'
 clan-disband-confirm:
   - '[message] {prefix} &c&lПодтвердите что вы хотите удалить ваш клан без возможного восстановления прописав команду ещё раз.'
+clan-leave:
+  - "[message] {prefix} &eВы покинули клан {clan}"
+  - "[team_msg] {prefix} &cИгрок {player} покинул клан"
 
 quest-status-progress: "&eВ прогрессе"
 quest-status-uncompleted: "&cНе выполнен"

@@ -3,6 +3,7 @@ package me.jetby.treexclans.commands.clan.subcommands;
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.commands.Subcommand;
 import me.jetby.treexclans.clan.Clan;
+import me.jetby.treexclans.configurations.Lang;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,9 +23,14 @@ public class LeaveSubcommand implements Subcommand {
             }
             Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
             if (clan.getLeader().equals(clan.getMember(player.getUniqueId()))) {
-                player.sendMessage("§cYou can't leave this clan because you are the leader. If you want disband this clan you can use /clan disband");
+                player.sendMessage(plugin.getLang().getMessage("you-cant-leave-leader"));
                 return true;
             }
+
+            plugin.getLang().sendMessage(player, clan, "clan-leave",
+                    new Lang.ReplaceString("{player}", player.getName()),
+                    new Lang.ReplaceString("{clan}", clan.getId())
+            );
             clan.removeMember(clan.getMember(player.getUniqueId()));
         }
         return true;

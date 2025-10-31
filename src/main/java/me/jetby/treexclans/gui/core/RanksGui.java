@@ -16,10 +16,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,7 +107,6 @@ public class RanksGui extends Gui {
     }
 
     private void setupRanksPagination() {
-
         List<Button> buttons = getMenu().buttons().stream()
                 .filter(b -> "all_ranks".equals(b.type()))
                 .toList();
@@ -115,18 +116,17 @@ public class RanksGui extends Gui {
                 .distinct()
                 .sorted()
                 .toList();
+
         if (buttons.isEmpty()) return;
 
         int itemsPerPage = sortedRankSlots.size();
 
         Map<String, Rank> ranks = new HashMap<>(getClan().getRanks());
         ranks.remove(getClan().getLeader().getRank().id());
-        List<String> ranksStr = ranks.keySet().stream().toList();
-
+        List<String> ranksStr = new ArrayList<>(ranks.keySet());
 
         int totalPages = (int) Math.ceil((double) ranksStr.size() / itemsPerPage);
-
-        Button button = buttons.get(0);
+        Button templateButton = buttons.get(0);
 
         for (int page = 0; page < totalPages; page++) {
             int start = page * itemsPerPage;
@@ -136,7 +136,7 @@ public class RanksGui extends Gui {
 
             for (int i = 0; i < itemsPerPage; i++) {
                 int rankIndex = start + i;
-                int slot = sortedRankSlots.get(i);
+                final int slot = sortedRankSlots.get(i);
 
                 if (rankIndex >= end) {
                     consumers[i] = builder -> {
@@ -147,17 +147,19 @@ public class RanksGui extends Gui {
                     continue;
                 }
 
-                Rank rank = ranks.get(ranksStr.get(rankIndex));
+                final String rankId = ranksStr.get(rankIndex);
+                final Rank rank = ranks.get(rankId);
 
                 consumers[i] = builder -> {
-                    ItemWrapper wrapper = new ItemWrapper(button.itemStack());
+                    ItemStack clonedItem = templateButton.itemStack().clone();
+                    ItemWrapper wrapper = new ItemWrapper(clonedItem);
 
-                    String rawDisplayName = button.displayName();
+                    String rawDisplayName = templateButton.displayName();
                     String processedDisplayName = replaceMemberPlaceholders(rawDisplayName, rank);
                     processedDisplayName = Papi.setPapi(getPlayer(), processedDisplayName);
                     wrapper.displayName(Colorize.text(processedDisplayName));
 
-                    List<String> rawLore = button.lore();
+                    List<String> rawLore = templateButton.lore();
                     List<String> processedLore = rawLore.stream()
                             .map(l -> replaceMemberPlaceholders(l, rank))
                             .map(l -> Papi.setPapi(getPlayer(), l))
@@ -165,31 +167,33 @@ public class RanksGui extends Gui {
                             .collect(Collectors.toList());
                     wrapper.lore(processedLore);
 
-                    wrapper.customModelData(button.customModelData());
-                    wrapper.enchanted(button.enchanted());
+                    wrapper.customModelData(templateButton.customModelData());
+                    wrapper.enchanted(templateButton.enchanted());
+                    wrapper.update();
 
-                    builder.defaultItem(wrapper);
                     builder.slots(slot);
+                    builder.defaultItem(wrapper);
+
                     builder.defaultClickHandler((event, ctrl) -> {
                         event.setCancelled(true);
                         Bukkit.getScheduler().runTaskLater(getPlugin(), () ->
                                 GuiFactory.create(
-                                        getPlugin(),
-                                        getPlugin().getGuiLoader().getMenus().get(button.openGui()),
-                                        getPlayer(), getClan(), rank, null)
+                                                getPlugin(),
+                                                getPlugin().getGuiLoader().getMenus().get(templateButton.openGui()),
+                                                getPlayer(), getClan(), rank, null)
                                         .open(getPlayer()), 1L);
                     });
-                    wrapper.update((HumanEntity) getPlayer());
-
                 };
             }
 
-            if (consumers[page]==null) continue;
+            if (consumers[page] == null) continue;
             addPage(consumers);
         }
     }
 
     private String replaceMemberPlaceholders(String text, Rank rank) {
+        if (text == null) return null;
+
         text = text.replace("%invite_status%", getStatus(rank.perms().contains(RankPerms.INVITE)));
         text = text.replace("%kick_status%", getStatus(rank.perms().contains(RankPerms.KICK)));
         text = text.replace("%base_status%", getStatus(rank.perms().contains(RankPerms.BASE)));

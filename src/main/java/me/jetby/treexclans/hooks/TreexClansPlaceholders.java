@@ -37,14 +37,30 @@ public class TreexClansPlaceholders extends PlaceholderExpansion {
     @Override
     public @Nullable String onPlaceholderRequest(Player player, @NotNull String identifier) {
         String[] args = identifier.split("_");
+        Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
 
-        switch (args[0].toLowerCase()) {
-            case "coin": {
-                if (!plugin.getClanManager().isInClan(player.getUniqueId())) return "0";
-                Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
-                return String.valueOf(clan.getMember(player.getUniqueId()).getCoin());
+        return switch (args[0].toLowerCase()) {
+            case "coin" -> {
+                if (!plugin.getClanManager().isInClan(player.getUniqueId())) yield "0";
+                yield String.valueOf(clan.getMember(player.getUniqueId()).getCoin());
             }
-        }
-        return null;
+            case "balance" -> {
+                if (!plugin.getClanManager().isInClan(player.getUniqueId())) yield "0";
+                yield String.valueOf(clan.getBalance());
+            }
+            case "level" -> {
+                if (!plugin.getClanManager().isInClan(player.getUniqueId())) yield "0";
+                yield String.valueOf(clan.getLevel());
+            }
+            case "clan_exp" -> {
+                if (!plugin.getClanManager().isInClan(player.getUniqueId())) yield "0";
+                yield String.valueOf(clan.getExp());
+            }
+            case "exp" -> {
+                if (!plugin.getClanManager().isInClan(player.getUniqueId())) yield "0";
+                yield String.valueOf(clan.getMember(player.getUniqueId()).getExp());
+            }
+            default -> null;
+        };
     }
 }

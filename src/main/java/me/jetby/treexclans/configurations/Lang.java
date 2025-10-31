@@ -58,9 +58,10 @@ public class Lang {
     public void sendMessage(Player player, Clan clan, String path) {
         ActionContext ctx = new ActionContext(player);
         ctx.put("clan", clan);
+        String prefix = config.getString("prefix", "");
 
         List<String> actions = config.getStringList(path).stream()
-                .map(str -> str.replace("{prefix}", config.getString("prefix", "")))
+                .map(str -> str.replace("{prefix}", prefix))
                 .toList();
 
         ActionExecutor.execute(ctx, ActionRegistry.transform(actions));
@@ -70,9 +71,10 @@ public class Lang {
         ActionContext ctx = new ActionContext(player);
         ctx.put("clan", clan);
 
+        String prefix = config.getString("prefix", "");
         List<String> actions = config.getStringList(path).stream()
                 .map(str -> {
-                    String replaced = str.replace("{prefix}", config.getString("prefix", ""));
+                    String replaced = str.replace("{prefix}", prefix);
                     for (ReplaceString replace : replaceStrings) {
                         replaced = replaced.replace(replace.target(), replace.replacement());
                     }

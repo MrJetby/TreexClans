@@ -10,24 +10,16 @@ import me.jetby.treexclans.clan.Member;
 import me.jetby.treexclans.gui.Button;
 import me.jetby.treexclans.gui.Gui;
 import me.jetby.treexclans.gui.Menu;
-import me.jetby.treexclans.gui.SkullCreator;
 import me.jetby.treexclans.tools.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import static me.jetby.treexclans.TreexClans.NAMESPACED_KEY;
 
 public class TopClansGui extends Gui {
 
@@ -69,9 +61,8 @@ public class TopClansGui extends Gui {
     }
 
     private void setupMembersPagination() {
-
         List<Button> clanButtons = getMenu().buttons().stream()
-                .filter(b -> "clans".equalsIgnoreCase(b.type()-))
+                .filter(b -> "clans".equalsIgnoreCase(b.type()))
                 .toList();
 
         List<Integer> sortedClansSlots = clanButtons.stream().map(Button::slot).toList();
@@ -104,17 +95,23 @@ public class TopClansGui extends Gui {
                     continue;
                 }
 
-                Clan clan = clans.get(memberIndex);
+                final Clan clan = clans.get(memberIndex);
 
                 consumers[i] = builder -> {
-                    ItemWrapper wrapper = new ItemWrapper(button.itemStack());
+                    ItemWrapper wrapper = new ItemWrapper(button.itemStack().clone());
 
-                    wrapper.displayName(Papi.setPapi(getPlayer(), setPlaceholders(applyDefaultPlaceholders(button.displayName()), clan)));
+                    String processedDisplayName = setPlaceholders(
+                            applyDefaultPlaceholders(button.displayName()),
+                            clan
+                    );
+                    processedDisplayName = Papi.setPapi(getPlayer(), processedDisplayName);
+                    wrapper.displayName(Colorize.text(processedDisplayName));
 
                     List<String> processedLore = button.lore().stream()
-                            .map(this::applyDefaultPlaceholders)
-                            .map(s -> Papi.setPapi(getPlayer(), s))
-                            .map(s -> setPlaceholders(s, clan))
+                            .map(l -> applyDefaultPlaceholders(l))
+                            .map(l -> setPlaceholders(l, clan))
+                            .map(l -> Papi.setPapi(getPlayer(), l))
+                            .map(Colorize::text)
                             .collect(Collectors.toList());
                     wrapper.lore(processedLore);
 
@@ -127,35 +124,42 @@ public class TopClansGui extends Gui {
                     builder.defaultClickHandler((event, ctrl) -> event.setCancelled(true));
                 };
             }
-            if (consumers[page]==null) continue;
+            if (consumers[page] == null) continue;
             addPage(consumers);
         }
     }
 
     private String setPlaceholders(String text, Clan clan) {
-        if (text==null) return null;
+        if (text == null) return null;
+
         text = text.replace("%level%", clan.getLevel().id());
+
         int kills = 0;
         int deaths = 0;
         for (Member member : clan.getMembersWithLeader()) {
-            kills = kills+member.getKills();
-            deaths = deaths+member.getDeaths();
+            kills += member.getKills();
+            deaths += member.getDeaths();
         }
-        if (clan.getPrefix()!=null) {
+
+        if (clan.getPrefix() != null) {
             text = text.replace("%prefix%", clan.getPrefix());
         } else {
             text = text.replace("%prefix%", clan.getId().toUpperCase());
         }
+
         OfflinePlayer leader = Bukkit.getOfflinePlayer(clan.getLeader().getUuid());
-        text = text.replace("%leader_name%", leader.getName());
+        String leaderName = leader.getName() != null ? leader.getName() : "Unknown";
+        text = text.replace("%leader_name%", leaderName);
         text = text.replace("%kills%", String.valueOf(kills));
         text = text.replace("%deaths%", String.valueOf(deaths));
         text = text.replace("%kd%", calculateKD(kills, deaths));
         text = text.replace("%balance%", String.valueOf(clan.getBalance()));
+
         return text;
     }
 
     private String calculateKD(int kills, int deaths) {
         return deaths == 0 ? kills + "" : NumberUtils.formatWithCommas((double) kills / deaths);
     }
+
 }

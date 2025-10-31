@@ -56,7 +56,10 @@ public class KickSubcommand implements Subcommand {
                 plugin.getLang().sendMessage(player, clan, "player-not-found");
                 return true;
             }
-
+            if (target!=null && clan.getMember(player.getUniqueId()).equals(member)) {
+                plugin.getLang().sendMessage(player, clan, "clan-you-cant-kick-yourself");
+                return true;
+            }
             if (clan.getLeader().equals(member)) {
                 plugin.getLang().sendMessage(player, clan, "you-cant-do-that-with-leader");
                 return true;

@@ -127,21 +127,19 @@ public class YAML implements Storage {
 
             Map<UUID, Map<String, Integer>> questsInProgress = new HashMap<>();
             ConfigurationSection progress = clan.getConfigurationSection("quests-progress");
+
             if (progress != null) {
                 for (String questId : progress.getKeys(false)) {
-                    if (plugin.getQuestsLoader().getQuests().get(questId) == null) continue;
-                    try {
-                        ConfigurationSection playersInProgress = progress.getConfigurationSection(questId);
-                        if (playersInProgress != null) {
-                            for (String id : playersInProgress.getKeys(false)) {
+                    ConfigurationSection playersInProgress = progress.getConfigurationSection(questId);
+                    if (playersInProgress == null) continue;
 
-                                Map<String, Integer> map = new HashMap<>();
-                                map.put(questId, playersInProgress.getInt(id, 0));
+                    for (String id : playersInProgress.getKeys(false)) {
+                        UUID uuid = UUID.fromString(id);
+                        int value = playersInProgress.getInt(id, 0);
 
-                                questsInProgress.put(UUID.fromString(id), map);
-                            }
-                        }
-                    } catch (Exception ignored) {
+                        Map<String, Integer> playerMap = questsInProgress.getOrDefault(uuid, new HashMap<>());
+                        playerMap.put(questId, value);
+                        questsInProgress.put(uuid, playerMap);
                     }
                 }
             }
@@ -151,7 +149,7 @@ public class YAML implements Storage {
             if (quests!=null) {
                 for (String uid : quests.getKeys(false)) {
                     try {
-                        completedQuests.put(UUID.fromString(uid), clan.getStringList(uid));
+                        completedQuests.put(UUID.fromString(uid), quests.getStringList(uid));
                     } catch (Exception e) {
                         LOGGER.error(e.getMessage());
                         e.printStackTrace();
