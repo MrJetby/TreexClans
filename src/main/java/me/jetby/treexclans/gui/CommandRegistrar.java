@@ -41,7 +41,8 @@ public class CommandRegistrar extends BukkitCommand implements CommandExecutor {
             return true;
         }
 
-        GuiFactory.create(plugin, plugin.getGuiLoader().getMenus().get(menuId), player, clan, null, null).open(player);
+        GuiFactory.create(plugin, plugin.getGuiLoader().getMenus().get(menuId),
+                player, clan, null, null, null).open(player);
         return true;
     }
 

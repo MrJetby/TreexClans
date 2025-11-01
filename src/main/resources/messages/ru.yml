@@ -15,6 +15,8 @@ null-economy: "Для этой функции требуется плагин н
 restart-needed: "Видимо администрация неправильно загрузила плагин. Если вы администратор то вам нужно перезапустить сервер так как для этой функции требуется работа с пакетами."
 
 commands:
+  setrank:
+    - "[message] &#FC835C• /clan setrank [ник] [ранг] &7- &fУстановить ранг игроку"
   kick:
     - "[message] &#FC835C• /clan kick [ник] &7- &fИзгнать игрока из своего клана"
   invite:
@@ -50,6 +52,7 @@ commands:
     - "&#FC835C• /clan kick [ник] &7- &fИзгнать игрока из своего клана"
     - "&#FC835C• /clan base &7- &fТелепортироваться на точку базы"
     - "&#FC835C• /clan setbase &7- &fПоставить точку базы"
+    - "&#FC835C• /clan setrank [ник] [ранг] &7- &fУстановить ранг игроку"
     - "&#FC835C• /clan disband &7- &fРасформировать клан (удаление клана)"
     - ""
     - "&#FFE259◀&m                                       &#FFE259▶ "
@@ -76,6 +79,8 @@ clan-tag-blocked:
   - "[message] {prefix} &cДанный тег клана запрещен!"
 clan-you-cant-kick-yourself:
   - '[message] {prefix} &cВы не можете кикнуть самого себя'
+clan-you-cant-setrank-yourself:
+  - '[message] {prefix} &cВы не можете выдать роль самому себе'
 you-haven-not-enough-money:
   - "[message] {prefix} &cУ вас недостаточно средств!"
 no-invite:
@@ -114,6 +119,8 @@ clan-player-already-in-clan:
   - "[message} {prefix} &7Этот игрок уже в клане"
 clan-invite-limit:
   - "[message] {prefix} &cДостигнут лимит участников в клане"
+clan-setrank:
+  - "[message] {prefix} &fВы дали роль {rank_prefix} &fигроку &e{target}"
 clan-join-request:
   - "[message] {prefix} &#17FF35Вам поступил запрос на вступление в клан &l{clan} &r&#17FF35от игрока &f&l{player}"
   - "[message] &#17FF35Используйте &l/clan accept {clan} &r&#17FF35чтобы вступить в клан"

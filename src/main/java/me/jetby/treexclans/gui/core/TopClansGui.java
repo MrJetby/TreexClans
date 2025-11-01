@@ -7,24 +7,37 @@ import me.jetby.treex.text.Papi;
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.clan.Clan;
 import me.jetby.treexclans.clan.Member;
+import me.jetby.treexclans.functions.tops.TopType;
 import me.jetby.treexclans.gui.Button;
 import me.jetby.treexclans.gui.Gui;
+import me.jetby.treexclans.gui.GuiFactory;
 import me.jetby.treexclans.gui.Menu;
 import me.jetby.treexclans.tools.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static me.jetby.treexclans.TreexClans.LOGGER;
+
 public class TopClansGui extends Gui {
 
-    public TopClansGui(TreexClans plugin, @Nullable Menu menu, Player player, Clan clan) {
+    private TopType currentSort;
+
+    public TopClansGui(TreexClans plugin, @Nullable Menu menu, Player player, Clan clan, TopType topType) {
         super(plugin, menu, player, clan);
+        if (topType != null) {
+            currentSort = topType;
+        } else {
+            currentSort = TopType.KILLS;
+        }
         registerButtons();
         setupMembersPagination();
 
@@ -52,13 +65,32 @@ public class TopClansGui extends Gui {
                 });
                 break;
             }
+            case "filter": {
+                builder.defaultClickHandler((e, gui) -> {
+                    e.setCancelled(true);
+                    close(player);
+                    Bukkit.getScheduler().runTaskLater(getPlugin(), ()-> GuiFactory.create(getPlugin(), getMenu(), player, getClan(),
+                            null, null, TopType.valueOf(button.openGui().toUpperCase())).open(player), 1L);
+                });
+                break;
+            }
         }
     }
 
     @Override
-    public boolean cancelRegistration(Player player, @javax.annotation.Nullable Button button) {
-        return button!=null && button.type().equals("clans");
+    public boolean cancelRegistration(Player player, @Nullable Button button) {
+        return button != null && (button.type().equals("clans") || button.type().equals("filter"));
     }
+
+    private void switchFilter() {
+        TopType[] types = TopType.values();
+        int currentIndex = currentSort.ordinal();
+        currentSort = types[(currentIndex + 1) % types.length];
+
+        setupMembersPagination();
+        openPage(0);
+    }
+
 
     private void setupMembersPagination() {
         List<Button> clanButtons = getMenu().buttons().stream()
@@ -70,8 +102,12 @@ public class TopClansGui extends Gui {
 
         int itemsPerPage = sortedClansSlots.size();
 
-        List<Clan> clans = getPlugin().getCfg().getClans().values().stream().toList();
-
+        List<Clan> clans = new ArrayList<>();
+        int a = 1;
+        for (Button button : clanButtons) {
+            clans.add(getPlugin().getTopManager().getTopClan(currentSort, a));
+            a++;
+        }
         int totalPages = (int) Math.ceil((double) clans.size() / itemsPerPage);
 
         Button button = clanButtons.get(0);
@@ -96,6 +132,10 @@ public class TopClansGui extends Gui {
                 }
 
                 final Clan clan = clans.get(memberIndex);
+                if (clan==null) {
+                    LOGGER.error("clan is null");
+                    continue;
+                }
 
                 consumers[i] = builder -> {
                     ItemWrapper wrapper = new ItemWrapper(button.itemStack().clone());
@@ -108,7 +148,7 @@ public class TopClansGui extends Gui {
                     wrapper.displayName(Colorize.text(processedDisplayName));
 
                     List<String> processedLore = button.lore().stream()
-                            .map(l -> applyDefaultPlaceholders(l))
+                            .map(this::applyDefaultPlaceholders)
                             .map(l -> setPlaceholders(l, clan))
                             .map(l -> Papi.setPapi(getPlayer(), l))
                             .map(Colorize::text)
@@ -129,7 +169,7 @@ public class TopClansGui extends Gui {
         }
     }
 
-    private String setPlaceholders(String text, Clan clan) {
+    private String setPlaceholders(String text, @NotNull Clan clan) {
         if (text == null) return null;
 
         text = text.replace("%level%", clan.getLevel().id());
@@ -162,4 +202,9 @@ public class TopClansGui extends Gui {
         return deaths == 0 ? kills + "" : NumberUtils.formatWithCommas((double) kills / deaths);
     }
 
+    private double calculateClanKD(Clan clan) {
+        int kills = clan.getMembersWithLeader().stream().mapToInt(Member::getKills).sum();
+        int deaths = clan.getMembersWithLeader().stream().mapToInt(Member::getDeaths).sum();
+        return deaths == 0 ? kills : (double) kills / deaths;
+    }
 }

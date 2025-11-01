@@ -16,6 +16,7 @@ import me.jetby.treexclans.configurations.Lang;
 import me.jetby.treexclans.configurations.QuestsLoader;
 import me.jetby.treexclans.functions.glow.Glow;
 import me.jetby.treexclans.functions.quests.QuestManager;
+import me.jetby.treexclans.functions.tops.TopManager;
 import me.jetby.treexclans.gui.CommandRegistrar;
 import me.jetby.treexclans.gui.GuiLoader;
 import me.jetby.treexclans.hooks.TreexClansPlaceholders;
@@ -55,6 +56,7 @@ public final class TreexClans extends JavaPlugin {
     @Setter
     private Glow glow;
     private ClanManager clanManager;
+    private TopManager topManager;
     private Storage storage;
 
     public static Logger LOGGER;
@@ -128,6 +130,8 @@ public final class TreexClans extends JavaPlugin {
 
         storage = new YAML(this);
         storage.load();
+
+        topManager = new TopManager(this);
 
         getServer().getPluginManager().registerEvents(new ClanListeners(this), this);
         getServer().getPluginManager().registerEvents(new QuestsListeners(this), this);

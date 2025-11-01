@@ -1,12 +1,9 @@
 package me.jetby.treexclans.tools;
 
 import lombok.experimental.UtilityClass;
-import me.jetby.treexclans.TreexClans;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static me.jetby.treexclans.TreexClans.LOGGER;
 
  /**
   * Simple cooldown system.
@@ -34,7 +31,6 @@ public class Cooldown {
     }
     public void setCooldown(String key, int seconds) {
         cooldowns.put(key, new Cooldowns(seconds, System.currentTimeMillis()));
-
     }
     public void removeCooldown(String key) {
         cooldowns.remove(key);

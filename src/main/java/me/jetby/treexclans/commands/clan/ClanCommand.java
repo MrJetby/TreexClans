@@ -53,7 +53,8 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
                 Clan clan = plugin.getClanManager().getClanByMember(player.getUniqueId());
                 for (Map.Entry<String, List<String>> entry : menuArgs.entrySet()) {
                     if (entry.getValue().contains(args[0])) {
-                        GuiFactory.create(plugin, plugin.getGuiLoader().getMenus().get(entry.getKey()), player, clan, null, null).open(player);
+                        GuiFactory.create(plugin, plugin.getGuiLoader().getMenus().get(entry.getKey())
+                                , player, clan, null, null, null).open(player);
                         return true;
                     }
                 }
@@ -118,7 +119,6 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
             });
             completions.remove("create");
             completions.remove("accept");
-            completions.remove("setrank");
             for (Map.Entry<String, List<String>> entry : menuArgs.entrySet()) {
                 Menu menu = plugin.getGuiLoader().getMenus().get(entry.getKey());
                 if (GuiType.valueOf(menu.type()) != GuiType.DEFAULT && player.hasPermission(menu.permission())) {

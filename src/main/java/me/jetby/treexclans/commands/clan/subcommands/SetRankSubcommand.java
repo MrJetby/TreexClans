@@ -42,10 +42,10 @@ public class SetRankSubcommand implements Subcommand {
                 return true;
             }
 
-            String rankName = args[1];
+            String rankName = args[0].toLowerCase();
             Rank rank = clan.getRanks().get(rankName);
             if (rank != null) {
-                String targetName = args[0];
+                String targetName = args[1];
                 UUID uuid;
                 Player target = Bukkit.getPlayer(targetName);
                 if (target == null) {
@@ -55,6 +55,16 @@ public class SetRankSubcommand implements Subcommand {
                     uuid = target.getUniqueId();
                 }
                 Member targetMember = clan.getMember(uuid);
+
+                if (target!=null && clan.getMember(player.getUniqueId()).equals(targetMember)) {
+                    plugin.getLang().sendMessage(player, clan, "clan-you-cant-setrank-yourself");
+                    return true;
+                }
+
+                if (clan.getLeader().equals(targetMember)) {
+                    plugin.getLang().sendMessage(player, clan, "you-cant-do-that-with-leader");
+                    return true;
+                }
 
                 plugin.getLang().sendMessage(player, clan, "clan-setrank",
                         new Lang.ReplaceString("{target}", targetName),
@@ -83,7 +93,7 @@ public class SetRankSubcommand implements Subcommand {
                 }
                 return playerNames;
             } else if (args.length == 2) {
-                return new ArrayList<>(clan.getRanks().keySet());
+                return clan.getRanks().keySet().stream().map(String::toLowerCase).toList();
             }
         }
         return null;

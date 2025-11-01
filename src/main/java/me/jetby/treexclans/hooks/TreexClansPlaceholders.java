@@ -21,7 +21,7 @@ public class TreexClansPlaceholders extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getIdentifier() {
-        return "treexclans";
+        return "clan";
     }
 
     @Override

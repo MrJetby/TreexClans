@@ -102,7 +102,7 @@ public class Config {
                     }
 
                 }
-                defaultRanks.put(key, new Rank(key, name, perms));
+                defaultRanks.put(key.toLowerCase(), new Rank(key.toLowerCase(), name, perms));
             }
         }
 
