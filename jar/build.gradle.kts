@@ -13,8 +13,8 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":modules:api"))
-    implementation(project(":modules:plugin"))
+    implementation(project(":api"))
+    implementation(project(":plugin"))
 }
 
 tasks.test {

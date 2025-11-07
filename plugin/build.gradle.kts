@@ -1,5 +1,5 @@
 dependencies {
-    implementation(project(":modules:api"))
+    implementation(project(":api"))
 
     compileOnly("com.github.MrJetby:Treex:68c61c48") // зависимость на Treex
     implementation("com.jodexindustries.jguiwrapper:common:1.0.0.9-beta")
@@ -15,8 +15,6 @@ dependencies {
     compileOnly("com.mojang:authlib:6.0.58")
     compileOnly("me.clip:placeholderapi:2.11.5")
 }
-
-
 
 tasks.processResources {
     filteringCharset = "UTF-8"
