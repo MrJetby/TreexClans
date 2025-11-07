@@ -10,8 +10,10 @@ import me.jetby.treex.tools.log.Logger;
 import me.jetby.treexclans.addon.AddonManagerImpl;
 import me.jetby.treexclans.api.TreexClansAPI;
 import me.jetby.treexclans.api.addons.AddonManager;
+import me.jetby.treexclans.api.addons.commands.CommandService;
 import me.jetby.treexclans.api.service.ClanManager;
 import me.jetby.treexclans.api.service.leaderboard.LeaderboardService;
+import me.jetby.treexclans.commands.CommandServiceImpl;
 import me.jetby.treexclans.commands.admin.AdminCommand;
 import me.jetby.treexclans.commands.clan.ClanCommand;
 import me.jetby.treexclans.configurations.*;
@@ -45,6 +47,7 @@ import java.util.HashSet;
 public final class TreexClans extends JavaPlugin implements TreexClansAPI {
 
     private static TreexClans INSTANCE;
+    private CommandService commandService;
 
     public static TreexClans getInstance() {
         return INSTANCE;
@@ -123,9 +126,12 @@ public final class TreexClans extends JavaPlugin implements TreexClansAPI {
         guiLoader.load();
         CommandRegistrar.createCommands(this);
 
+
+        this.commandService = new CommandServiceImpl();
+
         PluginCommand xClanCommand = this.getCommand("xclan");
         if (xClanCommand != null) {
-            AdminCommand cmd = new AdminCommand();
+            AdminCommand cmd = new AdminCommand(commandService);
             xClanCommand.setExecutor(cmd);
             xClanCommand.setTabCompleter(cmd);
         }
@@ -158,6 +164,7 @@ public final class TreexClans extends JavaPlugin implements TreexClansAPI {
                 this,                           // владелец (плагин)
                 ServicePriority.Normal
         );
+
         addonManagerImpl = new AddonManagerImpl(this, true);
         addonManagerImpl.loadAddons();
     }

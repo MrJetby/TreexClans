@@ -1,9 +1,9 @@
 package me.jetby.treexclans.commands.clan.subcommands;
 
 import me.jetby.treexclans.TreexClans;
-import me.jetby.treexclans.api.CustomCommandApi;
+import me.jetby.treexclans.api.addons.commands.CommandService;;
 import me.jetby.treexclans.api.service.clan.member.rank.RankPerms;
-import me.jetby.treexclans.commands.Subcommand;
+import me.jetby.treexclans.api.command.Subcommand;
 import me.jetby.treexclans.configurations.Lang;
 import me.jetby.treexclans.tools.Cooldown;
 import org.bukkit.Bukkit;
@@ -81,7 +81,7 @@ public class InviteSubcommand implements Subcommand {
     }
 
     @Override
-    public CustomCommandApi.CommandType type() {
-        return CustomCommandApi.CommandType.CLAN;
+    public CommandService.CommandType type() {
+        return CommandService.CommandType.CLAN;
     }
 }

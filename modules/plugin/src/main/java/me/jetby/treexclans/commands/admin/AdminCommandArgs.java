@@ -2,7 +2,7 @@ package me.jetby.treexclans.commands.admin;
 
 import lombok.Getter;
 import me.jetby.treexclans.TreexClans;
-import me.jetby.treexclans.commands.Subcommand;
+import me.jetby.treexclans.api.command.Subcommand;
 import me.jetby.treexclans.commands.admin.subcommands.CoinSubcommand;
 import me.jetby.treexclans.commands.admin.subcommands.ExpSubcommand;
 import me.jetby.treexclans.commands.admin.subcommands.ReloadSubcommand;

@@ -1,6 +1,6 @@
-package me.jetby.treexclans.commands;
+package me.jetby.treexclans.api.command;
 
-import me.jetby.treexclans.api.CustomCommandApi;
+import me.jetby.treexclans.api.addons.commands.CommandService;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -13,5 +13,5 @@ public interface Subcommand {
 
     @Nullable List<String> onTabCompleter(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args);
 
-    CustomCommandApi.CommandType type();
+    CommandService.CommandType type();
 }
