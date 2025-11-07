@@ -1,4 +1,4 @@
-package me.jetby.treexclans.gui;
+package me.jetby.treexclans.api.gui;
 
 import com.jodexindustries.jguiwrapper.api.item.ItemWrapper;
 import com.jodexindustries.jguiwrapper.api.text.SerializerType;
@@ -10,11 +10,11 @@ import me.jetby.treex.actions.ActionExecutor;
 import me.jetby.treex.actions.ActionRegistry;
 import me.jetby.treex.text.Colorize;
 import me.jetby.treex.text.Papi;
-import me.jetby.treexclans.TreexClans;
+import me.jetby.treexclans.InstanceFactory;
+import me.jetby.treexclans.api.gui.requirements.ClickRequirement;
+import me.jetby.treexclans.api.gui.requirements.Requirements;
+import me.jetby.treexclans.api.gui.requirements.ViewRequirement;
 import me.jetby.treexclans.api.service.clan.Clan;
-import me.jetby.treexclans.gui.requirements.ClickRequirement;
-import me.jetby.treexclans.gui.requirements.Requirements;
-import me.jetby.treexclans.gui.requirements.ViewRequirement;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -27,10 +27,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
-import java.util.*;
 
-import static me.jetby.treexclans.TreexClans.NAMESPACED_KEY;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
 
 public abstract class Gui extends PaginatedAdvancedGui implements Listener {
 
@@ -45,9 +47,9 @@ public abstract class Gui extends PaginatedAdvancedGui implements Listener {
     @Getter
     private final Clan clanImpl;
     @Getter
-    private final TreexClans plugin;
+    private final JavaPlugin plugin;
 
-    public Gui(TreexClans plugin, @Nullable Menu menu, Player player, Clan clanImpl) {
+    public Gui(JavaPlugin plugin, @Nullable Menu menu, Player player, Clan clanImpl) {
         super(menu.size(), menu.title());
         this.menu = menu;
         this.player = player;
@@ -212,7 +214,7 @@ public abstract class Gui extends PaginatedAdvancedGui implements Listener {
                         wrapper.update();
 
                         ItemMeta itemMeta = itemStack.getItemMeta();
-                        itemMeta.getPersistentDataContainer().set(NAMESPACED_KEY, PersistentDataType.STRING, "menu_item");
+                        itemMeta.getPersistentDataContainer().set(InstanceFactory.ITEM_KEY, PersistentDataType.STRING, "menu_item");
                         itemStack.setItemMeta(itemMeta);
 
                         builder.defaultItem(wrapper);

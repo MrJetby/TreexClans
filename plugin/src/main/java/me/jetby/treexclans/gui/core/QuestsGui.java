@@ -8,15 +8,16 @@ import me.jetby.treexclans.api.service.clan.Clan;
 import me.jetby.treexclans.api.service.clan.member.Member;
 import me.jetby.treexclans.functions.quests.Quest;
 import me.jetby.treexclans.functions.quests.QuestProgressType;
-import me.jetby.treexclans.gui.Button;
-import me.jetby.treexclans.gui.Gui;
-import me.jetby.treexclans.gui.Menu;
+import me.jetby.treexclans.api.gui.Button;
+import me.jetby.treexclans.api.gui.Gui;
+import me.jetby.treexclans.api.gui.Menu;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,7 @@ import static me.jetby.treexclans.TreexClans.NAMESPACED_KEY;
 public class QuestsGui extends Gui {
 
 
-    public QuestsGui(TreexClans plugin, Menu menu, Player player, Clan clanImpl) {
+    public QuestsGui(JavaPlugin plugin, Menu menu, Player player, Clan clanImpl) {
         super(plugin, menu, player, clanImpl);
 
         registerButtons();
@@ -167,6 +168,10 @@ public class QuestsGui extends Gui {
         } else {
             return getPlugin().getLang().getMessage("quest-progress-type-global");
         }
+    }
+
+    public TreexClans getPlugin() {
+        return (TreexClans) super.getPlugin();
     }
 
 }

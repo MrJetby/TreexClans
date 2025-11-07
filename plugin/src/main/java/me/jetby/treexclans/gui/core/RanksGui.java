@@ -2,20 +2,22 @@ package me.jetby.treexclans.gui.core;
 
 import com.jodexindustries.jguiwrapper.api.item.ItemWrapper;
 import com.jodexindustries.jguiwrapper.gui.advanced.GuiItemController;
+import me.jetby.treexclans.InstanceFactory;
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.api.service.clan.Clan;
 import me.jetby.treexclans.api.service.clan.member.rank.Rank;
 import me.jetby.treexclans.api.service.clan.member.rank.RankPerms;
-import me.jetby.treexclans.gui.Button;
-import me.jetby.treexclans.gui.Gui;
-import me.jetby.treexclans.gui.GuiFactory;
-import me.jetby.treexclans.gui.Menu;
+import me.jetby.treexclans.api.gui.Button;
+import me.jetby.treexclans.api.gui.Gui;
+import me.jetby.treexclans.gui.GuiFactoryImpl;
+import me.jetby.treexclans.api.gui.Menu;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -28,7 +30,7 @@ import java.util.stream.Collectors;
 import static me.jetby.treexclans.TreexClans.NAMESPACED_KEY;
 
 public class RanksGui extends Gui {
-    public RanksGui(TreexClans plugin, @Nullable Menu menu, Player player, Clan clanImpl) {
+    public RanksGui(JavaPlugin plugin, @Nullable Menu menu, Player player, Clan clanImpl) {
         super(plugin, menu, player, clanImpl);
         registerButtons();
 
@@ -161,7 +163,7 @@ public class RanksGui extends Gui {
                     builder.defaultClickHandler((event, ctrl) -> {
                         event.setCancelled(true);
                         Bukkit.getScheduler().runTaskLater(getPlugin(), () ->
-                                GuiFactory.create(
+                                InstanceFactory.GUI_FACTORY.create(
                                                 getPlugin(),
                                                 getPlugin().getGuiLoader().getMenus().get(button.openGui()),
                                                 getPlayer(), getClanImpl(), rank)
@@ -197,4 +199,7 @@ public class RanksGui extends Gui {
         }
     }
 
+    public TreexClans getPlugin() {
+        return (TreexClans) super.getPlugin();
+    }
 }

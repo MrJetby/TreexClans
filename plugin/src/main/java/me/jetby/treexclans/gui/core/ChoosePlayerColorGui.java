@@ -2,7 +2,11 @@ package me.jetby.treexclans.gui.core;
 
 import com.jodexindustries.jguiwrapper.api.item.ItemWrapper;
 import com.jodexindustries.jguiwrapper.gui.advanced.GuiItemController;
+import me.jetby.treexclans.InstanceFactory;
 import me.jetby.treexclans.TreexClans;
+import me.jetby.treexclans.api.gui.Button;
+import me.jetby.treexclans.api.gui.Gui;
+import me.jetby.treexclans.api.gui.Menu;
 import me.jetby.treexclans.api.service.clan.Clan;
 import me.jetby.treexclans.api.service.clan.member.Member;
 import me.jetby.treexclans.gui.*;
@@ -13,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -21,7 +26,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class ChoosePlayerColorGui extends Gui {
-    public ChoosePlayerColorGui(TreexClans plugin, @Nullable Menu menu, Player player, Clan clanImpl) {
+    public ChoosePlayerColorGui(JavaPlugin plugin, @Nullable Menu menu, Player player, Clan clanImpl) {
         super(plugin, menu, player, clanImpl);
         registerButtons();
 
@@ -129,7 +134,7 @@ public class ChoosePlayerColorGui extends Gui {
                         event.setCancelled(true);
 
                         Bukkit.getScheduler().runTaskLater(getPlugin(), () ->
-                                GuiFactory.create(
+                                InstanceFactory.GUI_FACTORY.create(
                                                 getPlugin(),
                                                 getPlugin().getGuiLoader().getMenus().get(button.openGui()),
                                                 getPlayer(), getClanImpl(), memberImpl)
@@ -139,5 +144,9 @@ public class ChoosePlayerColorGui extends Gui {
             }
             addPage(consumers);
         }
+    }
+
+    public TreexClans getPlugin() {
+        return (TreexClans) super.getPlugin();
     }
 }

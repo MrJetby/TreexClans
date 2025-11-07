@@ -16,20 +16,39 @@ if (envFile.exists()) {
 plugins {
     `java-library`
     `maven-publish`
+    id("com.github.johnrengelman.shadow") version "8.1.1" // ✅ Shadow plugin
 }
+
 
 java {
     withSourcesJar()
 }
 
+tasks {
+    shadowJar {
+        archiveClassifier.set("") // ✅ replace default jar
+        minimize() // optional — remove unused classes from shaded deps
+
+        // Optionally relocate to avoid classpath conflicts
+        relocate("com.jodexindustries.jguiwrapper", "me.jetby.treexclans.libs.jguiwrapper")
+    }
+
+    build {
+        dependsOn(shadowJar)
+    }
+}
+
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            from(components["java"])
+            artifact(tasks.shadowJar) // ✅ publish shaded JAR instead of normal
 
             groupId = "space.jetby.TreexClans"
             artifactId = "api"
             version = "1.0.0"
+
+            // Optional: include sources
+            artifact(tasks["sourcesJar"])
         }
     }
 

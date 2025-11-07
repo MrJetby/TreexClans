@@ -5,19 +5,20 @@ import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.api.service.clan.Clan;
 import me.jetby.treexclans.clan.MemberImpl;
 import me.jetby.treexclans.functions.glow.Equipment;
-import me.jetby.treexclans.gui.Button;
-import me.jetby.treexclans.gui.Gui;
-import me.jetby.treexclans.gui.Menu;
+import me.jetby.treexclans.api.gui.Button;
+import me.jetby.treexclans.api.gui.Gui;
+import me.jetby.treexclans.api.gui.Menu;
 import org.bukkit.Color;
 import org.bukkit.entity.Player;
 
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 public class ChooseColorGui extends Gui {
 
     private final MemberImpl target;
 
-    public ChooseColorGui(TreexClans plugin, Menu menu, Player player, Clan clanImpl, @Nullable MemberImpl target) {
+    public ChooseColorGui(JavaPlugin plugin, Menu menu, Player player, Clan clanImpl, @Nullable MemberImpl target) {
         super(plugin, menu, player, clanImpl);
         this.target = target;
         registerButtons();
@@ -49,6 +50,10 @@ public class ChooseColorGui extends Gui {
             }
         }
 
+    }
+
+    public TreexClans getPlugin() {
+        return (TreexClans) super.getPlugin();
     }
 
 }

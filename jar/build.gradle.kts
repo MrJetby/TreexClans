@@ -48,7 +48,7 @@ tasks {
         }
 
         // чтобы JAR содержал нужные модули
-        from(project(":modules:plugin").tasks.named("jar"))
-        from(project(":modules:api").tasks.named("jar"))
+        from(project(":plugin").tasks.named("jar"))
+        from(project(":api").tasks.named("jar"))
     }
 }

@@ -5,9 +5,9 @@ import com.jodexindustries.jguiwrapper.gui.advanced.GuiItemController;
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.api.service.clan.Clan;
 import me.jetby.treexclans.api.service.clan.member.Member;
-import me.jetby.treexclans.gui.Button;
-import me.jetby.treexclans.gui.Gui;
-import me.jetby.treexclans.gui.Menu;
+import me.jetby.treexclans.api.gui.Button;
+import me.jetby.treexclans.api.gui.Gui;
+import me.jetby.treexclans.api.gui.Menu;
 import me.jetby.treexclans.gui.SkullCreator;
 import me.jetby.treexclans.tools.NumberUtils;
 import org.bukkit.Bukkit;
@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -28,7 +29,7 @@ import static me.jetby.treexclans.TreexClans.NAMESPACED_KEY;
 public class MembersGui extends Gui {
 
 
-    public MembersGui(TreexClans plugin, Menu menu, Player player, Clan clanImpl) {
+    public MembersGui(JavaPlugin plugin, Menu menu, Player player, Clan clanImpl) {
         super(plugin, menu, player, clanImpl);
         registerButtons();
 
@@ -181,5 +182,9 @@ public class MembersGui extends Gui {
         int kills = memberImpl.getKills();
         int deaths = memberImpl.getDeaths();
         return deaths == 0 ? kills + "" : NumberUtils.formatWithCommas((double) kills / deaths);
+    }
+
+    public TreexClans getPlugin() {
+        return (TreexClans) super.getPlugin();
     }
 }

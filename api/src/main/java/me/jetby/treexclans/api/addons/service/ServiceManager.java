@@ -3,6 +3,7 @@ package me.jetby.treexclans.api.addons.service;
 import me.jetby.treexclans.api.addons.AddonManager;
 import me.jetby.treexclans.api.addons.commands.CommandService;
 import me.jetby.treexclans.api.addons.configuration.ServiceConfiguration;
+import me.jetby.treexclans.api.gui.GuiFactory;
 import me.jetby.treexclans.api.service.ClanManager;
 import me.jetby.treexclans.api.service.leaderboard.LeaderboardService;
 import net.milkbowl.vault.economy.Economy;
@@ -19,6 +20,7 @@ public interface ServiceManager {
     ClanManager getClanManager();
     LeaderboardService getLeaderboardService();
     CommandService getCommandService();
+    GuiFactory getGuiFactory();
 
     AddonManager getAddonManager();
     ServiceConfiguration getServiceConfiguration();

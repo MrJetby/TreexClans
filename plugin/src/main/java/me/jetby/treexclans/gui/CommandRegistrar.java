@@ -1,5 +1,6 @@
 package me.jetby.treexclans.gui;
 
+import me.jetby.treexclans.InstanceFactory;
 import me.jetby.treexclans.TreexClans;
 import org.bukkit.command.*;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -39,7 +40,7 @@ public class CommandRegistrar extends BukkitCommand implements CommandExecutor {
             return true;
         }
 
-        GuiFactory.create(plugin, plugin.getGuiLoader().getMenus().get(menuId),
+        InstanceFactory.GUI_FACTORY.create(plugin, plugin.getGuiLoader().getMenus().get(menuId),
                 player, clanImpl).open(player);
         return true;
     }

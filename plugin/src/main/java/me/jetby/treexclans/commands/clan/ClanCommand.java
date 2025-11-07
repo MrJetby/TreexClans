@@ -1,13 +1,14 @@
 package me.jetby.treexclans.commands.clan;
 
 import me.jetby.treex.text.Colorize;
+import me.jetby.treexclans.InstanceFactory;
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.api.addons.commands.CommandService;
 import me.jetby.treexclans.api.service.clan.member.rank.RankPerms;
-import me.jetby.treexclans.gui.Gui;
-import me.jetby.treexclans.gui.GuiFactory;
+import me.jetby.treexclans.api.gui.Gui;
+import me.jetby.treexclans.gui.GuiFactoryImpl;
 import me.jetby.treexclans.gui.GuiType;
-import me.jetby.treexclans.gui.Menu;
+import me.jetby.treexclans.api.gui.Menu;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -68,7 +69,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
                             return true;
                         }
                     }
-                    Gui gui = GuiFactory.create(plugin, menu, player, clanImpl);
+                    Gui gui = InstanceFactory.GUI_FACTORY.create(plugin, menu, player, clanImpl);
                     gui.open(player);
                     return true;
 

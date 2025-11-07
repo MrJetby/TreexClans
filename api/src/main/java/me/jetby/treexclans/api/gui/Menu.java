@@ -1,4 +1,4 @@
-package me.jetby.treexclans.gui;
+package me.jetby.treexclans.api.gui;
 
 import org.bukkit.event.inventory.InventoryType;
 

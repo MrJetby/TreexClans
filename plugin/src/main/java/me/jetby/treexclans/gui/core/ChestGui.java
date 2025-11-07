@@ -5,9 +5,9 @@ import com.jodexindustries.jguiwrapper.gui.advanced.GuiItemController;
 import me.jetby.treex.text.BetterColorize;
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.api.service.clan.Clan;
-import me.jetby.treexclans.gui.Button;
-import me.jetby.treexclans.gui.Gui;
-import me.jetby.treexclans.gui.Menu;
+import me.jetby.treexclans.api.gui.Button;
+import me.jetby.treexclans.api.gui.Gui;
+import me.jetby.treexclans.api.gui.Menu;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,6 +17,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +34,7 @@ public class ChestGui extends Gui {
     private boolean isInitialized = false;
     private Button blockedSlot;
 
-    public ChestGui(TreexClans plugin, @Nullable Menu menu, Player player, Clan clanImpl) {
+    public ChestGui(JavaPlugin plugin, @Nullable Menu menu, Player player, Clan clanImpl) {
         super(plugin, menu, player, clanImpl);
         registerButtons();
         onClose(event -> {

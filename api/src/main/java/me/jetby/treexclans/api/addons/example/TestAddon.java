@@ -23,7 +23,6 @@ public final class TestAddon extends JavaAddon {
     @Override
     public void onEnable() {
         this.getLogger().info("Test enabled!");
-        this.getServiceManager().getCommandService().registerCommand("test", new TestCommand());
     }
 
     @Override

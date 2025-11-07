@@ -8,6 +8,7 @@ import me.jetby.treexclans.api.addons.annotations.ClanAddon;
 import me.jetby.treexclans.api.addons.commands.CommandService;
 import me.jetby.treexclans.api.addons.configuration.ServiceConfiguration;
 import me.jetby.treexclans.api.addons.service.ServiceManager;
+import me.jetby.treexclans.api.gui.GuiFactory;
 import me.jetby.treexclans.api.service.ClanManager;
 import me.jetby.treexclans.api.service.leaderboard.LeaderboardService;
 import net.milkbowl.vault.economy.Economy;
@@ -25,6 +26,7 @@ public class ServiceManagerImpl implements ServiceManager {
     private final ClanManager clanManager;
     private final LeaderboardService leaderboardService;
     private final CommandService commandService;
+    private final GuiFactory guiFactory;
 
     private final AddonManager addonManager;
     private final ServiceConfiguration serviceConfiguration;
@@ -40,6 +42,7 @@ public class ServiceManagerImpl implements ServiceManager {
         this.clanManager = treex.getClanManager();
         this.leaderboardService = treex.getLeaderboardService();
         this.commandService = treex.getCommandService();
+        this.guiFactory = treex.getGuiFactory();
 
         this.addonManager = addonManager;
         this.serviceConfiguration = new ServiceConfigurationImpl(this);

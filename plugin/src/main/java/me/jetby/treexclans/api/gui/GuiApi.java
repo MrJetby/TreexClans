@@ -1,35 +1,17 @@
 package me.jetby.treexclans.api.gui;
 
-import lombok.experimental.UtilityClass;
-import me.jetby.treexclans.TreexClans;
+import lombok.Getter;
+import me.jetby.treexclans.api.TreexClansAPI;
 import me.jetby.treexclans.api.service.clan.Clan;
-import me.jetby.treexclans.gui.Gui;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * API for registering and managing custom GUI types.
- * <p>
- * Example usage:
- * <pre>
- * public class MyCustomGui extends Gui {
- *     public MyCustomGui(TreexClans plugin, Menu menu, Player player, Clan clan) {
- *         super(plugin, menu, player, clan);
- *         registerButtons();
- *     }
- * }
- *
- * // In your plugin initialization class:
- * GuiApi.registerGui("my_gui_type", (plugin, menu, player, clan, objects) ->
- *     new MyCustomGui(plugin, menu, player, clan)
- * );
- * </pre>
- */
-@UtilityClass
-public class GuiApi {
+@Getter
+public class GuiApi implements GuiService {
 
     private final Map<String, IGuiFactory> registeredGuis = new HashMap<>();
 
@@ -94,8 +76,8 @@ public class GuiApi {
      * @return the GUI instance, or null if the type is not registered
      */
     public Gui createGui(@NotNull String guiType,
-                         TreexClans plugin,
-                         me.jetby.treexclans.gui.Menu menu,
+                         JavaPlugin plugin,
+                         Menu menu,
                          Player player,
                          Clan clanImpl,
                          Object... customObjects) {
@@ -113,27 +95,5 @@ public class GuiApi {
      */
     public int getRegisteredGuiCount() {
         return registeredGuis.size();
-    }
-
-    /**
-     * Factory interface for creating custom GUI instances.
-     */
-    @FunctionalInterface
-    public interface IGuiFactory {
-        /**
-         * Creates a new GUI instance.
-         *
-         * @param plugin        the plugin instance
-         * @param menu          the menu configuration
-         * @param player        the player
-         * @param clanImpl          the player's clan
-         * @param customObjects additional objects (optional)
-         * @return the new GUI instance
-         */
-        Gui create(TreexClans plugin,
-                   me.jetby.treexclans.gui.Menu menu,
-                   Player player,
-                   Clan clanImpl,
-                   Object... customObjects);
     }
 }

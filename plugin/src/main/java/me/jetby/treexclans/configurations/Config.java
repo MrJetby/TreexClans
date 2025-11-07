@@ -10,7 +10,7 @@ import me.jetby.treexclans.api.service.clan.Clan;
 import me.jetby.treexclans.api.service.clan.level.Level;
 import me.jetby.treexclans.api.service.clan.member.rank.Rank;
 import me.jetby.treexclans.api.service.clan.member.rank.RankPerms;
-import me.jetby.treexclans.gui.requirements.SimpleRequirement;
+import me.jetby.treexclans.api.gui.requirements.SimpleRequirement;
 import me.jetby.treexclans.tools.FileLoader;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;

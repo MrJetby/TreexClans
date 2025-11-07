@@ -1,6 +1,6 @@
-package me.jetby.treexclans.gui;
+package me.jetby.treexclans.api.gui;
 
-import me.jetby.treexclans.gui.requirements.ViewRequirement;
+import me.jetby.treexclans.api.gui.requirements.ViewRequirement;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;

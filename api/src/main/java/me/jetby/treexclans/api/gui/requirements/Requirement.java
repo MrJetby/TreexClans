@@ -1,4 +1,4 @@
-package me.jetby.treexclans.gui.requirements;
+package me.jetby.treexclans.api.gui.requirements;
 
 /**
  * Базовый интерфейс требования для GUI.

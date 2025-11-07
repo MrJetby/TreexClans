@@ -2,7 +2,11 @@ package me.jetby.treexclans.gui.core;
 
 import com.jodexindustries.jguiwrapper.api.item.ItemWrapper;
 import com.jodexindustries.jguiwrapper.gui.advanced.GuiItemController;
+import me.jetby.treexclans.InstanceFactory;
 import me.jetby.treexclans.TreexClans;
+import me.jetby.treexclans.api.gui.Button;
+import me.jetby.treexclans.api.gui.Gui;
+import me.jetby.treexclans.api.gui.Menu;
 import me.jetby.treexclans.api.service.clan.Clan;
 import me.jetby.treexclans.api.service.leaderboard.LeaderboardService;
 import me.jetby.treexclans.gui.*;
@@ -14,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -29,7 +34,7 @@ public class TopClansGui extends Gui {
     private final LeaderboardService.TopType currentSort;
     private int s;
 
-    public TopClansGui(TreexClans plugin, @Nullable Menu menu, Player player, Clan clanImpl, LeaderboardService.TopType topType, int s) {
+    public TopClansGui(JavaPlugin plugin, @Nullable Menu menu, Player player, Clan clanImpl, LeaderboardService.TopType topType, int s) {
         super(plugin, menu, player, clanImpl);
         this.s = s;
         this.currentSort = Objects.requireNonNullElse(topType, LeaderboardService.TopType.KILLS);
@@ -58,7 +63,7 @@ public class TopClansGui extends Gui {
                 builder.defaultClickHandler((event, controller) -> {
                     close(player);
                     Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
-                        Gui gui = GuiFactory.create(getPlugin(), getMenu(), player, getClanImpl(), getTops(button).get(s), s + 1);
+                        Gui gui = InstanceFactory.GUI_FACTORY.create(getPlugin(), getMenu(), player, getClanImpl(), getTops(button).get(s), s + 1);
                         gui.open(player);
                     }, 1L);
                 });
@@ -262,5 +267,9 @@ public class TopClansGui extends Gui {
 
     private String calculateKD(int kills, int deaths) {
         return deaths == 0 ? kills + "" : NumberUtils.formatWithCommas((double) kills / deaths);
+    }
+
+    public TreexClans getPlugin() {
+        return (TreexClans) super.getPlugin();
     }
 }

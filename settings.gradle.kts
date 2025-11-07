@@ -1,3 +1,3 @@
 rootProject.name = "TreexClansNew"
 
-include("plugin", "api", "jar")
+include(":plugin", ":api", ":jar")

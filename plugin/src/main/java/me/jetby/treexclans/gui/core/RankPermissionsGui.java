@@ -6,12 +6,13 @@ import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.api.service.clan.Clan;
 import me.jetby.treexclans.api.service.clan.member.rank.Rank;
 import me.jetby.treexclans.api.service.clan.member.rank.RankPerms;
-import me.jetby.treexclans.gui.Button;
-import me.jetby.treexclans.gui.Gui;
-import me.jetby.treexclans.gui.Menu;
+import me.jetby.treexclans.api.gui.Button;
+import me.jetby.treexclans.api.gui.Gui;
+import me.jetby.treexclans.api.gui.Menu;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 public class RankPermissionsGui extends Gui {
     private final Rank rank;
 
-    public RankPermissionsGui(TreexClans plugin, @Nullable Menu menu, Player player, Clan clanImpl, Rank rank) {
+    public RankPermissionsGui(JavaPlugin plugin, @Nullable Menu menu, Player player, Clan clanImpl, Rank rank) {
         super(plugin, menu, player, clanImpl);
         this.rank = rank;
         registerButtons();
@@ -106,6 +107,8 @@ public class RankPermissionsGui extends Gui {
         return getPlugin().getLang().getMessage(status ? "rank-perm-yes" : "rank-perm-no");
     }
 
-
+    public TreexClans getPlugin() {
+        return (TreexClans) super.getPlugin();
+    }
 }
 

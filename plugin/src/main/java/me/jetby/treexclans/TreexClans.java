@@ -11,6 +11,7 @@ import me.jetby.treexclans.addon.AddonManagerImpl;
 import me.jetby.treexclans.api.TreexClansAPI;
 import me.jetby.treexclans.api.addons.AddonManager;
 import me.jetby.treexclans.api.addons.commands.CommandService;
+import me.jetby.treexclans.api.gui.GuiFactory;
 import me.jetby.treexclans.api.service.ClanManager;
 import me.jetby.treexclans.api.service.leaderboard.LeaderboardService;
 import me.jetby.treexclans.commands.CommandServiceImpl;
@@ -21,6 +22,7 @@ import me.jetby.treexclans.functions.glow.Glow;
 import me.jetby.treexclans.functions.quests.QuestManager;
 import me.jetby.treexclans.functions.tops.LeaderboardServiceImpl;
 import me.jetby.treexclans.gui.CommandRegistrar;
+import me.jetby.treexclans.gui.GuiFactoryImpl;
 import me.jetby.treexclans.gui.GuiLoader;
 import me.jetby.treexclans.hooks.ClanPlaceholder;
 import me.jetby.treexclans.hooks.TreexAutoDownload;
@@ -48,6 +50,7 @@ public final class TreexClans extends JavaPlugin implements TreexClansAPI {
 
     private static TreexClans INSTANCE;
     private CommandService commandService;
+    private GuiFactory guiFactory;
 
     public static TreexClans getInstance() {
         return INSTANCE;
@@ -67,7 +70,7 @@ public final class TreexClans extends JavaPlugin implements TreexClansAPI {
     private Storage storage;
 
     public static Logger LOGGER;
-    public static final NamespacedKey NAMESPACED_KEY = new NamespacedKey("treexclans", "item");
+    public static NamespacedKey NAMESPACED_KEY;
     @Setter
     private GuiLoader guiLoader;
 
@@ -90,6 +93,10 @@ public final class TreexClans extends JavaPlugin implements TreexClansAPI {
     public void onEnable() {
         this.plugin = this;
         INSTANCE = this;
+        this.guiFactory = new GuiFactoryImpl();
+        InstanceFactory.GUI_FACTORY = guiFactory;
+        InstanceFactory.ITEM_KEY = new NamespacedKey("treexclans", "item");
+        NAMESPACED_KEY = InstanceFactory.ITEM_KEY;
 
         try {
             new TreexAutoDownload(this);
