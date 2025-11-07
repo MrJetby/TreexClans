@@ -17,14 +17,14 @@ public class Requirements {
                                   String permission,
                                   String input,
                                   String output) {
-        String parsedInput = input;
-        String parsedOutput = output;
 
-        if (type.equalsIgnoreCase("string equals") || type.equalsIgnoreCase("!string equals")) {
-            parsedInput = setPlaceholders(player, input);
+        if (!type.equalsIgnoreCase("permission") && input==null) return true;
+        String parsedInput = setPlaceholders(player, input);
+
+        String parsedOutput = "";
+        if (output!=null) {
             parsedOutput = setPlaceholders(player, output);
         }
-
         return switch (type.toLowerCase()) {
             case "has permission" -> player.hasPermission(permission);
             case "!has permission" -> !player.hasPermission(permission);
