@@ -11,10 +11,10 @@ import me.jetby.treexclans.api.service.ClanManager;
 import me.jetby.treexclans.api.service.clan.Clan;
 import me.jetby.treexclans.api.service.clan.member.Member;
 import me.jetby.treexclans.api.service.clan.level.Level;
+import me.jetby.treexclans.clan.ClanImpl;
 import me.jetby.treexclans.configurations.Lang;
 import me.jetby.treexclans.gui.requirements.Requirements;
 import me.jetby.treexclans.gui.requirements.SimpleRequirement;
-import me.jetby.treexclans.clan.ClanImpl;
 import me.jetby.treexclans.clan.MemberImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -95,7 +95,7 @@ public final class ClanManagerImpl implements Listener, ClanManager {
 
     @SuppressWarnings("unchecked")
     private Map<String, Clan> clans() {
-        // cfg.getClans() is assumed to be Map<String, ClanImpl>
+        // cfg.getClans() is assumed to be Map<String, clan>
         return plugin.getCfg().getClans();
     }
 
@@ -136,7 +136,7 @@ public final class ClanManagerImpl implements Listener, ClanManager {
                     new Level("1", 0, 1, 0, 1, new ArrayList<>(), new ArrayList<>())
             );
 
-            ClanImpl clan = new ClanImpl(
+            var clan = new ClanImpl(
                     name,
                     null,
                     leader,
