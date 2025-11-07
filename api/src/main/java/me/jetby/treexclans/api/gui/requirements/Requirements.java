@@ -17,8 +17,13 @@ public class Requirements {
                                   String permission,
                                   String input,
                                   String output) {
-        var parsedInput = setPlaceholders(player, input);
-        var parsedOutput = setPlaceholders(player, output);
+        String parsedInput = input;
+        String parsedOutput = output;
+
+        if (type.equalsIgnoreCase("string equals") || type.equalsIgnoreCase("!string equals")) {
+            parsedInput = setPlaceholders(player, input);
+            parsedOutput = setPlaceholders(player, output);
+        }
 
         return switch (type.toLowerCase()) {
             case "has permission" -> player.hasPermission(permission);

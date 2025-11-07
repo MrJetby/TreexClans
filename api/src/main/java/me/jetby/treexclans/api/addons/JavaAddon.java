@@ -15,7 +15,7 @@ public abstract class JavaAddon {
 
     private ClanAddon info;
     private ServiceManager serviceManager;
-    protected File dataFolder;
+    private File dataFolder;
     private Logger logger;
 
     public final void initialize(@NotNull AddonContext context) {
@@ -51,7 +51,6 @@ public abstract class JavaAddon {
     public void saveConfig() {
         serviceManager.getServiceConfiguration().saveConfig();
     }
-
     public File getFile(String fileName) {
         return serviceManager.getServiceConfiguration().getFile(fileName);
     }
