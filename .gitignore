@@ -3,3 +3,4 @@
 .idea
 
 /modules/**/build
+modules/*/build
