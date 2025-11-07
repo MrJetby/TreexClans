@@ -1,3 +1,18 @@
+import java.util.Properties
+
+val envFile = rootProject.file(".env")
+val envProps = Properties()
+
+if (envFile.exists()) {
+    envFile.forEachLine { line ->
+        val trimmed = line.trim()
+        if (trimmed.isNotEmpty() && !trimmed.startsWith("#")) {
+            val (key, value) = line.split("=", limit = 2)
+            envProps[key] = value
+        }
+    }
+}
+
 plugins {
     `java-library`
     `maven-publish`
@@ -5,7 +20,6 @@ plugins {
 
 java {
     withSourcesJar()
-    withJavadocJar()
 }
 
 publishing {
@@ -13,7 +27,7 @@ publishing {
         create<MavenPublication>("maven") {
             from(components["java"])
 
-            groupId = "space.jetby"
+            groupId = "space.jetby.TreexClans"
             artifactId = "api"
             version = "1.0.0"
         }
@@ -21,10 +35,16 @@ publishing {
 
     repositories {
         maven {
-            url = uri("file:///var/www/maven")
+            name = "vds"
+            url = uri("sftp://maven.jetby.space:22/var/www/maven")
+            credentials {
+                username = envProps["JETBY_VDS_USER"]?.toString() ?: ""
+                password = envProps["JETBY_VDS_PASS"]?.toString() ?: ""
+            }
         }
     }
 }
+
 
 dependencies {
     compileOnly("com.github.MrJetby:Treex:68c61c48")
