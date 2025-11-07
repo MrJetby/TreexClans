@@ -19,11 +19,11 @@ public class Requirements {
                                   String output) {
 
         if (!type.equalsIgnoreCase("permission") && input==null) return true;
-        String parsedInput = setPlaceholders(player, input);
+        String parsedInput = Papi.set(player, input);
 
         String parsedOutput = "";
         if (output!=null) {
-            parsedOutput = setPlaceholders(player, output);
+            parsedOutput = Papi.set(player, output);
         }
         return switch (type.toLowerCase()) {
             case "has permission" -> player.hasPermission(permission);
@@ -35,16 +35,13 @@ public class Requirements {
         };
     }
 
-    private String setPlaceholders(Player player, String input) {
-        return PlaceholderAPI.setPlaceholders(player, input);
-    }
 
     private boolean evalJavascriptLike(Player player, String input) {
         String[] args = input.split(" ");
         if (args.length < 3) return false;
 
-        args[0] = Papi.setPapi(player, args[0]);
-        args[2] = Papi.setPapi(player, args[2]);
+        args[0] = Papi.set(player, args[0]);
+        args[2] = Papi.set(player, args[2]);
 
         try {
             double x = Double.parseDouble(args[0]);
