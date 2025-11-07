@@ -1,6 +1,7 @@
 package me.jetby.treexclans.api.addons.service;
 
 import me.jetby.treexclans.api.addons.AddonManager;
+import me.jetby.treexclans.api.addons.commands.CommandService;
 import me.jetby.treexclans.api.addons.configuration.ServiceConfiguration;
 import me.jetby.treexclans.api.service.ClanManager;
 import me.jetby.treexclans.api.service.leaderboard.LeaderboardService;
@@ -17,6 +18,7 @@ public interface ServiceManager {
     Economy getEconomy();
     ClanManager getClanManager();
     LeaderboardService getLeaderboardService();
+    CommandService getCommandService();
 
     AddonManager getAddonManager();
     ServiceConfiguration getServiceConfiguration();

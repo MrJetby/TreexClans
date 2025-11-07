@@ -1,8 +1,8 @@
 package me.jetby.treexclans.commands.clan.subcommands;
 
 import me.jetby.treexclans.TreexClans;
-import me.jetby.treexclans.api.CustomCommandApi;
-import me.jetby.treexclans.commands.Subcommand;
+import me.jetby.treexclans.api.addons.commands.CommandService;
+import me.jetby.treexclans.api.command.Subcommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -51,7 +51,7 @@ public class ChatSubcommand implements Subcommand {
     }
 
     @Override
-    public CustomCommandApi.CommandType type() {
-        return CustomCommandApi.CommandType.CLAN;
+    public CommandService.CommandType type() {
+        return CommandService.CommandType.CLAN;
     }
 }

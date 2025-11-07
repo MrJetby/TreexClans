@@ -1,7 +1,7 @@
 package me.jetby.treexclans.commands.clan;
 
 import lombok.Getter;
-import me.jetby.treexclans.commands.Subcommand;
+import me.jetby.treexclans.api.command.Subcommand;
 import me.jetby.treexclans.commands.clan.subcommands.*;
 
 public enum ClanCommandArgs {

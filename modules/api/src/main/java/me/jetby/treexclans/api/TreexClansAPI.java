@@ -1,5 +1,6 @@
 package me.jetby.treexclans.api;
 
+import me.jetby.treexclans.api.addons.commands.CommandService;
 import me.jetby.treexclans.api.service.ClanManager;
 import me.jetby.treexclans.api.service.leaderboard.LeaderboardService;
 import net.milkbowl.vault.economy.Economy;
@@ -23,6 +24,9 @@ public interface TreexClansAPI {
 
 
     Economy getEconomy();
+
+
+    CommandService getCommandService();
 
     /**
      * @return the main plugin instance

@@ -1,9 +1,9 @@
 package me.jetby.treexclans.commands.admin.subcommands;
 
 import me.jetby.treexclans.TreexClans;
-import me.jetby.treexclans.api.CustomCommandApi;
+import me.jetby.treexclans.api.addons.commands.CommandService;
+import me.jetby.treexclans.api.command.Subcommand;
 import me.jetby.treexclans.api.service.clan.Clan;
-import me.jetby.treexclans.commands.Subcommand;
 import me.jetby.treexclans.commands.clan.ClanCommand;
 import me.jetby.treexclans.configurations.Config;
 import me.jetby.treexclans.configurations.QuestsLoader;
@@ -71,7 +71,7 @@ public class ReloadSubcommand implements Subcommand {
     }
 
     @Override
-    public CustomCommandApi.CommandType type() {
-        return CustomCommandApi.CommandType.ADMIN;
+    public CommandService.CommandType type() {
+        return CommandService.CommandType.ADMIN;
     }
 }

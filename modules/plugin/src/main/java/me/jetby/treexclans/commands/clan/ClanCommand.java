@@ -2,7 +2,7 @@ package me.jetby.treexclans.commands.clan;
 
 import me.jetby.treex.text.Colorize;
 import me.jetby.treexclans.TreexClans;
-import me.jetby.treexclans.api.CustomCommandApi;
+import me.jetby.treexclans.api.addons.commands.CommandService;
 import me.jetby.treexclans.api.service.clan.member.rank.RankPerms;
 import me.jetby.treexclans.gui.Gui;
 import me.jetby.treexclans.gui.GuiFactory;
@@ -24,10 +24,12 @@ import java.util.stream.Collectors;
 
 public class ClanCommand implements CommandExecutor, TabCompleter {
     private final TreexClans plugin;
+    private final CommandService commandService;
     private final Map<String, List<String>> menuArgs = new HashMap<>();
 
     public ClanCommand(TreexClans plugin) {
         this.plugin = plugin;
+        this.commandService = plugin.getCommandService();
         plugin.getGuiLoader().getMenus().forEach((key, item) -> menuArgs.put(key, item.openArgs()));
 
     }
@@ -49,8 +51,8 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
 
                 return true;
             }
-            var apiArg = CustomCommandApi.getSubcommands().get(args[0]);
-            if (apiArg != null && apiArg.type() == CustomCommandApi.CommandType.CLAN) {
+            var apiArg = commandService.getCommands().get(args[0]);
+            if (apiArg != null && apiArg.type() == CommandService.CommandType.CLAN) {
                 apiArg.onCommand(sender, Arrays.copyOfRange(args, 1, args.length));
                 return true;
             }

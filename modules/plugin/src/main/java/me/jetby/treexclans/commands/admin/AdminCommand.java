@@ -1,6 +1,7 @@
 package me.jetby.treexclans.commands.admin;
 
-import me.jetby.treexclans.api.CustomCommandApi;
+import lombok.AllArgsConstructor;
+import me.jetby.treexclans.api.addons.commands.CommandService;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,7 +13,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@AllArgsConstructor
 public class AdminCommand implements CommandExecutor, TabCompleter {
+
+    private final CommandService commandService;
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!sender.hasPermission("clan.admin")) return true;
@@ -21,8 +26,8 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
             return true;
         }
         try {
-            var apiArg = CustomCommandApi.getSubcommands().get(args[0]);
-            if (apiArg != null && apiArg.type() == CustomCommandApi.CommandType.ADMIN) {
+            var apiArg = commandService.getCommands().get(args[0]);
+            if (apiArg != null && apiArg.type() == CommandService.CommandType.ADMIN) {
                 apiArg.onCommand(sender, Arrays.copyOfRange(args, 1, args.length));
                 return true;
             }
