@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TreexClansNew.main.iml" filepath="$PROJECT_DIR$/.idea/modules/TreexClansNew.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/api/TreexClansNew.modules.api.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/api/TreexClansNew.modules.api.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/jar/TreexClansNew.modules.jar.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/jar/TreexClansNew.modules.jar.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/modules/plugin/TreexClansNew.modules.plugin.main.iml" filepath="$PROJECT_DIR$/.idea/modules/modules/plugin/TreexClansNew.modules.plugin.main.iml" />
     </modules>
   </component>

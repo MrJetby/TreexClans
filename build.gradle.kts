@@ -36,7 +36,6 @@ allprojects {
 
 subprojects {
     apply(plugin = "java")
-
     java {
         toolchain.languageVersion.set(JavaLanguageVersion.of(17))
     }

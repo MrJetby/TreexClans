@@ -1,6 +1,29 @@
+plugins {
+    `java-library`
+    `maven-publish`
+}
+
 java {
     withSourcesJar()
     withJavadocJar()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+
+            groupId = "space.jetby"
+            artifactId = "api"
+            version = "1.0.0"
+        }
+    }
+
+    repositories {
+        maven {
+            url = uri("file:///var/www/maven")
+        }
+    }
 }
 
 dependencies {
