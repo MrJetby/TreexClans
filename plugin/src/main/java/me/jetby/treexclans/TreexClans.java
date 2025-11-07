@@ -190,9 +190,9 @@ public final class TreexClans extends JavaPlugin implements TreexClansAPI {
     }
 
     private void disableGlowForAll() {
-        for (var clanImpl : cfg.getClans().values()) {
-            var memberImpls = new HashSet<>(clanImpl.getMembers());
-            memberImpls.add(clanImpl.getLeader());
+        for (var clan : cfg.getClans().values()) {
+            var memberImpls = new HashSet<>(clan.getMembers());
+            memberImpls.add(clan.getLeader());
             for (var memberImpl : memberImpls) {
                 Player player = Bukkit.getPlayer(memberImpl.getUuid());
                 if (player != null) {

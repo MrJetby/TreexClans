@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.jetby.treexclans.api.TreexClansAPI;
 import me.jetby.treexclans.api.addons.annotations.ClanAddon;
 import me.jetby.treexclans.api.addons.service.ServiceManager;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -43,4 +44,19 @@ public abstract class JavaAddon {
 
     public abstract void onEnable();
     public abstract void onDisable();
+
+    public FileConfiguration getConfig() {
+        return serviceManager.getServiceConfiguration().getConfig();
+    }
+    public void saveConfig() {
+        serviceManager.getServiceConfiguration().saveConfig();
+    }
+
+    public File getFile(String fileName) {
+        return serviceManager.getServiceConfiguration().getFile(fileName);
+    }
+    public FileConfiguration getConfiguration(String fileName) {
+        return serviceManager.getServiceConfiguration().getFileConfiguration(fileName);
+    }
+
 }

@@ -19,6 +19,35 @@ public class ServiceConfigurationImpl implements ServiceConfiguration {
         this.javaPlugin = serviceManager.getPlugin();
     }
 
+    public FileConfiguration getFileConfiguration(String child) {
+        File file = new File(dataFolder, child);
+
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                javaPlugin.getLogger().severe("Failed to create config file: "+child);
+                e.printStackTrace();
+            }
+        }
+        return YamlConfiguration.loadConfiguration(file);
+    }
+
+
+    public File getFile(String child) {
+        File file = new File(dataFolder, child);
+
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                javaPlugin.getLogger().severe("Failed to create config file: "+child);
+                e.printStackTrace();
+            }
+        }
+        return file;
+    }
+
     public FileConfiguration getConfig() {
         File configFile = new File(dataFolder, "config.yml");
 
