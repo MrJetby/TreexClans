@@ -1,0 +1,85 @@
+id: quests
+title: "&0&lКвесты"
+size: 54
+open_permission: none
+open_args:
+  - 'quests'
+
+listen: quests
+
+# Available types
+# all_quests
+# category-<id>
+Items:
+  quest1:
+    slot:
+      - '10-16'
+      - '19-25'
+      - '28-34'
+      - '37-43'
+    material: BOOK
+    type: all_quests
+    display_name: "&e&lКвест &7%quest_name%"
+    lore:
+      - "&7Тип: &f%quest_progress_type%"
+      - "&7Статус: &f%status%"
+      - "&7Задача: &f%quest_description%"
+      - "&7Прогресс: &a%quest_progress%/%quest_target%"
+      - ""
+      - "&6Награды:"
+
+
+  orange:
+    material: ORANGE_STAINED_GLASS_PANE
+    slot:
+      - 0-2
+      - 6-8
+      - 45
+      - 47
+      - 51
+      - 53
+    display_name: " "
+
+  black:
+    material: BLACK_STAINED_GLASS_PANE
+    slot:
+      - 3
+      - 5
+      - 48
+      - 50
+    display_name: " "
+
+
+  gray:
+    material: GRAY_STAINED_GLASS_PANE
+    slot:
+      - 4
+    display_name: " "
+
+
+
+  menu:
+    material: DARK_OAK_DOOR
+    slot: 49
+    display_name: "&6Вернуться в меню"
+    click_commands:
+      - "[open_menu] main"
+
+
+
+
+
+
+
+
+  next_page:
+    material: SPECTRAL_ARROW
+    type: next_page
+    slot: 52
+    display_name: "&aСледующая страница ▶"
+
+  prev_page:
+    material: ARROW
+    slot: 46
+    type: prev_page
+    display_name: "&c◀ Предыдущая страница"

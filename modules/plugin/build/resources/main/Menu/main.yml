@@ -1,0 +1,93 @@
+id: main
+title: "&0&lКлановое меню"
+size: 54
+open_permission: none
+open_args:
+  - 'menu'
+open_commands: { }
+
+
+Items:
+
+  info:
+    material: WRITABLE_BOOK
+    slot: 49
+    hide_attributes: true
+    display_name: "&6Клан %clan_prefix% &8(%clan_tag%)"
+    lore:
+      - "&6• &fЛидер: &6&l%clan_leader_name%"
+      - "&6• &fБаланс: &6&l%clan_balance%"
+      - "&6• &fОпыт: &6&l%clan_exp%&7/&c&l%clan_exp_max%"
+      - "&6• &fУровень: &6&l%clan_level%"
+
+  chest:
+    material: CHEST
+    slot: 20
+    display_name: "&6Хранилище"
+    lore:
+      - "&7Нажмите чтобы открыть"
+    click_commands:
+      - '[open_menu] storage'
+  members:
+    material: PLAYER_HEAD
+    slot: 24
+    display_name: "&6Участники клана"
+    lore:
+      - "&7Нажмите чтобы открыть"
+    click_commands:
+      - '[open_menu] members'
+  quests:
+    material: TOTEM_OF_UNDYING
+    slot: 30
+    display_name: "&6Квесты"
+    lore:
+      - "&7Нажмите чтобы открыть"
+    click_commands:
+      - '[open_menu] quests'
+  ranks:
+    material: TURTLE_HELMET
+    slot: 31
+    display_name: "&6Ранги"
+    hide_attributes: true
+    lore:
+      - "&7Нажмите чтобы открыть"
+    click_commands:
+      - '[open_menu] ranks'
+  glow:
+    material: LEATHER_CHESTPLATE
+    color: YELLOW
+    slot: 32
+    hide_attributes: true
+    display_name: "&6Свечение"
+    lore:
+      - "&7Нажмите чтобы открыть"
+    click_commands:
+      - '[open_menu] choose_player_color'
+
+  orange:
+    material: ORANGE_STAINED_GLASS_PANE
+    slot:
+      - 0-2
+      - 6-8
+      - 45-47
+      - 51-53
+    display_name: " "
+
+  black:
+    material: BLACK_STAINED_GLASS_PANE
+    slot:
+      - 3
+      - 5
+      - 48
+      - 50
+    display_name: " "
+
+
+  gray:
+    material: GRAY_STAINED_GLASS_PANE
+    slot: 4
+    display_name: " "
+
+
+
+

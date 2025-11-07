@@ -1,0 +1,99 @@
+config-version: 2
+
+lang: ru
+
+debug: true
+
+clan-create:
+
+  ##
+  ## Проверки перед созданием клана
+  ## Можно добавлять сколько угодно проверок
+  ##
+  requirements:
+    money-check:
+      type: math
+      # Если у вас не отображает сумму вместо %vault_eco_balance_fixed% тогда выполните следующее
+      # /papi ecloud download vault
+      # /papi reload
+      input: "%vault_eco_balance_fixed% >= 5000"
+      actions:
+        - "[money_take] 5000"
+      deny_actions:
+        - "[message] <#FFE259>&lTreexClans</#FFA751> &7> &cНедостаточно монет! Ваш баланс: &f%vault_eco_balance_fixed%"
+  min-clan-tag-length: 3
+  max-clan-tag-length: 6
+  blocked-tags:
+    - "admin"
+    - "owner"
+    - "op"
+  regex: "^[A-Za-z0-9]+$"
+  member-rank: MEMBER # ВАЖНО: Укажите здесь ранг, который будет присвоен новому участнику клана при вступлении в клан
+  leader-rank: LEADER # ВАЖНО: Укажите здесь ранг, который будет присвоен создателю клана при создании клана
+
+
+chat-format: "<#FFE259>&l[TreexClans]</#FFA751> &e&l{player} &7▶ &f{message}"
+
+prefix:
+  placeholder:
+    has_prefix: "&7[&6{prefix}&7]"
+    no_prefix: "&8[&e{tag}&8]"
+    no_clan: ""
+  min-clan-prefix-length: 3
+  max-clan-prefix-length: 16
+  regex: "^[A-Za-z0-9]+$"
+  # какие символы игнорировать из префикса
+  length-ignored-symbols: ["&", "#"]
+
+tag-placeholder:
+  has_clan: "&8[&e{tag}&8]"
+  no_clan: ""
+
+# Если true то квесты будут выполнятся постепенно, то есть нельзя перейти на другой квест пока не выполнишь предыдущий
+# Если false то можно выполнить любой квест не смотря на очерёдность
+gradual-quest: true
+
+ranks:
+  # можно создавать сколько угодно рангов
+  MEMBER:
+    display-name: "&7Участник"
+    permissions:
+      invite: true
+      kick: false
+      base: true
+      setbase: false
+      setrank: false
+      deposit: true
+      withdraw: false
+      pvp: false
+      setslogan: false
+      setprefix: false
+  CONTROL:
+    display-name: "&3Управляющий"
+    permissions:
+      invite: true
+      kick: true
+      base: true
+      setbase: true
+      setrank: false
+      deposit: true
+      withdraw: true
+      pvp: true
+      setslogan: false
+      setprefix: false
+  LEADER:
+    display-name: "&4&lЛидер"
+    permissions:
+      invite: true
+      kick: true
+      base: true
+      setbase: true
+      setrank: true
+      deposit: true
+      withdraw: true
+      pvp: true
+      setslogan: true
+      setprefix: true
+
+
+placeholder-show-format: "%weeks% %days% %hours% %minutes%"

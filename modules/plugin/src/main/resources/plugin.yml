@@ -1,0 +1,16 @@
+name: TreexClans
+version: '${project.version}'
+main: me.jetby.treexclans.TreexClans
+api-version: '1.16'
+load: POSTWORLD
+authors: [ MrJetby ]
+website: https://dsc.gg/treexstudio
+depend:
+  - packetevents
+softdepend:
+  - Vault
+  - Treex
+  - PlaceholderAPI
+commands:
+  xclan: { }
+  clan: { }

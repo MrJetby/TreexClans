@@ -1,0 +1,63 @@
+id: shop
+title: "&0&lКлановый магазин"
+size: 54
+open_permission: none
+open_args:
+  - 'shop'
+
+listen: menu
+
+Items:
+
+
+  diamond:
+    slot: 9
+    material: DIAMOND
+    lore:
+      - ""
+      - "&6• Стоимость &610 коинов"
+      - "&6• Ваш баланс &6%clan_coin% коинов"
+      - ""
+      - "&7▶ Нажмите чтобы купить"
+    click_requirements:
+      money-check:
+        type: math
+        input: "%clan_coin% >= 10"
+        deny_commands:
+          - "[message] &cУ вас недостаточно коинов."
+    click_commands:
+      - "[console] minecraft:give %player_name% diamond 1"
+      - "[coin_take] 10"
+      - "[open_menu] shop"
+
+
+
+  orange:
+    material: ORANGE_STAINED_GLASS_PANE
+    slot:
+      - 0-2
+      - 6-8
+      - 45-47
+      - 51-53
+    display_name: " "
+
+  black:
+    material: BLACK_STAINED_GLASS_PANE
+    slot:
+      - 3
+      - 5
+      - 48
+      - 50
+    display_name: " "
+
+
+  gray:
+    material: GRAY_STAINED_GLASS_PANE
+    slot:
+      - 4
+      - 49
+    display_name: " "
+
+
+
+

@@ -1,0 +1,73 @@
+'1':
+  exp: 100
+  chest: 3
+  max-members: 2
+  max-balance: 50000
+'2':
+  exp: 250
+  chest: 15
+  max-members: 3
+  max-balance: 250000
+  level-up-actions:
+    - "[message] &7"
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lLEVEL-UP"
+    - "[message] &7Ваш клан достиг &e2-го уровня"
+    - "[message] &7"
+    - "[message] &6&lБонусы:"
+    - "[message] &a+ &fСлотов в хранилище: &615"
+    - "[message] &a+ &fМаксимум участников в клане: &63"
+    - "[message] &a+ &fМаксимальный баланс клана: &6250,000"
+    - "[message] &7"
+    - "[message] &6&m                                      &r"
+'3':
+  exp: 300
+  chest: 30
+  max-members: 4
+  max-balance: 500000
+  level-up-actions:
+    - "[message] &7"
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lLEVEL-UP"
+    - "[message] &7Ваш клан достиг &e3-го уровня"
+    - "[message] &7"
+    - "[message] &6&lБонусы:"
+    - "[message] &a+ &fСлотов в хранилище: &630"
+    - "[message] &a+ &fМаксимум участников в клане: &64"
+    - "[message] &a+ &fМаксимальный баланс клана: &6500,000"
+    - "[message] &7"
+    - "[message] &6&m                                      &r"
+'4':
+  exp: 350
+  chest: 40
+  max-members: 5
+  max-balance: 1500000
+  level-up-actions:
+    - "[message] &7"
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lLEVEL-UP"
+    - "[message] &7Ваш клан достиг &e4-го уровня"
+    - "[message] &7"
+    - "[message] &6&lБонусы:"
+    - "[message] &a+ &fСлотов в хранилище: &640"
+    - "[message] &a+ &fМаксимум участников в клане: &65"
+    - "[message] &a+ &fМаксимальный баланс клана: &61,500,000"
+    - "[message] &7"
+    - "[message] &6&m                                      &r"
+'5':
+  exp: 400
+  chest: 50
+  max-members: 6
+  max-balance: 2500000
+  level-up-actions:
+    - "[message] &7"
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lLEVEL-UP"
+    - "[message] &7Ваш клан достиг &e5-го уровня"
+    - "[message] &7"
+    - "[message] &6&lБонусы:"
+    - "[message] &a+ &fСлотов в хранилище: &650"
+    - "[message] &a+ &fМаксимум участников в клане: &66"
+    - "[message] &a+ &fМаксимальный баланс клана: &62,500,000"
+    - "[message] &7"
+    - "[message] &6&m                                      &r"

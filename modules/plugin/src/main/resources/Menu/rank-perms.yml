@@ -1,0 +1,76 @@
+id: rank-perms
+title: "&0&lПрава"
+size: 27
+open_permission: none
+open_commands: { }
+
+listen: rank_permissions
+
+Items:
+
+  invite:
+    slot: 0
+    type: perm-invite
+    display_name: "&6⚐ &fПриглашать в клан %invite_status%"
+
+
+  kick:
+    slot: 1
+    type: perm-kick
+    display_name: "&6⚐ &fКикать с клана %kick_status%"
+
+
+  setbase:
+    slot: 2
+    type: perm-setbase
+    display_name: "&6⚐ &fПоставить базу %setbase_status%"
+
+
+  base:
+    slot: 3
+    type: perm-base
+    display_name: "&6⚐ &fТелепорт на базу %base_status%"
+
+
+  setrank:
+    slot: 4
+    type: perm-setrank
+    display_name: "&6⚐ &fНастраивать ранги %setrank_status%"
+
+  deposit:
+    slot: 5
+    type: perm-deposit
+    display_name: "&6⚐ &fВносить деньги в баланс клана %deposit_status%"
+
+
+  withdraw:
+    slot: 6
+    type: perm-withdraw
+    display_name: "&6⚐ &fСнимать деньги с баланса клана %withdraw_status%"
+
+
+  pvp:
+    slot: 7
+    type: perm-pvp
+    display_name: "&6⚐ &fПереключать pvp %pvp_status%"
+
+
+  setslogan:
+    slot: 8
+    type: perm-setslogan
+    display_name: "&6⚐ &fПереключать pvp %setslogan_status%"
+
+
+  setprefix:
+    slot: 9
+    type: perm-setprefix
+    display_name: "&6⚐ &fПереключать pvp %setprefix_status%"
+
+
+
+  back:
+    slot: 22
+    material: DARK_OAK_DOOR
+    display_name: "&6Вернуться в меню"
+    click_commands:
+      - '[open_menu] ranks'
