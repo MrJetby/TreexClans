@@ -49,10 +49,6 @@ public interface ClanManager {
      */
     @NotNull Lookup lookup();
 
-    /* ----------------------------------------------------
-     * SUB-INTERFACES
-     * ---------------------------------------------------- */
-
     /** Clan creation and deletion lifecycle. */
     interface Lifecycle {
 

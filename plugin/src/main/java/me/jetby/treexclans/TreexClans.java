@@ -81,7 +81,7 @@ public final class TreexClans extends JavaPlugin implements TreexClansAPI {
 
     private Modules modules;
 
-    private AddonManager addonManagerImpl;
+    private AddonManager addonManager;
 
     @Override
     public void onLoad() {
@@ -172,16 +172,16 @@ public final class TreexClans extends JavaPlugin implements TreexClansAPI {
                 ServicePriority.Normal
         );
 
-        addonManagerImpl = new AddonManagerImpl(this, true);
-        addonManagerImpl.loadAddons();
+        addonManager = new AddonManagerImpl(this, true);
+        ((AddonManagerImpl) addonManager).loadAddons();
     }
 
     private PluginCommand clanCommand;
 
     @Override
     public void onDisable() {
-        if (addonManagerImpl != null) {
-            addonManagerImpl.unloadAll();
+        if (addonManager != null) {
+            addonManager.disableAddons();
         }
         getServer().getServicesManager().unregister(TreexClansAPI.class);
         if (storage != null) storage.save();

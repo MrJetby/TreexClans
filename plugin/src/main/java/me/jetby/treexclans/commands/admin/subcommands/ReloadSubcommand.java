@@ -1,6 +1,7 @@
 package me.jetby.treexclans.commands.admin.subcommands;
 
 import me.jetby.treexclans.TreexClans;
+import me.jetby.treexclans.addon.AddonManagerImpl;
 import me.jetby.treexclans.api.addons.commands.CommandService;
 import me.jetby.treexclans.api.command.Subcommand;
 import me.jetby.treexclans.api.service.clan.Clan;
@@ -52,8 +53,8 @@ public class ReloadSubcommand implements Subcommand {
             QuestsLoader questsLoader = new QuestsLoader();
             questsLoader.load();
             plugin.setQuestsLoader(questsLoader);
-            plugin.getAddonManagerImpl().unloadAll(); //TODO
-            plugin.getAddonManagerImpl().loadAddons();
+            plugin.getAddonManager().disableAddons(); //TODO
+            ((AddonManagerImpl) plugin.getAddonManager()).loadAddons();
 
             plugin.getStorage().load();
 

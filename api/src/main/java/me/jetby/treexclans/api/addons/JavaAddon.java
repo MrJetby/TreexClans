@@ -42,8 +42,8 @@ public abstract class JavaAddon {
         this.dataFolder = serviceManager.getDataFolder();
     }
 
-    public abstract void onEnable();
-    public abstract void onDisable();
+    protected abstract void onEnable();
+    protected abstract void onDisable();
 
     public FileConfiguration getConfig() {
         return serviceManager.getServiceConfiguration().getConfig();
