@@ -169,7 +169,7 @@ public final class AddonManagerImpl implements AddonManager {
         }
 
         try {
-            invokeLifecycle(addon, "onEnable");
+            invokeLifecycle(addon, "enable");
             logInfo("Enabled addon: " + info.id());
             return true;
         } catch (Throwable e) {
@@ -193,7 +193,7 @@ public final class AddonManagerImpl implements AddonManager {
     public boolean disableAddon(@NotNull JavaAddon addon) {
         String id = addon.getInfo().id();
         try {
-            invokeLifecycle(addon, "onDisable");
+            invokeLifecycle(addon, "disable");
             logInfo("Disabled addon: " + id);
         } catch (Throwable e) {
             logError("Error disabling addon " + id, e);

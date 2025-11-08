@@ -30,6 +30,7 @@ public abstract class JavaAddon {
     private ServiceManager serviceManager;
     private File dataFolder;
     private Logger logger;
+    protected boolean enabled = false;
 
     /**
      * Initializes the addon context.
@@ -70,6 +71,21 @@ public abstract class JavaAddon {
         };
 
         this.dataFolder = serviceManager.getDataFolder();
+    }
+
+    private void enable() {
+        if (!enabled) {
+            this.enabled = true;
+            this.onEnable();
+        }
+    }
+
+    private void disable() {
+        if (enabled) {
+            this.enabled = false;
+            this.onDisable();
+            this.getServiceManager().getEventRegistrar().unregister(this);
+        }
     }
 
     /**

@@ -104,7 +104,7 @@ public interface ClanManager {
          * @param clan       the clan to delete.
          * @param initiator  the player who initiated deletion (nullable).
          */
-        void deleteClan(@NotNull Clan clan, @Nullable Player initiator);
+        boolean deleteClan(@NotNull Clan clan, @Nullable Player initiator);
 
         /**
          * Deletes a clan by its name.

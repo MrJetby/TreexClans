@@ -7,6 +7,7 @@ import me.jetby.treexclans.api.addons.AddonManager;
 import me.jetby.treexclans.api.addons.annotations.ClanAddon;
 import me.jetby.treexclans.api.addons.commands.CommandService;
 import me.jetby.treexclans.api.addons.configuration.ServiceConfiguration;
+import me.jetby.treexclans.api.addons.listener.EventRegistrar;
 import me.jetby.treexclans.api.addons.service.ServiceManager;
 import me.jetby.treexclans.api.gui.GuiFactory;
 import me.jetby.treexclans.api.service.ClanManager;
@@ -28,6 +29,7 @@ public class ServiceManagerImpl implements ServiceManager {
     private final CommandService commandService;
     private final GuiFactory guiFactory;
 
+    private final EventRegistrar eventRegistrar;
     private final AddonManager addonManager;
     private final ServiceConfiguration serviceConfiguration;
     private final ClanAddon addon;
@@ -44,6 +46,7 @@ public class ServiceManagerImpl implements ServiceManager {
         this.commandService = treex.getCommandService();
         this.guiFactory = treex.getGuiFactory();
 
+        this.eventRegistrar = treex.getEventRegistrar();
         this.addonManager = addonManager;
         this.serviceConfiguration = new ServiceConfigurationImpl(this);
         this.addon = addon;

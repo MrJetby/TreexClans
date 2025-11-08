@@ -3,6 +3,7 @@ package me.jetby.treexclans.api.addons.service;
 import me.jetby.treexclans.api.addons.AddonManager;
 import me.jetby.treexclans.api.addons.commands.CommandService;
 import me.jetby.treexclans.api.addons.configuration.ServiceConfiguration;
+import me.jetby.treexclans.api.addons.listener.EventRegistrar;
 import me.jetby.treexclans.api.gui.GuiFactory;
 import me.jetby.treexclans.api.service.ClanManager;
 import me.jetby.treexclans.api.service.leaderboard.LeaderboardService;
@@ -49,7 +50,6 @@ public interface ServiceManager {
      * @return The addon's dedicated data directory.
      */
     File getDataFolder();
-
 
     /**
      * Provides access to the registered Vault economy provider.
@@ -115,6 +115,18 @@ public interface ServiceManager {
      * @return The {@link AddonManager} instance.
      */
     AddonManager getAddonManager();
+
+    /**
+     * Provides access to the global event registrar.
+     *
+     * <p>
+     * Used to register and unregister Bukkit listeners for addons.
+     * Each addon can manage its own event lifecycle safely through this service.
+     * </p>
+     *
+     * @return the {@link EventRegistrar} instance
+     */
+    EventRegistrar getEventRegistrar();
 
     /**
      * Provides access to the configuration service.
