@@ -208,11 +208,17 @@ public final class AddonManagerImpl implements AddonManager {
         return true;
     }
 
-    private void invokeLifecycle(JavaAddon addon, String methodName) throws Throwable {
-        var method = addon.getClass().getDeclaredMethod(methodName);
-        method.setAccessible(true);
-        method.invoke(addon);
+    private void invokeLifecycle(JavaAddon addon, String methodName) {
+        try {
+            // Берём метод именно из класса JavaAddon, а не из аддона
+            var method = JavaAddon.class.getDeclaredMethod(methodName);
+            method.setAccessible(true);
+            method.invoke(addon);
+        } catch (Throwable e) {
+            logError("Error invoking lifecycle method '" + methodName + "' for " + addon.getClass().getName(), e);
+        }
     }
+
 
     private void closeAllClassLoaders() {
         classLoaders.values().forEach(loader -> {
@@ -232,10 +238,12 @@ public final class AddonManagerImpl implements AddonManager {
                     .forEach(name -> {
                         try {
                             classes.add(loader.loadClass(name));
-                        } catch (Throwable ignored) {
-                            logDebug("Failed to load class: " + name);
+                        } catch (Throwable t) {
+                            logError("Failed to load class: " + name + " → " +
+                                    t.getClass().getSimpleName() + ": " + t.getMessage());
                         }
                     });
+
         } catch (IOException e) {
             throw new AddonLoadException("Failed to read JAR: " + jarFile.getName(), e);
         }
@@ -316,5 +324,6 @@ public final class AddonManagerImpl implements AddonManager {
     private void logInfo(String msg) { logger.info("[TreexAddon] " + msg); }
     private void logWarn(String msg) { logger.warning("[TreexAddon] " + msg); }
     private void logError(String msg, Throwable e) { logger.log(Level.SEVERE, "[TreexAddon] " + msg, e); }
+    private void logError(String msg) { logger.log(Level.SEVERE, "[TreexAddon] " + msg); }
     private void logDebug(String msg) { if (debugMode) logger.info("[TreexAddon:DEBUG] " + msg); }
 }
