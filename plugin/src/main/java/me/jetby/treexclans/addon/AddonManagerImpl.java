@@ -90,9 +90,8 @@ public final class AddonManagerImpl implements AddonManager {
     }
 
 
-    @Nullable
     @Override
-    public JavaAddon loadAddon(@NotNull File jarFile)
+    public @NotNull JavaAddon loadAddon(@NotNull File jarFile)
             throws AddonLoadException, DuplicateAddonIdException, MissingDependencyException, AddonNotFoundException {
 
         if (!jarFile.exists() || !jarFile.getName().endsWith(".jar")) {
@@ -218,7 +217,6 @@ public final class AddonManagerImpl implements AddonManager {
             logError("Error invoking lifecycle method '" + methodName + "' for " + addon.getClass().getName(), e);
         }
     }
-
 
     private void closeAllClassLoaders() {
         classLoaders.values().forEach(loader -> {
