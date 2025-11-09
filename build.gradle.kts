@@ -1,5 +1,4 @@
 plugins {
-    // Подключаем плагины только для возможного использования в подпроектах
     kotlin("jvm") version "2.3.0-Beta2" apply false
     id("com.gradleup.shadow") version "8.3.0" apply false
     id("xyz.jpenilla.run-paper") version "2.3.1" apply false
@@ -8,11 +7,10 @@ plugins {
 
 allprojects {
     group = "me.jetby"
-    version = "1.2.1"
+    version = "2.0"
 
     repositories {
         mavenCentral()
-        // Репозитории из pom.xml
         maven("https://repo.papermc.io/repository/maven-public/") {
             name = "papermc-repo"
         }

@@ -1,7 +1,7 @@
 dependencies {
     implementation(project(":api"))
 
-    compileOnly("com.github.MrJetby:Treex:68c61c48") // зависимость на Treex
+    compileOnly("com.github.MrJetby:Treex:79b0b65e")
     implementation("com.jodexindustries.jguiwrapper:common:1.0.0.9-beta")
 
     compileOnly("com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT")
@@ -15,7 +15,6 @@ dependencies {
     compileOnly("com.mojang:authlib:6.0.58")
     compileOnly("me.clip:placeholderapi:2.11.5")
 }
-
 tasks.processResources {
     filteringCharset = "UTF-8"
     val props = mapOf(
