@@ -1,5 +1,6 @@
 package me.jetby.treexclans.api.addons;
 
+import me.jetby.treexclans.api.addons.exception.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -7,79 +8,90 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Public API for interacting with TreexClans Addon System.
+ * Public API for interacting with the TreexClans Addon System.
  * <p>
- * Provides methods for loading, enabling, disabling, and unloading addons dynamically.
+ * Provides methods for dynamically loading, enabling, disabling,
+ * and managing addons at runtime.
  */
 public interface AddonManager {
 
     /**
-     * Loads all addon JARs from the addons folder.
-     */
-    void loadAddons();
-
-    /**
-     * Loads a single addon JAR (does not enable it immediately).
+     * Loads a single addon JAR without enabling it.
+     * <p>
+     * This method scans the JAR, validates metadata, and prepares
+     * an addon instance for future activation.
      *
-     * @param jarFile The path to the addon JAR file.
-     * @throws Exception If loading or scanning fails.
+     * @param jarFile The addon JAR file to load.
+     * @return The loaded {@link JavaAddon} instance.
+     * @throws AddonLoadException         If the addon could not be read or parsed.
+     * @throws DuplicateAddonIdException  If another addon with the same ID already exists.
+     * @throws MissingDependencyException If required dependencies are missing.
      */
-    void loadAddon(@NotNull File jarFile) throws Exception;
+    JavaAddon loadAddon(@NotNull File jarFile)
+            throws AddonLoadException,
+            DuplicateAddonIdException,
+            MissingDependencyException,
+            AddonNotFoundException;
 
     /**
-     * Enables all loaded addons in dependency order.
-     */
-    void enableAll();
-
-    /**
-     * Enables a specific addon by ID.
+     * Enables a specific addon instance.
+     * <p>
+     * Invokes {@link JavaAddon#onEnable()} and marks the addon as active.
      *
-     * @param addonId The addon ID.
+     * @param addon The addon to enable.
      * @return true if successfully enabled.
+     * @throws AddonEnableException If the addon failed to initialize.
      */
-    boolean enableAddon(@NotNull String addonId);
+    boolean enableAddon(@NotNull JavaAddon addon) throws AddonEnableException;
 
     /**
-     * Disables and unloads all addons (reverse order).
+     * Disables all currently loaded addons in reverse load order.
+     * <p>
+     * Invokes {@link JavaAddon#onDisable()} for each addon and
+     * performs any necessary cleanup.
      */
-    void unloadAll();
+    void disableAddons();
 
     /**
-     * Disables a specific addon (invokes onDisable).
+     * Disables a specific addon instance.
+     * <p>
+     * Invokes the {@link JavaAddon#onDisable()} lifecycle method.
      *
      * @param addon The addon instance to disable.
-     * @return true if successfully disabled.
+     * @return {@code true} if successfully disabled, otherwise {@code false}.
      */
-    boolean disable(@NotNull JavaAddon addon);
+    boolean disableAddon(@NotNull JavaAddon addon);
 
     /**
-     * Unloads a specific addon by its ID.
+     * Retrieves a loaded addon by its registered ID.
      *
-     * @param addonId The addon ID.
-     * @return true if successfully unloaded.
-     */
-    boolean unloadAddon(@NotNull String addonId);
-
-    /**
-     * Retrieves a loaded addon by its ID.
-     *
-     * @param addonId The addon ID.
-     * @return The addon instance or null if not found.
+     * @param addonId The unique addon ID.
+     * @return The corresponding {@link JavaAddon} instance, or {@code null} if not found.
      */
     @Nullable
     JavaAddon getAddon(@NotNull String addonId);
 
     /**
-     * Checks if an addon with the specified ID is currently loaded.
+     * Checks whether an addon with the specified ID is currently enabled.
      *
-     * @param addonId The addon ID.
-     * @return true if the addon is loaded.
+     * @param addonId The addon ID to check.
+     * @return {@code true} if the addon is enabled, otherwise {@code false}.
      */
-    boolean isLoaded(@NotNull String addonId);
+    boolean isAddonEnabled(@NotNull String addonId);
 
     /**
-     * @return An immutable list of all loaded addon IDs.
+     * Checks whether the specified addon instance is currently enabled.
+     *
+     * @param addon The addon instance to check.
+     * @return {@code true} if the addon is enabled, otherwise {@code false}.
+     */
+    boolean isAddonEnabled(@NotNull JavaAddon addon);
+
+    /**
+     * Returns an immutable list of all loaded addons.
+     *
+     * @return A list of currently loaded {@link JavaAddon} instances.
      */
     @NotNull
-    List<String> getAddonIds();
+    List<JavaAddon> getAddons();
 }

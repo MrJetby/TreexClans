@@ -10,17 +10,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
-public class OnClanDelete extends Event implements Cancellable {
+public class ClanDeleteEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled = false;
 
     @NotNull
-    private final Clan clanImpl;
+    private final Clan clan;
     @Nullable
     private final Player player;
 
-    public OnClanDelete(@NotNull Clan clanImpl, @Nullable Player player) {
-        this.clanImpl = clanImpl;
+    public ClanDeleteEvent(@NotNull Clan clan, @Nullable Player player) {
+        this.clan = clan;
         this.player = player;
     }
 

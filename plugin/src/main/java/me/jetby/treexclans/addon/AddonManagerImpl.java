@@ -7,6 +7,7 @@ import me.jetby.treexclans.api.addons.AddonManager;
 import me.jetby.treexclans.api.addons.JavaAddon;
 import me.jetby.treexclans.api.addons.annotations.ClanAddon;
 import me.jetby.treexclans.api.addons.annotations.Dependency;
+import me.jetby.treexclans.api.addons.exception.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,14 +36,13 @@ import java.util.logging.Logger;
  */
 public final class AddonManagerImpl implements AddonManager {
 
-    private final JavaPlugin plugin; //TODO api for TreexClans
+    private final JavaPlugin plugin;
     private final File addonsFolder;
-    private final Logger logger; // Используем стандартный Logger для детального логирования
+    private final Logger logger;
 
-    @Getter
-    private final Map<String, JavaAddon> loadedAddons = new LinkedHashMap<>(); // LinkedHashMap для порядка загрузки
-    private final Map<String, URLClassLoader> classLoaders = new HashMap<>(); // Ключ: имя JAR
-    private final Map<String, File> jarFiles = new HashMap<>(); // Ключ: ID аддона → JAR файл (для перезагрузки)
+    private final Map<String, JavaAddon> loadedAddons = new LinkedHashMap<>();
+    private final Map<String, URLClassLoader> classLoaders = new HashMap<>();
+    private final Map<String, File> jarFiles = new HashMap<>();
 
     private final boolean debugMode;
 
@@ -61,7 +61,6 @@ public final class AddonManagerImpl implements AddonManager {
         }
     }
 
-    @Override
     public void loadAddons() {
         File[] jars = addonsFolder.listFiles((dir, name) -> name.endsWith(".jar"));
         if (jars == null || jars.length == 0) {
@@ -70,184 +69,165 @@ public final class AddonManagerImpl implements AddonManager {
         }
 
         logInfo("Found " + jars.length + " addon(s) to load.");
-        List<Throwable> errors = new ArrayList<>();
+        int success = 0;
 
         for (File jarFile : jars) {
             try {
-                loadAddon(jarFile);
+                JavaAddon addon = loadAddon(jarFile);
+                if (addon != null) {
+                    success++;
+                }
+            } catch (AddonException e) {
+                logWarn("Failed to load addon " + jarFile.getName() + ": " + e.getMessage());
+                logDebug("Cause: " + e.getClass().getSimpleName());
             } catch (Throwable e) {
-                String msg = "Failed to load addon " + jarFile.getName() + ": " + e.getClass().getSimpleName() + " — " + e.getMessage();
-                logError(msg, e);
-                errors.add(e);
+                logError("Unexpected error loading " + jarFile.getName(), e);
             }
         }
 
-        if (!errors.isEmpty()) {
-            logWarn("Loaded with " + errors.size() + " error(s).");
-        }
-
+        logInfo(success + " addon(s) loaded successfully.");
         enableAll();
-        logInfo(loadedAddons.size() + " addon(s) loaded successfully.");
     }
 
 
-    /**
-     * Загружает один JAR-аддон.
-     * Сканирует классы, находит @TreexAddonInfo, инициализирует и добавляет в loadedAddons (но не включает!).
-     * Если ID уже загружен — выбрасывает IllegalStateException.
-     *
-     * @param jarFile Путь к JAR-файлу.
-     * @throws IllegalStateException Если аддон с таким ID уже загружен.
-     * @throws Exception             Если ошибка сканирования/загрузки.
-     * @see #enableAddon(String)
-     */
     @Override
-    public void loadAddon(@NotNull File jarFile) throws Exception {
+    public @NotNull JavaAddon loadAddon(@NotNull File jarFile)
+            throws AddonLoadException, DuplicateAddonIdException, MissingDependencyException, AddonNotFoundException {
+
         if (!jarFile.exists() || !jarFile.getName().endsWith(".jar")) {
-            throw new IllegalArgumentException("Invalid JAR file: " + jarFile.getAbsolutePath());
+            throw new AddonLoadException("Invalid JAR file: " + jarFile.getAbsolutePath(), null);
         }
 
         logDebug("Loading addon from " + jarFile.getName());
-        URLClassLoader loader = new URLClassLoader(new URL[]{jarFile.toURI().toURL()}, plugin.getClass().getClassLoader());
-        classLoaders.put(jarFile.getName(), loader);
+        URLClassLoader loader;
+
+        try {
+            loader = new URLClassLoader(new URL[]{jarFile.toURI().toURL()}, plugin.getClass().getClassLoader());
+            classLoaders.put(jarFile.getName(), loader);
+        } catch (IOException e) {
+            throw new AddonLoadException("Failed to open JAR file " + jarFile.getName(), e);
+        }
 
         List<Class<?>> classes = scanClassesInJar(jarFile, loader);
-        String loadedId = null;
+        JavaAddon addon = null;
 
         for (Class<?> clazz : classes) {
             ClanAddon meta = clazz.getAnnotation(ClanAddon.class);
             if (meta == null) continue;
+
             if (!JavaAddon.class.isAssignableFrom(clazz)) {
-                logWarn("Class " + clazz.getName() + " is annotated with @Addon but doesn't implement TreexAddon.");
+                logWarn("Class " + clazz.getName() + " is annotated with @ClanAddon but does not extend JavaAddon.");
                 continue;
             }
+
             if (loadedAddons.containsKey(meta.id())) {
-                throw new IllegalStateException("Addon with ID '" + meta.id() + "' is already loaded.");
+                throw new DuplicateAddonIdException("Addon with ID '" + meta.id() + "' is already loaded.");
             }
 
-            JavaAddon addon = (JavaAddon) clazz.getDeclaredConstructor().newInstance();
-            addon.initialize(new AddonContext(
-                    new ServiceManagerImpl(this, addonsFolder, plugin, meta),
-                    logger
-            ));
-
-            loadedAddons.put(meta.id(), addon);
-            jarFiles.put(meta.id(), jarFile);
-            loadedId = meta.id();
-
-            logInfo("Loaded addon: " + meta.id());
+            try {
+                addon = (JavaAddon) clazz.getDeclaredConstructor().newInstance();
+                addon.initialize(new AddonContext(
+                        new ServiceManagerImpl(this, addonsFolder, plugin, meta),
+                        logger
+                ));
+                loadedAddons.put(meta.id(), addon);
+                jarFiles.put(meta.id(), jarFile);
+                logInfo("Loaded addon: " + meta.id());
+                break;
+            } catch (Throwable e) {
+                throw new AddonLoadException("Failed to instantiate addon class " + clazz.getName(), e);
+            }
         }
 
-        if (loadedId == null) {
-            logWarn("No @Addon classes found in " + jarFile.getName());
+        if (addon == null) {
             classLoaders.remove(jarFile.getName());
+            throw new AddonNotFoundException("No valid @ClanAddon class found in " + jarFile.getName());
         }
 
+        return addon;
     }
 
-    @Override
     public void enableAll() {
         List<JavaAddon> ordered = sortByDependencies();
         logDebug("Enabling " + ordered.size() + " addon(s) in dependency order.");
-        ordered.forEach(a -> enableAddon(a.getInfo().id()));
+        ordered.forEach(a -> {
+            try {
+                enableAddon(a);
+            } catch (AddonEnableException e) {
+                logWarn("Failed to enable " + a.getInfo().id() + ": " + e.getMessage());
+            }
+        });
     }
 
     @Override
-    public boolean enableAddon(@NotNull String addonId) {
-        JavaAddon addon = loadedAddons.get(addonId);
-        if (addon == null) {
-            logWarn("Addon not found: " + addonId);
-            return false;
-        }
-
+    public boolean enableAddon(@NotNull JavaAddon addon) throws AddonEnableException {
         ClanAddon info = addon.getInfo();
+
         if (!checkDependencies(info)) {
-            logWarn("Skipping " + info.id() + " due to missing dependencies.");
-            return false;
+            throw new AddonEnableException("Missing dependencies for addon " + info.id(), null);
         }
 
         try {
-            addon.onEnable();
+            invokeLifecycle(addon, "enable");
             logInfo("Enabled addon: " + info.id());
             return true;
         } catch (Throwable e) {
-            logError("Error enabling " + info.id() + ": " + e.getMessage(), e);
-            return false;
+            throw new AddonEnableException("Error while enabling addon " + info.id(), e);
         }
     }
 
     @Override
-    public void unloadAll() {
+    public void disableAddons() {
         List<JavaAddon> reversed = new ArrayList<>(loadedAddons.values());
         Collections.reverse(reversed);
-        reversed.forEach(a -> unloadAddon(a.getInfo().id()));
+        reversed.forEach(this::disableAddon);
 
         loadedAddons.clear();
         jarFiles.clear();
+        closeAllClassLoaders();
+        logInfo("All addons unloaded.");
+    }
+
+    @Override
+    public boolean disableAddon(@NotNull JavaAddon addon) {
+        String id = addon.getInfo().id();
+        try {
+            invokeLifecycle(addon, "disable");
+            logInfo("Disabled addon: " + id);
+        } catch (Throwable e) {
+            logError("Error disabling addon " + id, e);
+        }
+
+        loadedAddons.remove(id);
+        File jarFile = jarFiles.remove(id);
+        if (jarFile != null) {
+            URLClassLoader loader = classLoaders.remove(jarFile.getName());
+            if (loader != null) try { loader.close(); } catch (IOException ignored) {}
+        }
+        return true;
+    }
+
+    private void invokeLifecycle(JavaAddon addon, String methodName) {
+        try {
+            // Берём метод именно из класса JavaAddon, а не из аддона
+            var method = JavaAddon.class.getDeclaredMethod(methodName);
+            method.setAccessible(true);
+            method.invoke(addon);
+        } catch (Throwable e) {
+            logError("Error invoking lifecycle method '" + methodName + "' for " + addon.getClass().getName(), e);
+        }
+    }
+
+    private void closeAllClassLoaders() {
         classLoaders.values().forEach(loader -> {
             try {
                 loader.close();
             } catch (IOException ignored) {}
         });
         classLoaders.clear();
-
-        logInfo("All addons unloaded.");
     }
 
-    @Override
-    public boolean disable(@NotNull JavaAddon addon) {
-        return unloadAddon(addon.getInfo().id());
-    }
-
-    @Override
-    public boolean unloadAddon(@NotNull String addonId) {
-        JavaAddon addon = loadedAddons.get(addonId);
-        if (addon == null) {
-            logWarn("Addon not found: " + addonId);
-            return false;
-        }
-
-//        Set<String> dependents = findDependents(addonId);
-//        if (!dependents.isEmpty()) {
-//            logWarn("Addon " + addonId + " has dependents: " + dependents + ". Unloading anyway.");
-//            dependents.forEach(this::unloadAddon);
-//        }
-
-        try {
-            addon.onDisable();
-            logInfo("Disabled addon: " + addonId);
-        } catch (Throwable e) {
-            logError("Error disabling " + addonId + ": " + e.getMessage(), e);
-        }
-
-        loadedAddons.remove(addonId);
-        File jarFile = jarFiles.remove(addonId);
-        if (jarFile != null) {
-            URLClassLoader loader = classLoaders.remove(jarFile.getName());
-            if (loader != null) try { loader.close(); } catch (IOException ignored) {}
-        }
-
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public JavaAddon getAddon(@NotNull String addonId) {
-        return loadedAddons.get(addonId);
-    }
-
-    @Override
-    public boolean isLoaded(@NotNull String addonId) {
-        return loadedAddons.containsKey(addonId);
-    }
-
-    @NotNull
-    @Override
-    public List<String> getAddonIds() {
-        return List.copyOf(loadedAddons.keySet());
-    }
-
-    private List<Class<?>> scanClassesInJar(@NotNull File jarFile, @NotNull URLClassLoader loader) throws IOException {
+    private List<Class<?>> scanClassesInJar(@NotNull File jarFile, @NotNull URLClassLoader loader) throws AddonLoadException {
         List<Class<?>> classes = new ArrayList<>();
         try (JarFile jar = new JarFile(jarFile)) {
             jar.stream()
@@ -256,10 +236,14 @@ public final class AddonManagerImpl implements AddonManager {
                     .forEach(name -> {
                         try {
                             classes.add(loader.loadClass(name));
-                        } catch (Throwable ignored) {
-                            logDebug("Failed to load class: " + name);
+                        } catch (Throwable t) {
+                            logError("Failed to load class: " + name + " → " +
+                                    t.getClass().getSimpleName() + ": " + t.getMessage());
                         }
                     });
+
+        } catch (IOException e) {
+            throw new AddonLoadException("Failed to read JAR: " + jarFile.getName(), e);
         }
         return classes;
     }
@@ -267,7 +251,7 @@ public final class AddonManagerImpl implements AddonManager {
     private boolean checkDependencies(@NotNull ClanAddon info) {
         boolean ok = true;
         for (Dependency dep : info.depends()) {
-            if (!isLoaded(dep.id())) {
+            if (!isAddonEnabled(dep.id())) {
                 logWarn("Missing dependency: " + dep.id() + " for " + info.id());
                 ok = false;
             }
@@ -308,25 +292,36 @@ public final class AddonManagerImpl implements AddonManager {
             for (Dependency d : info.depends()) graph.get(id).add(d.id());
             for (Dependency d : info.softDepends()) graph.get(id).add(d.id());
             for (String after : info.loadAfter()) graph.get(id).add(after);
-            for (String before : info.loadBefore()) graph.get(before).add(id);
+            for (String before : info.loadBefore()) graph.computeIfAbsent(before, k -> new LinkedHashSet<>()).add(id);
         }
         return graph;
     }
 
-    private Set<String> findDependents(@NotNull String givenId) {
-        Set<String> dependents = new HashSet<>();
-        for (JavaAddon a : loadedAddons.values()) {
-            ClanAddon info = a.getInfo();
-            if (info.id().equals(givenId)) continue;
-            for (Dependency d : info.depends()) if (d.id().equals(givenId)) dependents.add(info.id());
-            for (Dependency d : info.softDepends()) if (d.id().equals(givenId)) dependents.add(info.id());
-            for (String after : info.loadAfter()) if (after.equals(givenId)) dependents.add(info.id());
-        }
-        return dependents;
+    @Nullable
+    @Override
+    public JavaAddon getAddon(@NotNull String addonId) {
+        return loadedAddons.get(addonId);
     }
 
-    private void logInfo(String msg) { if (debugMode) logger.info("[TreexAddon] " + msg); }
-    private void logWarn(String msg) { if (debugMode) logger.warning("[TreexAddon] " + msg); }
-    private void logError(String msg, Throwable e) { if (debugMode) logger.log(Level.SEVERE, "[TreexAddon] " + msg, e); }
-    private void logDebug(String msg) { if (debugMode) logger.fine("[TreexAddon] " + msg); }
+    @Override
+    public boolean isAddonEnabled(@NotNull String addonId) {
+        return loadedAddons.containsKey(addonId);
+    }
+
+    @Override
+    public boolean isAddonEnabled(@NotNull JavaAddon addon) {
+        return loadedAddons.containsValue(addon);
+    }
+
+    @NotNull
+    @Override
+    public List<JavaAddon> getAddons() {
+        return List.copyOf(loadedAddons.values());
+    }
+
+    private void logInfo(String msg) { logger.info("[TreexAddon] " + msg); }
+    private void logWarn(String msg) { logger.warning("[TreexAddon] " + msg); }
+    private void logError(String msg, Throwable e) { logger.log(Level.SEVERE, "[TreexAddon] " + msg, e); }
+    private void logError(String msg) { logger.log(Level.SEVERE, "[TreexAddon] " + msg); }
+    private void logDebug(String msg) { if (debugMode) logger.info("[TreexAddon:DEBUG] " + msg); }
 }

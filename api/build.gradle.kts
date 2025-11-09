@@ -1,5 +1,6 @@
 import java.util.Properties
 
+// === Load .env file ===
 val envFile = rootProject.file(".env")
 val envProps = Properties()
 
@@ -7,7 +8,7 @@ if (envFile.exists()) {
     envFile.forEachLine { line ->
         val trimmed = line.trim()
         if (trimmed.isNotEmpty() && !trimmed.startsWith("#")) {
-            val (key, value) = line.split("=", limit = 2)
+            val (key, value) = trimmed.split("=", limit = 2)
             envProps[key] = value
         }
     }
@@ -16,37 +17,78 @@ if (envFile.exists()) {
 plugins {
     `java-library`
     `maven-publish`
-    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
-
 
 java {
     withSourcesJar()
 }
 
-tasks {
-    shadowJar {
-        archiveClassifier.set("")
-        minimize()
+repositories {
+    mavenCentral()
+    maven("https://jitpack.io")
+}
 
-        relocate("com.jodexindustries.jguiwrapper", "me.jetby.treexclans.libs.jguiwrapper")
-    }
+val exposedDependencies = listOf(
+    "com.github.MrJetby:Treex:68c61c48",
+    "com.jodexindustries.jguiwrapper:common:1.0.0.9-beta",
+    "com.github.MilkBowl:VaultAPI:1.7",
+)
 
-    build {
-        dependsOn(shadowJar)
-    }
+val compileOnlyDependencies = listOf(
+    "com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT",
+    "org.projectlombok:lombok:1.18.42",
+    "com.github.retrooper:packetevents-spigot:2.8.0",
+    "com.mojang:authlib:6.0.58",
+    "me.clip:placeholderapi:2.11.5"
+)
+
+dependencies {
+    compileOnlyDependencies.forEach { compileOnly(it) }
+    exposedDependencies.forEach { compileOnly(it) }
+
+    annotationProcessor("org.projectlombok:lombok:1.18.42")
+    testCompileOnly("org.projectlombok:lombok:1.18.42")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
 }
 
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            artifact(tasks.shadowJar)
-
+            from(components["java"])
             groupId = "space.jetby.TreexClans"
             artifactId = "api"
-            version = "2.0"
+            version = "1.0.7-beta"
 
-            artifact(tasks["sourcesJar"])
+            pom.withXml {
+                val dependenciesNode = asNode().appendNode("dependencies")
+                exposedDependencies.forEach {
+                    val (group, artifact, version) = it.split(":")
+                    val dep = dependenciesNode.appendNode("dependency")
+                    dep.appendNode("groupId", group)
+                    dep.appendNode("artifactId", artifact)
+                    dep.appendNode("version", version)
+                    dep.appendNode("scope", "compile")
+                }
+            }
+
+            pom {
+                name.set("TreexClans API")
+                description.set("TreexClans Addon API for developers")
+                url.set("https://jetby.space")
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("JetBy")
+                        name.set("JetBy")
+                        email.set("support@jetby.space")
+                    }
+                }
+            }
         }
     }
 
@@ -62,19 +104,6 @@ publishing {
     }
 }
 
-
-dependencies {
-    compileOnly("com.github.MrJetby:Treex:68c61c48")
-    implementation("com.jodexindustries.jguiwrapper:common:1.0.0.9-beta")
-
-    compileOnly("com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT")
-    compileOnly("org.projectlombok:lombok:1.18.42")
-    annotationProcessor("org.projectlombok:lombok:1.18.42")
-
-    testCompileOnly("org.projectlombok:lombok:1.18.42")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
-    compileOnly("com.github.retrooper:packetevents-spigot:2.8.0")
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
-    compileOnly("com.mojang:authlib:6.0.58")
-    compileOnly("me.clip:placeholderapi:2.11.5")
+tasks.withType<GenerateModuleMetadata> {
+    enabled = false
 }

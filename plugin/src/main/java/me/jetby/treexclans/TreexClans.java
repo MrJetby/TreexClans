@@ -11,6 +11,7 @@ import me.jetby.treexclans.addon.AddonManagerImpl;
 import me.jetby.treexclans.api.TreexClansAPI;
 import me.jetby.treexclans.api.addons.AddonManager;
 import me.jetby.treexclans.api.addons.commands.CommandService;
+import me.jetby.treexclans.api.addons.listener.EventRegistrar;
 import me.jetby.treexclans.api.gui.GuiFactory;
 import me.jetby.treexclans.api.service.ClanManager;
 import me.jetby.treexclans.api.service.leaderboard.LeaderboardService;
@@ -27,6 +28,7 @@ import me.jetby.treexclans.gui.GuiLoader;
 import me.jetby.treexclans.hooks.ClanPlaceholder;
 import me.jetby.treexclans.hooks.TreexAutoDownload;
 import me.jetby.treexclans.hooks.Vault;
+import me.jetby.treexclans.listener.EventRegistryImpl;
 import me.jetby.treexclans.listeners.ClanListeners;
 import me.jetby.treexclans.listeners.QuestsListeners;
 import me.jetby.treexclans.storage.Storage;
@@ -81,7 +83,8 @@ public final class TreexClans extends JavaPlugin implements TreexClansAPI {
 
     private Modules modules;
 
-    private AddonManager addonManagerImpl;
+    private EventRegistrar eventRegistrar;
+    private AddonManager addonManager;
 
     @Override
     public void onLoad() {
@@ -172,16 +175,17 @@ public final class TreexClans extends JavaPlugin implements TreexClansAPI {
                 ServicePriority.Normal
         );
 
-        addonManagerImpl = new AddonManagerImpl(this, true);
-        addonManagerImpl.loadAddons();
+        eventRegistrar = new EventRegistryImpl();
+        addonManager = new AddonManagerImpl(this, true);
+        ((AddonManagerImpl) addonManager).loadAddons();
     }
 
     private PluginCommand clanCommand;
 
     @Override
     public void onDisable() {
-        if (addonManagerImpl != null) {
-            addonManagerImpl.unloadAll();
+        if (addonManager != null) {
+            addonManager.disableAddons();
         }
         getServer().getServicesManager().unregister(TreexClansAPI.class);
         if (storage != null) storage.save();

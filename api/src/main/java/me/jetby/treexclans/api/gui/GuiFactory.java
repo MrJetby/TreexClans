@@ -1,6 +1,5 @@
 package me.jetby.treexclans.api.gui;
 
-import me.jetby.treexclans.api.TreexClansAPI;
 import me.jetby.treexclans.api.service.clan.Clan;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;

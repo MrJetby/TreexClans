@@ -5,8 +5,8 @@ import me.jetby.treex.actions.ActionExecutor;
 import me.jetby.treex.actions.ActionRegistry;
 import me.jetby.treex.text.Colorize;
 import me.jetby.treex.text.Papi;
-import me.jetby.treexclans.api.events.OnClanCreate;
-import me.jetby.treexclans.api.events.OnClanDelete;
+import me.jetby.treexclans.api.events.ClanCreateEvent;
+import me.jetby.treexclans.api.events.ClanDeleteEvent;
 import me.jetby.treexclans.api.service.ClanManager;
 import me.jetby.treexclans.api.service.clan.Clan;
 import me.jetby.treexclans.api.service.clan.member.Member;
@@ -108,8 +108,16 @@ public final class ClanManagerImpl implements Listener, ClanManager {
         @Override
         public boolean createClan(@NotNull String name, @NotNull Clan clan) {
             if (exists(name)) return false;
+
+            var event = new ClanCreateEvent(clan, null);
+            Bukkit.getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                plugin.getLogger().info("Clan creation process halted — event cancelled externally.");
+                return false;
+            }
+
             clans().put(name, clan);
-            Bukkit.getPluginManager().callEvent(new OnClanCreate(clan, null));
             return true;
         }
 
@@ -153,27 +161,44 @@ public final class ClanManagerImpl implements Listener, ClanManager {
                     ""
             );
 
+            var event = new ClanCreateEvent(clan, leaderPlayer);
+            Bukkit.getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                plugin.getLogger().info("Clan creation process halted — event cancelled externally.");
+                return false;
+            }
+
             clans().put(name, clan);
-            Bukkit.getPluginManager().callEvent(new OnClanCreate(clan, leaderPlayer));
             return true;
         }
 
         @Override
-        public void deleteClan(@NotNull Clan clan, @Nullable Player initiator) {
-            //        for (Member member : clan.getMembers()) {
-//            Player player = Bukkit.getPlayer(member.getUuid());
-//            if (player != null) {
-//                player.sendMessage("Your clan was disbanded by clan leader");
-//            }
-//        }
+        public boolean deleteClan(@NotNull Clan clan, @Nullable Player initiator) {
+            var event = new ClanDeleteEvent(clan, initiator);
+            Bukkit.getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                plugin.getLogger().info("Clan delete process halted — event cancelled externally.");
+                return false;
+            }
+
             clans().remove(clan.getId());
-            Bukkit.getPluginManager().callEvent(new OnClanDelete(clan, initiator));
+            return true;
         }
 
         @Override
         public boolean deleteClan(@NotNull String name) {
             var clan = clans().get(name);
             if (clan == null) {
+                return false;
+            }
+
+            var event = new ClanDeleteEvent(clan, null);
+            Bukkit.getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                plugin.getLogger().info("Clan delete process halted — event cancelled externally.");
                 return false;
             }
 
@@ -186,7 +211,6 @@ public final class ClanManagerImpl implements Listener, ClanManager {
             }
 
             clans().remove(clan.getId());
-            Bukkit.getPluginManager().callEvent(new OnClanDelete(clan, null));
             return true;
         }
 

@@ -2,6 +2,7 @@ package me.jetby.treexclans.api.events;
 
 import lombok.Getter;
 import me.jetby.treexclans.api.service.clan.Clan;
+import me.jetby.treexclans.functions.quests.Quest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
-public class OnClanCreate extends Event implements Cancellable {
+public class ClanQuestCompleteEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled = false;
 
@@ -18,10 +19,13 @@ public class OnClanCreate extends Event implements Cancellable {
     private final Clan clanImpl;
     @Nullable
     private final Player player;
+    @NotNull
+    private final Quest quest;
 
-    public OnClanCreate(@NotNull Clan clanImpl, @Nullable Player player) {
+    public ClanQuestCompleteEvent(@NotNull Clan clanImpl, @Nullable Player player, @NotNull Quest quest) {
         this.clanImpl = clanImpl;
         this.player = player;
+        this.quest = quest;
     }
 
     @Override

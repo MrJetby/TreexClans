@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import me.jetby.treexclans.api.gui.GuiFactory;
 import org.bukkit.NamespacedKey;
-import org.bukkit.plugin.Plugin;
 
 /**
  * A global static registry (factory) of commonly used plugin instances and constants.

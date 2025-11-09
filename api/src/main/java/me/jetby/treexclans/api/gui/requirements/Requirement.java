@@ -1,18 +1,22 @@
 package me.jetby.treexclans.api.gui.requirements;
 
 /**
- * Базовый интерфейс требования для GUI.
+ * Base interface for GUI requirement checks.
+ * <p>
+ * A requirement defines a logical condition that must be met
+ * before a GUI action or button becomes available to a player.
+ * </p>
  *
- * <p>Поддерживаемые типы требований:</p>
+ * <p>Supported requirement types:</p>
  * <ul>
- *     <li><b>"has permission"</b> — игрок имеет указанное разрешение.</li>
- *     <li><b>"!has permission"</b> — игрок <u>не</u> имеет указанного разрешения.</li>
- *     <li><b>"string equals"</b> — input == output (игнор регистра, поддерживаются плейсхолдеры).</li>
- *     <li><b>"!string equals"</b> — input != output (игнор регистра, поддерживаются плейсхолдеры).</li>
- *     <li><b>"javascript"</b> / <b>"math"</b> — проверка выражений (> >= == != <= <), плейсхолдеры поддерживаются.</li>
+ *     <li><b>"has permission"</b> — player has the specified permission.</li>
+ *     <li><b>"!has permission"</b> — player <u>does not</u> have the specified permission.</li>
+ *     <li><b>"string equals"</b> — compares {@code input == output} (case-insensitive, placeholders supported).</li>
+ *     <li><b>"!string equals"</b> — compares {@code input != output} (case-insensitive, placeholders supported).</li>
+ *     <li><b>"javascript"</b> / <b>"math"</b> — evaluates an expression (>, >=, ==, !=, <=, <), placeholders supported.</li>
  * </ul>
  *
- * <p>Примеры:</p>
+ * <p>Examples:</p>
  * <pre>
  * type: "has permission"
  * permission: "treexclans.admin"
@@ -28,61 +32,69 @@ package me.jetby.treexclans.api.gui.requirements;
 public interface Requirement {
 
     /**
-     * Тип проверки.
-     *
-     * <p>Возможные значения:</p>
+     * Defines the type of requirement.
+     * <p>
+     * Available values:
+     * </p>
      * <ul>
-     *     <li><b>"has permission"</b> — проверяет наличие разрешения.</li>
-     *     <li><b>"!has permission"</b> — проверяет отсутствие разрешения.</li>
-     *     <li><b>"string equals"</b> — сравнивает input и output (регистр игнорируется, плейсхолдеры разрешены).</li>
-     *     <li><b>"!string equals"</b> — сравнивает input и output на неравенство.</li>
-     *     <li><b>"javascript"</b> / <b>"math"</b> — выполняет математическое выражение (> >= == != <= <).</li>
+     *     <li><b>"has permission"</b> — checks if a player has the specified permission.</li>
+     *     <li><b>"!has permission"</b> — checks if a player lacks the specified permission.</li>
+     *     <li><b>"string equals"</b> — compares {@code input} and {@code output} (case-insensitive, placeholders allowed).</li>
+     *     <li><b>"!string equals"</b> — checks if {@code input} and {@code output} are not equal.</li>
+     *     <li><b>"javascript"</b> / <b>"math"</b> — evaluates a mathematical or logical expression (>, >=, ==, !=, <=, <).</li>
      * </ul>
      *
-     * @return тип требования
+     * @return the type of requirement.
      */
     String type();
 
     /**
-     * Разрешение, используемое при проверке прав.
-     *
-     * <p>Применяется только для типов:</p>
+     * The permission node to check.
+     * <p>
+     * Used only with:
+     * </p>
      * <ul>
      *     <li><b>"has permission"</b></li>
      *     <li><b>"!has permission"</b></li>
      * </ul>
      *
-     * @return строка разрешения (например, {@code treexclans.admin})
+     * @return the permission string (e.g. {@code treexclans.admin}).
      */
     String permission();
 
     /**
-     * Входное значение для проверки.
-     *
-     * <p>Используется при следующих типах:</p>
+     * The input value or expression for validation.
+     * <p>
+     * Used with:
+     * </p>
      * <ul>
-     *     <li><b>"string equals"</b> / <b>"!string equals"</b> — сравнение с {@link #output()}</li>
-     *     <li><b>"javascript"</b> / <b>"math"</b> — выражение вида {@code %player_level% >= 10}</li>
+     *     <li><b>"string equals"</b> / <b>"!string equals"</b> — compared with {@link #output()}.</li>
+     *     <li><b>"javascript"</b> / <b>"math"</b> — evaluated expression (e.g. {@code %player_level% >= 10}).</li>
      * </ul>
      *
-     * <p>Поддерживаются плейсхолдеры PlaceholderAPI.</p>
+     * <p>
+     * PlaceholderAPI placeholders are supported.
+     * </p>
      *
-     * @return входное выражение
+     * @return the input expression.
      */
     String input();
 
     /**
-     * Выходное значение для сравнения.
-     *
-     * <p>Используется только при типах:</p>
+     * The comparison target for {@link #input()}.
+     * <p>
+     * Used only with:
+     * </p>
      * <ul>
      *     <li><b>"string equals"</b></li>
      *     <li><b>"!string equals"</b></li>
      * </ul>
      *
-     * <p>Поддерживаются плейсхолдеры PlaceholderAPI.</p>
+     * <p>
+     * PlaceholderAPI placeholders are supported.
+     * </p>
      *
-     * @return значение для сравнения
+     * @return the output or comparison value.
      */
     String output();
 }
