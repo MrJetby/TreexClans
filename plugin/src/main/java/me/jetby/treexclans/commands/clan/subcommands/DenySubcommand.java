@@ -41,7 +41,6 @@ public class DenySubcommand implements Subcommand {
 
             plugin.getMessages().sendMessage(player, null, "clan-deny");
         }
-
         return true;
     }
 
