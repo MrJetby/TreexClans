@@ -4,7 +4,7 @@ import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.api.addons.commands.CommandService;;
 import me.jetby.treexclans.api.service.clan.member.rank.RankPerms;
 import me.jetby.treexclans.api.command.Subcommand;
-import me.jetby.treexclans.configurations.Lang;
+import me.jetby.treexclans.configurations.Messages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,16 +20,16 @@ public class SetPrefixSubcommand implements Subcommand {
 
         if (sender instanceof Player player) {
             if (args.length == 0) {
-                plugin.getLang().sendMessage(player, null, "commands.setprefix");
+                plugin.getMessages().sendMessage(player, null, "commands.setprefix");
                 return true;
             }
             if (!plugin.getClanManager().lookup().isInClan(player.getUniqueId())) {
-                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
+                plugin.getMessages().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
             var clanImpl = plugin.getClanManager().lookup().getClanByMember(player.getUniqueId());
             if (!clanImpl.getMember(player.getUniqueId()).getRank().perms().contains(RankPerms.SETPREFIX)) {
-                plugin.getLang().sendMessage(player, clanImpl, "your-rank-is-not-allowed-to-do-that");
+                plugin.getMessages().sendMessage(player, clanImpl, "your-rank-is-not-allowed-to-do-that");
                 return true;
             }
 
@@ -37,7 +37,7 @@ public class SetPrefixSubcommand implements Subcommand {
 
             if (plugin.getClanManager().validation().isAllowedPrefix(player, message)) {
                 clanImpl.setPrefix(message);
-                plugin.getLang().sendMessage(player, clanImpl, "clan-setprefix", new Lang.ReplaceString("{clan_prefix}", message.toString()));
+                plugin.getMessages().sendMessage(player, clanImpl, "clan-setprefix", new Messages.ReplaceString("{clan_prefix}", message.toString()));
             }
         }
 

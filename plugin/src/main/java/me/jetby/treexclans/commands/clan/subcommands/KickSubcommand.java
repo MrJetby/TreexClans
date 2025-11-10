@@ -4,7 +4,7 @@ import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.api.addons.commands.CommandService;;
 import me.jetby.treexclans.api.service.clan.member.rank.RankPerms;
 import me.jetby.treexclans.api.command.Subcommand;
-import me.jetby.treexclans.configurations.Lang;
+import me.jetby.treexclans.configurations.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -26,17 +26,17 @@ public class KickSubcommand implements Subcommand {
 
         if (sender instanceof Player player) {
             if (args.length == 0) {
-                plugin.getLang().sendMessage(player, null, "commands.kick");
+                plugin.getMessages().sendMessage(player, null, "commands.kick");
                 return true;
             }
             if (!plugin.getClanManager().lookup().isInClan(player.getUniqueId())) {
-                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
+                plugin.getMessages().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
             var clanImpl = plugin.getClanManager().lookup().getClanByMember(player.getUniqueId());
 
             if (!clanImpl.getMember(player.getUniqueId()).getRank().perms().contains(RankPerms.KICK)) {
-                plugin.getLang().sendMessage(player, clanImpl, "your-rank-is-not-allowed-to-do-that");
+                plugin.getMessages().sendMessage(player, clanImpl, "your-rank-is-not-allowed-to-do-that");
                 return true;
             }
 
@@ -52,22 +52,22 @@ public class KickSubcommand implements Subcommand {
             var memberImpl = clanImpl.getMember(uuid);
 
             if (memberImpl == null) {
-                plugin.getLang().sendMessage(player, clanImpl, "player-not-found");
+                plugin.getMessages().sendMessage(player, clanImpl, "player-not-found");
                 return true;
             }
             if (target != null && clanImpl.getMember(player.getUniqueId()).equals(memberImpl)) {
-                plugin.getLang().sendMessage(player, clanImpl, "clan-you-cant-kick-yourself");
+                plugin.getMessages().sendMessage(player, clanImpl, "clan-you-cant-kick-yourself");
                 return true;
             }
             if (clanImpl.getLeader().equals(memberImpl)) {
-                plugin.getLang().sendMessage(player, clanImpl, "you-cant-do-that-with-leader");
+                plugin.getMessages().sendMessage(player, clanImpl, "you-cant-do-that-with-leader");
                 return true;
             }
 
             clanImpl.removeMember(memberImpl);
-            plugin.getLang().sendMessage(player, clanImpl, "clan-player-kick", new Lang.ReplaceString("{target}", targetName));
+            plugin.getMessages().sendMessage(player, clanImpl, "clan-player-kick", new Messages.ReplaceString("{target}", targetName));
             if (target != null && target.isOnline()) {
-                plugin.getLang().sendMessage(target, clanImpl, "clan-you-was-kicked", new Lang.ReplaceString("{player}", player.getName()));
+                plugin.getMessages().sendMessage(target, clanImpl, "clan-you-was-kicked", new Messages.ReplaceString("{player}", player.getName()));
             }
         }
         return true;

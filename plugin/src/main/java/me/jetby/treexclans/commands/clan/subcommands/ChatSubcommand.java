@@ -18,17 +18,17 @@ public class ChatSubcommand implements Subcommand {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (sender instanceof Player player) {
             if (!plugin.getClanManager().lookup().isInClan(player.getUniqueId())) {
-                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
+                plugin.getMessages().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
 
             if (args.length == 0) {
                 var memberImpl = plugin.getClanManager().lookup().getClanByMember(player.getUniqueId()).getMember(player.getUniqueId());
                 if (!memberImpl.isChat()) {
-                    plugin.getLang().sendMessage(player, null, "clan-chat-on");
+                    plugin.getMessages().sendMessage(player, null, "clan-chat-on");
                     memberImpl.setChat(true);
                 } else {
-                    plugin.getLang().sendMessage(player, null, "clan-chat-off");
+                    plugin.getMessages().sendMessage(player, null, "clan-chat-off");
                     memberImpl.setChat(false);
                 }
                 return true;

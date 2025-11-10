@@ -104,7 +104,7 @@ public class RankPermissionsGui extends Gui {
     }
 
     private String getStatus(boolean status) {
-        return getPlugin().getLang().getMessage(status ? "rank-perm-yes" : "rank-perm-no");
+        return getPlugin().getMessages().getMessage(status ? "rank-perm-yes" : "rank-perm-no");
     }
 
     public TreexClans getPlugin() {

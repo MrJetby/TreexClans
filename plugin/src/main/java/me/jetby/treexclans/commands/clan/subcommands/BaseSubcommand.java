@@ -20,20 +20,20 @@ public class BaseSubcommand implements Subcommand {
 
         if (sender instanceof Player player) {
             if (!plugin.getClanManager().lookup().isInClan(player.getUniqueId())) {
-                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
+                plugin.getMessages().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
             var clanImpl = plugin.getClanManager().lookup().getClanByMember(player.getUniqueId());
             if (clanImpl.getBase() == null) {
-                plugin.getLang().sendMessage(player, null, "clan-base-unset");
+                plugin.getMessages().sendMessage(player, null, "clan-base-unset");
                 return true;
             }
             if (!clanImpl.getMember(player.getUniqueId()).getRank().perms().contains(RankPerms.BASE)) {
-                plugin.getLang().sendMessage(player, clanImpl, "your-rank-is-not-allowed-to-do-that");
+                plugin.getMessages().sendMessage(player, clanImpl, "your-rank-is-not-allowed-to-do-that");
                 return true;
             }
             player.teleport(clanImpl.getBase());
-            plugin.getLang().sendMessage(player, clanImpl, "clan-base");
+            plugin.getMessages().sendMessage(player, clanImpl, "clan-base");
         }
 
         return true;

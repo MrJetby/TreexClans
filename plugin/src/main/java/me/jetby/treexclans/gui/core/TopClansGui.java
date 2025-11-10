@@ -232,6 +232,7 @@ public class TopClansGui extends Gui {
 
         OfflinePlayer leader = Bukkit.getOfflinePlayer(clanImpl.getLeader().getUuid());
         String leaderName = leader.getName() != null ? leader.getName() : "Unknown";
+        setCustomPlaceholder("%slogan%", clanImpl.getSlogan());
         setCustomPlaceholder("%tag%", clanImpl.getId());
         setCustomPlaceholder("%level%", clanImpl.getLevel().id());
         setCustomPlaceholder("%leader_name%", leaderName);
@@ -245,23 +246,23 @@ public class TopClansGui extends Gui {
         if (text == null) return null;
         switch (currentSort) {
             case KILLS ->
-                    text = text.replace("%top_kills_set%", getPlugin().getLang().getMessage("gui.tops.kills.set"));
+                    text = text.replace("%top_kills_set%", getPlugin().getMessages().getMessage("gui.tops.kills.set"));
             case DEATHS ->
-                    text = text.replace("%top_deaths_set%", getPlugin().getLang().getMessage("gui.tops.deaths.set"));
-            case KD -> text = text.replace("%top_kd_set%", getPlugin().getLang().getMessage("gui.tops.kd.set"));
+                    text = text.replace("%top_deaths_set%", getPlugin().getMessages().getMessage("gui.tops.deaths.set"));
+            case KD -> text = text.replace("%top_kd_set%", getPlugin().getMessages().getMessage("gui.tops.kd.set"));
             case BALANCE ->
-                    text = text.replace("%top_balance_set%", getPlugin().getLang().getMessage("gui.tops.balance.set"));
+                    text = text.replace("%top_balance_set%", getPlugin().getMessages().getMessage("gui.tops.balance.set"));
             case LEVEL ->
-                    text = text.replace("%top_level_set%", getPlugin().getLang().getMessage("gui.tops.level.set"));
+                    text = text.replace("%top_level_set%", getPlugin().getMessages().getMessage("gui.tops.level.set"));
             case MEMBERS ->
-                    text = text.replace("%top_members_set%", getPlugin().getLang().getMessage("gui.tops.members.set"));
+                    text = text.replace("%top_members_set%", getPlugin().getMessages().getMessage("gui.tops.members.set"));
         }
-        text = text.replace("%top_kills_set%", getPlugin().getLang().getMessage("gui.tops.kills.unset"));
-        text = text.replace("%top_deaths_set%", getPlugin().getLang().getMessage("gui.tops.deaths.unset"));
-        text = text.replace("%top_kd_set%", getPlugin().getLang().getMessage("gui.tops.kd.unset"));
-        text = text.replace("%top_balance_set%", getPlugin().getLang().getMessage("gui.tops.balance.unset"));
-        text = text.replace("%top_level_set%", getPlugin().getLang().getMessage("gui.tops.level.unset"));
-        text = text.replace("%top_members_set%", getPlugin().getLang().getMessage("gui.tops.members.unset"));
+        text = text.replace("%top_kills_set%", getPlugin().getMessages().getMessage("gui.tops.kills.unset"));
+        text = text.replace("%top_deaths_set%", getPlugin().getMessages().getMessage("gui.tops.deaths.unset"));
+        text = text.replace("%top_kd_set%", getPlugin().getMessages().getMessage("gui.tops.kd.unset"));
+        text = text.replace("%top_balance_set%", getPlugin().getMessages().getMessage("gui.tops.balance.unset"));
+        text = text.replace("%top_level_set%", getPlugin().getMessages().getMessage("gui.tops.level.unset"));
+        text = text.replace("%top_members_set%", getPlugin().getMessages().getMessage("gui.tops.members.unset"));
         return text;
     }
 

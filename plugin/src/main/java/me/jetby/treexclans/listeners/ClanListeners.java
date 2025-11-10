@@ -41,7 +41,7 @@ public class ClanListeners implements Listener {
             if (clanImpl.isPvp()) return;
             if (e.getEntity() instanceof Player target) {
                 if (plugin.getClanManager().lookup().getClanByMember(target.getUniqueId()) != null && plugin.getClanManager().lookup().getClanByMember(target.getUniqueId()).equals(clanImpl)) {
-                    plugin.getLang().sendMessage(player, clanImpl, "pvp-disabled");
+                    plugin.getMessages().sendMessage(player, clanImpl, "pvp-disabled");
                     e.setCancelled(true);
                 }
             }
@@ -57,7 +57,7 @@ public class ClanListeners implements Listener {
             if (clanImpl.isPvp()) return;
             if (e.getHitEntity() instanceof Player target) {
                 if (plugin.getClanManager().lookup().getClanByMember(target.getUniqueId()) != null && plugin.getClanManager().lookup().getClanByMember(target.getUniqueId()).equals(clanImpl)) {
-                    plugin.getLang().sendMessage(player, clanImpl, "pvp-disabled");
+                    plugin.getMessages().sendMessage(player, clanImpl, "pvp-disabled");
                     e.setCancelled(true);
                 }
             }

@@ -31,6 +31,19 @@ public final class LeaderboardServiceImpl implements LeaderboardService {
     }
 
     @Override
+    public @NotNull Object getTopProgress(@NotNull Clan clan, TopType type) {
+        return switch (type) {
+            case KILLS -> getTotalKills(clan);
+            case DEATHS -> getTotalDeaths(clan);
+            case KD -> calculateKd(getTotalKills(clan), getTotalDeaths(clan));
+            case BALANCE -> clan.getBalance();
+            case LEVEL -> clan.getLevel().id();
+            case MEMBERS -> clan.getMembersWithLeader().size();
+        };
+    }
+
+
+    @Override
     public @NotNull List<Clan> getTopList(@NotNull TopType type) {
         Comparator<Clan> comparator = switch (type) {
             case KILLS -> Comparator.comparingInt(this::getTotalKills).reversed();

@@ -19,7 +19,7 @@ public class FormatTime {
         this.config = plugin.getCfg();
         this.cachedFormats = new HashMap<>();
 
-        FileConfiguration configuration = plugin.getLang().getConfig();
+        FileConfiguration configuration = plugin.getMessages().getConfig();
 
         ConfigurationSection formattedTime = configuration.getConfigurationSection("formattedTime");
 

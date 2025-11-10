@@ -1,7 +1,7 @@
 dependencies {
     implementation(project(":api"))
 
-    compileOnly("com.github.MrJetby:Treex:79b0b65e")
+    compileOnly("space.jetby.libs:Treex:0.1.5")
     implementation("com.jodexindustries.jguiwrapper:common:1.0.0.9-beta")
 
     compileOnly("com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT")

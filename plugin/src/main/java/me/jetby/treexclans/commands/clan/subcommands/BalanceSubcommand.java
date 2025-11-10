@@ -3,7 +3,7 @@ package me.jetby.treexclans.commands.clan.subcommands;
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.api.addons.commands.CommandService;
 import me.jetby.treexclans.api.command.Subcommand;
-import me.jetby.treexclans.configurations.Lang;
+import me.jetby.treexclans.configurations.Messages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,11 +20,11 @@ public class BalanceSubcommand implements Subcommand {
 
         if (sender instanceof Player player) {
             if (!plugin.getClanManager().lookup().isInClan(player.getUniqueId())) {
-                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
+                plugin.getMessages().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
             var clanImpl = plugin.getClanManager().lookup().getClanByMember(player.getUniqueId());
-            plugin.getLang().sendMessage(player, clanImpl, "clan-balance", new Lang.ReplaceString("{balance}", String.valueOf(clanImpl.getBalance())));
+            plugin.getMessages().sendMessage(player, clanImpl, "clan-balance", new Messages.ReplaceString("{balance}", String.valueOf(clanImpl.getBalance())));
         }
 
         return true;

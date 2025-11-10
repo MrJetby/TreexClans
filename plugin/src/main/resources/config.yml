@@ -43,8 +43,7 @@ prefix:
   max-clan-prefix-length: 16
   regex: "^[A-Za-z0-9]+$"
   # какие символы игнорировать из префикса
-  length-ignored-symbols: ["&", "#"]
-
+  length-ignored-symbols: "&x(?:&[0-9A-Fa-f]){6}|&[0-9A-Fa-f]"
 tag-placeholder:
   has_clan: "&8[&e{tag}&8]"
   no_clan: ""

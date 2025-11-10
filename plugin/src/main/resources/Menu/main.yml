@@ -6,6 +6,7 @@ open_args:
   - 'menu'
 open_commands: { }
 
+listen: MENU
 
 Items:
 

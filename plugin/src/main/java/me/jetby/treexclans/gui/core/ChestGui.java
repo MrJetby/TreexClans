@@ -2,8 +2,7 @@ package me.jetby.treexclans.gui.core;
 
 import com.jodexindustries.jguiwrapper.api.item.ItemWrapper;
 import com.jodexindustries.jguiwrapper.gui.advanced.GuiItemController;
-import me.jetby.treex.text.BetterColorize;
-import me.jetby.treexclans.TreexClans;
+import me.jetby.treex.text.Colorize;
 import me.jetby.treexclans.api.service.clan.Clan;
 import me.jetby.treexclans.api.gui.Button;
 import me.jetby.treexclans.api.gui.Gui;
@@ -101,8 +100,8 @@ public class ChestGui extends Gui {
                     consumers[i] = builder -> {
                         builder.slots(guiSlot);
                         ItemWrapper barrier = ItemWrapper.builder(blockedSlot.itemStack().getType())
-                                .displayName(BetterColorize.component(blockedSlot.displayName()))
-                                .lore(BetterColorize.component((blockedSlot.lore())))
+                                .displayName(Colorize.text(blockedSlot.displayName()))
+                                .lore(Colorize.list((blockedSlot.lore())))
                                 .build();
 
                         ItemMeta meta = barrier.itemStack().getItemMeta();

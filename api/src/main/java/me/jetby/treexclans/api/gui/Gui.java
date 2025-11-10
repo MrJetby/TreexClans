@@ -76,14 +76,7 @@ public abstract class Gui extends PaginatedAdvancedGui implements Listener {
 
     public String applyDefaultPlaceholders(String text) {
         if (text == null) return null;
-        text = text.replace("%player_name%", player.getName());
         if (clanImpl != null) {
-            text = text.replace("%clan_tag%", clanImpl.getId());
-            if (clanImpl.getPrefix() != null) {
-                text = text.replace("%clan_prefix%", clanImpl.getPrefix());
-            } else {
-                text = text.replace("%clan_prefix%", clanImpl.getId().toUpperCase());
-            }
             Player leader = Bukkit.getPlayer(clanImpl.getLeader().getUuid());
             if (leader != null) {
                 text = text.replace("%clan_leader_name%", leader.getName());
@@ -91,10 +84,6 @@ public abstract class Gui extends PaginatedAdvancedGui implements Listener {
                 OfflinePlayer offlineLeader = Bukkit.getOfflinePlayer(clanImpl.getLeader().getUuid());
                 text = text.replace("%clan_leader_name%", offlineLeader.getName());
             }
-            text = text.replace("%clan_exp%", String.valueOf(clanImpl.getExp()));
-            text = text.replace("%clan_exp_max%", String.valueOf(clanImpl.getLevel().minExp()));
-            text = text.replace("%clan_level%", clanImpl.getLevel().id());
-            text = text.replace("%clan_balance%", String.valueOf(clanImpl.getBalance()));
             if (getClanImpl().getMember(player.getUniqueId()) != null) {
                 text = text.replace("%clan_coin%", String.valueOf(getClanImpl().getMember(player.getUniqueId()).getCoin()));
             }
@@ -208,7 +197,7 @@ public abstract class Gui extends PaginatedAdvancedGui implements Listener {
                                 .map(this::applyDefaultPlaceholders)
                                 .map(l -> Papi.setPapi(player, l))
                                 .toList();
-                        wrapper.lore(Colorize.list(processedLore));
+                        wrapper.lore(Papi.setPapi(player, Colorize.list(processedLore)));
                         wrapper.customModelData(finalSelectedButton.customModelData());
                         wrapper.enchanted(finalSelectedButton.enchanted());
                         wrapper.update();

@@ -25,10 +25,6 @@ public class Config {
     @Getter(AccessLevel.NONE)
     private final File file;
     @Getter(AccessLevel.NONE)
-    private final FileConfiguration language;
-    @Getter(AccessLevel.NONE)
-    private final String lang;
-    @Getter(AccessLevel.NONE)
     private final FileConfiguration level;
 
     private final Map<Integer, Level> levels = new LinkedHashMap<>();
@@ -49,7 +45,7 @@ public class Config {
     private int prefixMinLength;
     private int prefixMaxLength;
     private String prefixRegex;
-    private List<String> lengthIgnoredSymbols;
+    private String lengthIgnoredSymbols;
 
     private String tagPlaceholder_hasClan;
     private String tagPlaceholder_noClan;
@@ -61,18 +57,12 @@ public class Config {
     private String regex;
     private List<String> blockedTags;
     private final List<SimpleRequirement> requirements = new ArrayList<>();
-
     private boolean gradualQuest;
 
-    public Config(TreexClans plugin) {
+    public Config() {
         this.configuration = FileLoader.getFileConfiguration("config.yml");
         this.level = FileLoader.getFileConfiguration("levels.yml");
         this.file = FileLoader.getFile("config.yml");
-
-        lang = configuration.getString("lang", "en");
-        Lang lang = new Lang(plugin, this.lang);
-        plugin.setLang(lang);
-        this.language = lang.getConfig();
     }
 
     public void load() {
@@ -88,7 +78,7 @@ public class Config {
         prefixMinLength = prefix.getInt("min-clan-prefix-length", 3);
         prefixMaxLength = prefix.getInt("max-clan-prefix-length", 16);
         prefixRegex = prefix.getString("regex", "^[A-Za-z0-9]+$");
-        lengthIgnoredSymbols = prefix.getStringList("length-ignored-symbols");
+        lengthIgnoredSymbols = prefix.getString("length-ignored-symbols");
 
         ConfigurationSection prefixPlaceholder = prefix.getConfigurationSection("placeholder");
         if (prefixPlaceholder == null) prefixPlaceholder = prefix.createSection("placeholder");

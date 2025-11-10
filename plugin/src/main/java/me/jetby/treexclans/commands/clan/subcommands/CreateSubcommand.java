@@ -4,7 +4,7 @@ import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.api.addons.commands.CommandService;
 import me.jetby.treexclans.api.command.Subcommand;
 import me.jetby.treexclans.api.service.ClanManager;
-import me.jetby.treexclans.configurations.Lang;
+import me.jetby.treexclans.configurations.Messages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,7 +22,7 @@ public class CreateSubcommand implements Subcommand {
         if (sender instanceof Player player) {
 
             if (clanManagerImpl.lookup().isInClan(player.getUniqueId())) {
-                plugin.getLang().sendMessage(player, null, "commands.create");
+                plugin.getMessages().sendMessage(player, null, "commands.create");
                 return true;
             } else {
                 if (args.length < 1) {
@@ -31,7 +31,7 @@ public class CreateSubcommand implements Subcommand {
                 }
                 String clanName = args[0].toLowerCase();
                 if (clanManagerImpl.lifecycle().clanExists(clanName)) {
-                    plugin.getLang().sendMessage(player, null, "clan-is-already-exists");
+                    plugin.getMessages().sendMessage(player, null, "clan-is-already-exists");
                     return true;
                 }
                 if (!clanManagerImpl.validation().isAllowedName(player, clanName)) {
@@ -40,7 +40,7 @@ public class CreateSubcommand implements Subcommand {
 
                 if (clanManagerImpl.lifecycle().createClan(clanName, player)) {
                     var clanImpl = plugin.getClanManager().lookup().getClan(clanName);
-                    plugin.getLang().sendMessage(player, clanImpl, "clan-create", new Lang.ReplaceString("{clan}", clanName));
+                    plugin.getMessages().sendMessage(player, clanImpl, "clan-create", new Messages.ReplaceString("{clan}", clanName));
                 }
             }
 

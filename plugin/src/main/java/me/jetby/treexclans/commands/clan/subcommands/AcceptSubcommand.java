@@ -4,7 +4,7 @@ import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.api.addons.commands.CommandService;
 import me.jetby.treexclans.api.command.Subcommand;
 import me.jetby.treexclans.clan.MemberImpl;
-import me.jetby.treexclans.configurations.Lang;
+import me.jetby.treexclans.configurations.Messages;
 import me.jetby.treexclans.tools.Cooldown;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -24,20 +24,20 @@ public class AcceptSubcommand implements Subcommand {
 
         if (sender instanceof Player player) {
             if (args.length == 0) {
-                plugin.getLang().sendMessage(player, null, "commands.accept");
+                plugin.getMessages().sendMessage(player, null, "commands.accept");
                 return true;
             }
             if (plugin.getClanManager().lookup().isInClan(player.getUniqueId())) {
-                plugin.getLang().sendMessage(player, null, "your-already-in-clan");
+                plugin.getMessages().sendMessage(player, null, "your-already-in-clan");
                 return true;
             }
             if (!plugin.getClanManager().lifecycle().clanExists(args[0])) {
-                plugin.getLang().sendMessage(player, null, "clan-does-not-exist");
+                plugin.getMessages().sendMessage(player, null, "clan-does-not-exist");
 
                 return true;
             }
             if (!Cooldown.isOnCooldown("invite_" + player.getUniqueId() + "_" + args[0])) {
-                sender.sendMessage("§cYou have no pending clan invites.");
+                plugin.getMessages().sendMessage(player, null, "no-invite");
                 return true;
             } else {
                 Cooldown.removeCooldown("invite_" + player.getUniqueId() + "_" + args[0]);
@@ -51,9 +51,9 @@ public class AcceptSubcommand implements Subcommand {
                         0, 0, new HashMap<>(),
                         0, 0
                 );
-                plugin.getLang().sendMessage(player, clanImpl, "clan-join",
-                        new Lang.ReplaceString("{player}", player.getName()),
-                        new Lang.ReplaceString("{clan}", clanImpl.getId())
+                plugin.getMessages().sendMessage(player, clanImpl, "clan-join",
+                        new Messages.ReplaceString("{player}", player.getName()),
+                        new Messages.ReplaceString("{clan}", clanImpl.getId())
                 );
                 clanImpl.addMember(memberImpl);
             }

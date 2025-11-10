@@ -156,17 +156,17 @@ public class QuestsGui extends Gui {
 
     private String status(Member memberImpl, Quest quest) {
         if (getPlugin().getQuestManager().isQuestCompleted(memberImpl, quest)) {
-            return getPlugin().getLang().getMessage("quest-status-completed");
+            return getPlugin().getMessages().getMessage("quest-status-completed");
         } else {
-            return getPlugin().getLang().getMessage("quest-status-uncompleted");
+            return getPlugin().getMessages().getMessage("quest-status-uncompleted");
         }
     }
 
     private String progressType(Quest quest) {
         if (quest.progressType().equals(QuestProgressType.INDIVIDUAL)) {
-            return getPlugin().getLang().getMessage("quest-progress-type-individual");
+            return getPlugin().getMessages().getMessage("quest-progress-type-individual");
         } else {
-            return getPlugin().getLang().getMessage("quest-progress-type-global");
+            return getPlugin().getMessages().getMessage("quest-progress-type-global");
         }
     }
 

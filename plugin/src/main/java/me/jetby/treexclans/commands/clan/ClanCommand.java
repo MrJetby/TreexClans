@@ -6,7 +6,6 @@ import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.api.addons.commands.CommandService;
 import me.jetby.treexclans.api.service.clan.member.rank.RankPerms;
 import me.jetby.treexclans.api.gui.Gui;
-import me.jetby.treexclans.gui.GuiFactoryImpl;
 import me.jetby.treexclans.gui.GuiType;
 import me.jetby.treexclans.api.gui.Menu;
 import org.bukkit.command.Command;
@@ -41,11 +40,11 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
 
             if (args.length < 1) {
                 if (!plugin.getClanManager().lookup().isInClan(player.getUniqueId())) {
-                    for (String str : plugin.getLang().getConfig().getStringList("commands.help-no-clan")) {
+                    for (String str : plugin.getMessages().getConfig().getStringList("commands.help-no-clan")) {
                         sender.sendMessage(Colorize.text(str));
                     }
                 } else {
-                    for (String str : plugin.getLang().getConfig().getStringList("commands.help")) {
+                    for (String str : plugin.getMessages().getConfig().getStringList("commands.help")) {
                         sender.sendMessage(Colorize.text(str));
                     }
                 }

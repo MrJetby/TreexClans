@@ -20,17 +20,17 @@ public class SetBaseSubcommand implements Subcommand {
 
         if (sender instanceof Player player) {
             if (!plugin.getClanManager().lookup().isInClan(player.getUniqueId())) {
-                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
+                plugin.getMessages().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
             var clanImpl = plugin.getClanManager().lookup().getClanByMember(player.getUniqueId());
 
             if (!clanImpl.getMember(player.getUniqueId()).getRank().perms().contains(RankPerms.SETBASE)) {
-                plugin.getLang().sendMessage(player, clanImpl, "your-rank-is-not-allowed-to-do-that");
+                plugin.getMessages().sendMessage(player, clanImpl, "your-rank-is-not-allowed-to-do-that");
                 return true;
             }
             clanImpl.setBase(player.getLocation());
-            plugin.getLang().sendMessage(player, clanImpl, "clan-setbase");
+            plugin.getMessages().sendMessage(player, clanImpl, "clan-setbase");
         }
 
         return true;

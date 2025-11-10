@@ -1,9 +1,9 @@
 package me.jetby.treexclans.commands.clan.subcommands;
 
 import me.jetby.treexclans.TreexClans;
-import me.jetby.treexclans.api.addons.commands.CommandService;;
+import me.jetby.treexclans.api.addons.commands.CommandService;
 import me.jetby.treexclans.api.command.Subcommand;
-import me.jetby.treexclans.configurations.Messages;
+import me.jetby.treexclans.tools.Cooldown;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -12,28 +12,36 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class LeaveSubcommand implements Subcommand {
+public class DenySubcommand implements Subcommand {
     private final TreexClans plugin = TreexClans.getInstance();
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
+
+
         if (sender instanceof Player player) {
-            if (!plugin.getClanManager().lookup().isInClan(player.getUniqueId())) {
-                plugin.getMessages().sendMessage(player, null, "your-not-in-clan");
-                return true;
-            }
-            var clanImpl = plugin.getClanManager().lookup().getClanByMember(player.getUniqueId());
-            if (clanImpl.getLeader().equals(clanImpl.getMember(player.getUniqueId()))) {
-                player.sendMessage(plugin.getMessages().getMessage("you-cant-leave-leader"));
+            if (args.length == 0) {
+                plugin.getMessages().sendMessage(player, null, "commands.deny");
                 return true;
             }
 
-            clanImpl.removeMember(clanImpl.getMember(player.getUniqueId()));
-            plugin.getMessages().sendMessage(player, clanImpl, "clan-leave",
-                    new Messages.ReplaceString("{player}", player.getName()),
-                    new Messages.ReplaceString("{clan}", clanImpl.getId())
-            );
+            var clanId = args[0];
+            if (!plugin.getClanManager().lifecycle().clanExists(clanId)) {
+                plugin.getMessages().sendMessage(player, null, "clan-does-not-exist");
+                return true;
+            }
+
+            if (!Cooldown.isOnCooldown("invite_" + player.getUniqueId() + "_" + clanId)) {
+                plugin.getMessages().sendMessage(player, null, "no-invite");
+                return true;
+            }
+
+            Cooldown.setCooldown("denied_" + player.getUniqueId() + "_" + clanId, 120);
+            Cooldown.removeCooldown("invite_" + player.getUniqueId() + "_" + clanId);
+
+            plugin.getMessages().sendMessage(player, null, "clan-deny");
         }
+
         return true;
     }
 

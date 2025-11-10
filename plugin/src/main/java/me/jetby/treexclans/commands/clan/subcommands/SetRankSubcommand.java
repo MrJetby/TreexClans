@@ -5,7 +5,7 @@ import me.jetby.treexclans.api.addons.commands.CommandService;;
 import me.jetby.treexclans.api.service.clan.member.rank.Rank;
 import me.jetby.treexclans.api.service.clan.member.rank.RankPerms;
 import me.jetby.treexclans.api.command.Subcommand;
-import me.jetby.treexclans.configurations.Lang;
+import me.jetby.treexclans.configurations.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -26,18 +26,18 @@ public class SetRankSubcommand implements Subcommand {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (sender instanceof Player player) {
             if (args.length < 2) {
-                plugin.getLang().sendMessage(player, null, "commands.setrank");
+                plugin.getMessages().sendMessage(player, null, "commands.setrank");
                 return true;
             }
             if (!plugin.getClanManager().lookup().isInClan(player.getUniqueId())) {
-                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
+                plugin.getMessages().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
 
             var clanImpl = plugin.getClanManager().lookup().getClanByMember(player.getUniqueId());
 
             if (!clanImpl.getMember(player.getUniqueId()).getRank().perms().contains(RankPerms.SETRANK)) {
-                plugin.getLang().sendMessage(player, clanImpl, "your-rank-is-not-allowed-to-do-that");
+                plugin.getMessages().sendMessage(player, clanImpl, "your-rank-is-not-allowed-to-do-that");
                 return true;
             }
 
@@ -59,19 +59,19 @@ public class SetRankSubcommand implements Subcommand {
                 var targetMemberImpl = clanImpl.getMember(uuid);
 
                 if (target != null && clanImpl.getMember(player.getUniqueId()).equals(targetMemberImpl)) {
-                    plugin.getLang().sendMessage(player, clanImpl, "clan-you-cant-setrank-yourself");
+                    plugin.getMessages().sendMessage(player, clanImpl, "clan-you-cant-setrank-yourself");
                     return true;
                 }
 
                 if (clanImpl.getLeader().equals(targetMemberImpl)) {
-                    plugin.getLang().sendMessage(player, clanImpl, "you-cant-do-that-with-leader");
+                    plugin.getMessages().sendMessage(player, clanImpl, "you-cant-do-that-with-leader");
                     return true;
                 }
 
-                plugin.getLang().sendMessage(player, clanImpl, "clan-setrank",
-                        new Lang.ReplaceString("{target}", targetName),
-                        new Lang.ReplaceString("{player}", player.getName()),
-                        new Lang.ReplaceString("{rank_prefix}", rank.name())
+                plugin.getMessages().sendMessage(player, clanImpl, "clan-setrank",
+                        new Messages.ReplaceString("{target}", targetName),
+                        new Messages.ReplaceString("{player}", player.getName()),
+                        new Messages.ReplaceString("{rank_prefix}", rank.name())
                 );
                 targetMemberImpl.setRank(rank);
             }

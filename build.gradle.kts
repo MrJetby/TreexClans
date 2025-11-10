@@ -29,6 +29,10 @@ allprojects {
         maven("https://repo.jodex.xyz/releases") {
             name = "Jodexindustries-releases"
         }
+        maven {
+            name = "jetby-repo"
+            url = uri("https://maven.jetby.space")
+        }
     }
 }
 

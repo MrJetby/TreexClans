@@ -20,19 +20,19 @@ public class DisbandSubcommand implements Subcommand {
 
         if (sender instanceof Player player) {
             if (!plugin.getClanManager().lookup().isInClan(player.getUniqueId())) {
-                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
+                plugin.getMessages().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
             var clanImpl = plugin.getClanManager().lookup().getClanByMember(player.getUniqueId());
             if (Cooldown.isOnCooldown("delete_" + player.getUniqueId())) {
                 if (clanImpl.getLeader().getUuid().equals(player.getUniqueId())) {
                     if (plugin.getClanManager().lifecycle().deleteClan(clanImpl, player)) {
-                        plugin.getLang().sendMessage(player, clanImpl, "clan-disband");
+                        plugin.getMessages().sendMessage(player, clanImpl, "clan-disband");
                     }
                 }
             } else {
                 if (clanImpl.getLeader().getUuid().equals(player.getUniqueId())) {
-                    plugin.getLang().sendMessage(player, clanImpl, "clan-disband-confirm");
+                    plugin.getMessages().sendMessage(player, clanImpl, "clan-disband-confirm");
                     Cooldown.setCooldown("delete_" + player.getUniqueId(), 10);
                 }
             }

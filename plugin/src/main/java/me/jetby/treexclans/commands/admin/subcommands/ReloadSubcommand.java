@@ -27,15 +27,13 @@ public class ReloadSubcommand implements Subcommand {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
 
-
-
         try {
             long start = System.currentTimeMillis();
 
             plugin.getStorage().save();
             Map<String, Clan> clans = plugin.getCfg().getClans();
 
-            Config cfg = new Config(plugin);
+            Config cfg = new Config();
             cfg.load();
             cfg.setClans(clans);
             plugin.setCfg(cfg);
@@ -53,7 +51,7 @@ public class ReloadSubcommand implements Subcommand {
             QuestsLoader questsLoader = new QuestsLoader();
             questsLoader.load();
             plugin.setQuestsLoader(questsLoader);
-            plugin.getAddonManager().disableAddons(); //TODO
+            plugin.getAddonManager().disableAddons();
             ((AddonManagerImpl) plugin.getAddonManager()).loadAddons();
 
             plugin.getStorage().load();

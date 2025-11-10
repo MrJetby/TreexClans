@@ -7,6 +7,7 @@ import me.jetby.treex.actions.ActionRegistry;
 import me.jetby.treex.text.Colorize;
 import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.api.service.clan.Clan;
+import me.jetby.treexclans.tools.FileLoader;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -15,50 +16,14 @@ import java.io.File;
 import java.util.List;
 
 
-public class Lang {
+public class Messages {
 
     @Getter
-    private FileConfiguration config;
+    private final FileConfiguration config = FileLoader.getFileConfiguration("messages.yml");
 
-    public Lang(TreexClans plugin, String lang) {
-        File langFolder = new File(plugin.getDataFolder(), "messages");
-
-
-        File[] files = langFolder.listFiles();
-
-        String[] defaults = {"ru.yml"};
-
-        for (String name : defaults) {
-            File target = new File(langFolder, name);
-
-            if (!target.exists()) {
-                plugin.saveResource("messages/" + name, false);
-                FileConfiguration configuration = YamlConfiguration.loadConfiguration(target);
-                String foundedLang = configuration.getString("lang");
-                if (foundedLang == null) continue;
-                if (!foundedLang.equalsIgnoreCase(lang)) continue;
-                this.config = configuration;
-                break;
-            }
-
-        }
-
-        if (files == null) return;
-
-        for (File file : files) {
-            if (!file.getName().endsWith(".yml")) continue;
-            FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-            String foundedLang = configuration.getString("lang");
-            if (foundedLang == null) continue;
-            if (!foundedLang.equalsIgnoreCase(lang)) continue;
-            this.config = configuration;
-            break;
-        }
-    }
-
-    public void sendMessage(Player player, Clan clanImpl, String path) {
+    public void sendMessage(Player player, Clan clan, String path) {
         ActionContext ctx = new ActionContext(player);
-        ctx.put("clan", clanImpl);
+        ctx.put("clan", clan);
         String prefix = config.getString("prefix", "");
 
         List<String> actions = config.getStringList(path).stream()
@@ -68,9 +33,9 @@ public class Lang {
         ActionExecutor.execute(ctx, ActionRegistry.transform(actions));
     }
 
-    public void sendMessage(Player player, Clan clanImpl, String path, ReplaceString... replaceStrings) {
+    public void sendMessage(Player player, Clan clan, String path, ReplaceString... replaceStrings) {
         ActionContext ctx = new ActionContext(player);
-        ctx.put("clan", clanImpl);
+        ctx.put("clan", clan);
 
         String prefix = config.getString("prefix", "");
         List<String> actions = config.getStringList(path).stream()

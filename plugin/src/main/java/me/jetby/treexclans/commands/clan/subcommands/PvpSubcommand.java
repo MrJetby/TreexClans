@@ -19,21 +19,21 @@ public class PvpSubcommand implements Subcommand {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (sender instanceof Player player) {
             if (!plugin.getClanManager().lookup().isInClan(player.getUniqueId())) {
-                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
+                plugin.getMessages().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
             var clanImpl = plugin.getClanManager().lookup().getClanByMember(player.getUniqueId());
 
             if (!clanImpl.getMember(player.getUniqueId()).getRank().perms().contains(RankPerms.PVP)) {
-                plugin.getLang().sendMessage(player, clanImpl, "your-rank-is-not-allowed-to-do-that");
+                plugin.getMessages().sendMessage(player, clanImpl, "your-rank-is-not-allowed-to-do-that");
                 return true;
             }
 
             if (clanImpl.isPvp()) {
-                plugin.getLang().sendMessage(player, clanImpl, "clan-pvp-off");
+                plugin.getMessages().sendMessage(player, clanImpl, "clan-pvp-off");
                 clanImpl.setPvp(false);
             } else {
-                plugin.getLang().sendMessage(player, clanImpl, "clan-pvp-on");
+                plugin.getMessages().sendMessage(player, clanImpl, "clan-pvp-on");
                 clanImpl.setPvp(true);
             }
         }

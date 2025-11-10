@@ -36,7 +36,7 @@ public class CommandRegistrar extends BukkitCommand implements CommandExecutor {
         }
         var clanImpl = plugin.getClanManager().lookup().getClanByMember(player.getUniqueId());
         if (clanImpl == null) {
-            plugin.getLang().sendMessage(player, null, "your-not-in-clan");
+            plugin.getMessages().sendMessage(player, null, "your-not-in-clan");
             return true;
         }
 

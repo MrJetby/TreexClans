@@ -28,6 +28,8 @@ public class Actions {
         actions.add(new ActionEntry("TREEXCLANS", "COIN_GIVE", new CoinAddAction()));
         actions.add(new ActionEntry("TREEXCLANS", "COIN_TAKE", new CoinTakeAction()));
 
+        actions.add(new ActionEntry("TREEXCLANS", "BUTTON", new ButtonAction()));
+
         ActionTypeRegistry.register(actions);
     }
 }

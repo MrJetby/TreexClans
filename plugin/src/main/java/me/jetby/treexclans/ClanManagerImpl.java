@@ -12,7 +12,7 @@ import me.jetby.treexclans.api.service.clan.Clan;
 import me.jetby.treexclans.api.service.clan.member.Member;
 import me.jetby.treexclans.api.service.clan.level.Level;
 import me.jetby.treexclans.clan.ClanImpl;
-import me.jetby.treexclans.configurations.Lang;
+import me.jetby.treexclans.configurations.Messages;
 import me.jetby.treexclans.api.gui.requirements.Requirements;
 import me.jetby.treexclans.api.gui.requirements.SimpleRequirement;
 import me.jetby.treexclans.clan.MemberImpl;
@@ -228,24 +228,24 @@ public final class ClanManagerImpl implements Listener, ClanManager {
             int max = plugin.getCfg().getMaxTagLength();
 
             if (clanName.length() < min) {
-                plugin.getLang().sendMessage(player, null, "clan-tag-too-short",
-                        new Lang.ReplaceString("{min_length}", String.valueOf(min)));
+                plugin.getMessages().sendMessage(player, null, "clan-tag-too-short",
+                        new Messages.ReplaceString("{min_length}", String.valueOf(min)));
                 return false;
             }
 
             if (clanName.length() > max) {
-                plugin.getLang().sendMessage(player, null, "clan-tag-too-long",
-                        new Lang.ReplaceString("{max_length}", String.valueOf(max)));
+                plugin.getMessages().sendMessage(player, null, "clan-tag-too-long",
+                        new Messages.ReplaceString("{max_length}", String.valueOf(max)));
                 return false;
             }
 
             if (plugin.getCfg().getBlockedTags().contains(clanName.toLowerCase())) {
-                plugin.getLang().sendMessage(player, null, "clan-tag-blocked");
+                plugin.getMessages().sendMessage(player, null, "clan-tag-blocked");
                 return false;
             }
 
             if (!isAllowedRegex(clanName, plugin.getCfg().getRegex())) {
-                plugin.getLang().sendMessage(player, null, "disallowed-tag-regex");
+                plugin.getMessages().sendMessage(player, null, "disallowed-tag-regex");
                 return false;
             }
 
@@ -277,24 +277,24 @@ public final class ClanManagerImpl implements Listener, ClanManager {
             int max = plugin.getCfg().getPrefixMaxLength();
 
             if (cleaned.length() < min) {
-                plugin.getLang().sendMessage(player, null, "clan-prefix-too-short",
-                        new Lang.ReplaceString("{min_length}", String.valueOf(min)));
+                plugin.getMessages().sendMessage(player, null, "clan-prefix-too-short",
+                        new Messages.ReplaceString("{min_length}", String.valueOf(min)));
                 return false;
             }
 
             if (cleaned.length() > max) {
-                plugin.getLang().sendMessage(player, null, "clan-prefix-too-long",
-                        new Lang.ReplaceString("{max_length}", String.valueOf(max)));
+                plugin.getMessages().sendMessage(player, null, "clan-prefix-too-long",
+                        new Messages.ReplaceString("{max_length}", String.valueOf(max)));
                 return false;
             }
 
             if (plugin.getCfg().getBlockedTags().contains(prefix.toLowerCase())) {
-                plugin.getLang().sendMessage(player, null, "clan-tag-blocked");
+                plugin.getMessages().sendMessage(player, null, "clan-tag-blocked");
                 return false;
             }
 
             if (!isAllowedRegex(prefix, plugin.getCfg().getPrefixRegex())) {
-                plugin.getLang().sendMessage(player, null, "disallowed-prefix-regex");
+                plugin.getMessages().sendMessage(player, null, "disallowed-prefix-regex");
                 return false;
             }
 
@@ -306,14 +306,11 @@ public final class ClanManagerImpl implements Listener, ClanManager {
             return text.matches(regex);
         }
 
-        private String removeIgnoredSymbols(String input, List<String> ignored) {
-            String result = input;
-            for (String token : ignored) {
-                if (token != null && !token.isEmpty()) {
-                    result = result.replace(token, "");
-                }
+        private String removeIgnoredSymbols(String input, String ignoredRegex) {
+            if (ignoredRegex == null || ignoredRegex.isEmpty()) {
+                return input;
             }
-            return result;
+            return input.replaceAll(ignoredRegex, "");
         }
     }
 

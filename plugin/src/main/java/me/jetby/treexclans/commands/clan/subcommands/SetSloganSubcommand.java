@@ -4,7 +4,7 @@ import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.api.addons.commands.CommandService;;
 import me.jetby.treexclans.api.service.clan.member.rank.RankPerms;
 import me.jetby.treexclans.api.command.Subcommand;
-import me.jetby.treexclans.configurations.Lang;
+import me.jetby.treexclans.configurations.Messages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,16 +20,16 @@ public class SetSloganSubcommand implements Subcommand {
 
         if (sender instanceof Player player) {
             if (args.length == 0) {
-                plugin.getLang().sendMessage(player, null, "commands.setslogan");
+                plugin.getMessages().sendMessage(player, null, "commands.setslogan");
                 return true;
             }
             if (!plugin.getClanManager().lookup().isInClan(player.getUniqueId())) {
-                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
+                plugin.getMessages().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
             var clanImpl = plugin.getClanManager().lookup().getClanByMember(player.getUniqueId());
             if (!clanImpl.getMember(player.getUniqueId()).getRank().perms().contains(RankPerms.SETSLOGAN)) {
-                plugin.getLang().sendMessage(player, clanImpl, "your-rank-is-not-allowed-to-do-that");
+                plugin.getMessages().sendMessage(player, clanImpl, "your-rank-is-not-allowed-to-do-that");
                 return true;
             }
 
@@ -37,7 +37,7 @@ public class SetSloganSubcommand implements Subcommand {
             for (String str : args) message.append(str).append(" ");
 
             clanImpl.setSlogan(message.toString());
-            plugin.getLang().sendMessage(player, clanImpl, "clan-setslogan", new Lang.ReplaceString("{slogan}", message.toString()));
+            plugin.getMessages().sendMessage(player, clanImpl, "clan-setslogan", new Messages.ReplaceString("{slogan}", message.toString()));
         }
 
         return true;

@@ -21,7 +21,7 @@ public class GlowSubcommand implements Subcommand {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (sender instanceof Player player) {
             if (!plugin.getClanManager().lookup().isInClan(player.getUniqueId())) {
-                plugin.getLang().sendMessage(player, null, "your-not-in-clan");
+                plugin.getMessages().sendMessage(player, null, "your-not-in-clan");
                 return true;
             }
 
@@ -32,7 +32,7 @@ public class GlowSubcommand implements Subcommand {
             var clanImpl = plugin.getClanManager().lookup().getClanByMember(player.getUniqueId());
             if (plugin.getGlow().hasObserver(player)) {
                 plugin.getGlow().removeObserver(player);
-                plugin.getLang().sendMessage(player, clanImpl, "clan-glow-off");
+                plugin.getMessages().sendMessage(player, clanImpl, "clan-glow-off");
             } else {
                 Set<Member> memberImpls = new HashSet<>(clanImpl.getMembers());
                 if (clanImpl.getMember(player.getUniqueId()) != clanImpl.getLeader()) {
@@ -40,7 +40,7 @@ public class GlowSubcommand implements Subcommand {
                 }
                 memberImpls.remove(clanImpl.getMember(player.getUniqueId()));
                 plugin.getGlow().addObserver(player, memberImpls);
-                plugin.getLang().sendMessage(player, clanImpl, "clan-glow-on");
+                plugin.getMessages().sendMessage(player, clanImpl, "clan-glow-on");
             }
         }
         return true;

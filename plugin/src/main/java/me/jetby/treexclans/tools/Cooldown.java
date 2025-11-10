@@ -19,16 +19,17 @@ public class Cooldown {
 
     public boolean isOnCooldown(String key) {
         var cd = cooldowns.get(key);
-        if (cd != null) {
-            int sec = cd.seconds();
-            int goal = ((int) (System.currentTimeMillis() - cd.timestamp()) / 1000);
-            if (sec >= goal) {
-                cooldowns.remove(key);
-                return true;
-            }
+        if (cd == null) return false;
+
+        long elapsed = (System.currentTimeMillis() - cd.timestamp()) / 1000;
+        if (elapsed >= cd.seconds()) {
+            cooldowns.remove(key);
+            return false;
         }
-        return false;
+
+        return true;
     }
+
 
     public void setCooldown(String key, int seconds) {
         cooldowns.put(key, new Cooldowns(seconds, System.currentTimeMillis()));
@@ -37,7 +38,6 @@ public class Cooldown {
     public void removeCooldown(String key) {
         cooldowns.remove(key);
     }
-
 
     private record Cooldowns(int seconds, long timestamp) {
     }

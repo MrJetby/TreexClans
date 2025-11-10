@@ -9,7 +9,6 @@ import me.jetby.treexclans.api.service.clan.member.rank.Rank;
 import me.jetby.treexclans.api.service.clan.member.rank.RankPerms;
 import me.jetby.treexclans.api.gui.Button;
 import me.jetby.treexclans.api.gui.Gui;
-import me.jetby.treexclans.gui.GuiFactoryImpl;
 import me.jetby.treexclans.api.gui.Menu;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -193,9 +192,9 @@ public class RanksGui extends Gui {
 
     private String getStatus(boolean status) {
         if (status) {
-            return getPlugin().getLang().getMessage("rank-perm-yes");
+            return getPlugin().getMessages().getMessage("rank-perm-yes");
         } else {
-            return getPlugin().getLang().getMessage("rank-perm-no");
+            return getPlugin().getMessages().getMessage("rank-perm-no");
         }
     }
 

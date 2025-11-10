@@ -62,8 +62,6 @@ public final class TreexClans extends JavaPlugin implements TreexClansAPI {
     private Economy economy;
     @Setter
     private Config cfg;
-    @Setter
-    public Lang lang;
     private FormatTime formatTime;
     @Setter
     private Glow glow;
@@ -85,6 +83,8 @@ public final class TreexClans extends JavaPlugin implements TreexClansAPI {
 
     private EventRegistrar eventRegistrar;
     private AddonManager addonManager;
+    @Getter
+    private Messages messages;
 
     @Override
     public void onLoad() {
@@ -120,8 +120,11 @@ public final class TreexClans extends JavaPlugin implements TreexClansAPI {
 
         new ConfigUpdater(getConfig().getInt("config-version", 1));
 
-        cfg = new Config(this);
+        cfg = new Config();
         cfg.load();
+
+
+        messages = new Messages();
 
         formatTime = new FormatTime(this);
 
