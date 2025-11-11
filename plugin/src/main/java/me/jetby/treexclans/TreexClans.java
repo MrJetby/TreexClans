@@ -171,6 +171,9 @@ public final class TreexClans extends JavaPlugin implements TreexClansAPI {
         getServer().getPluginManager().registerEvents(new ClanListeners(this), this);
         getServer().getPluginManager().registerEvents(new QuestsListeners(this), this);
 
+        eventRegistrar = new EventRegistryImpl();
+        addonManager = new AddonManagerImpl(this, true);
+
         getServer().getServicesManager().register(
                 TreexClansAPI.class,            // интерфейс
                 this,    // реализация
@@ -178,8 +181,6 @@ public final class TreexClans extends JavaPlugin implements TreexClansAPI {
                 ServicePriority.Normal
         );
 
-        eventRegistrar = new EventRegistryImpl();
-        addonManager = new AddonManagerImpl(this, true);
         ((AddonManagerImpl) addonManager).loadAddons();
     }
 
