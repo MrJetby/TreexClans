@@ -1,5 +1,6 @@
 package me.jetby.treexclans.api;
 
+import me.jetby.treexclans.api.addons.AddonManager;
 import me.jetby.treexclans.api.addons.commands.CommandService;
 import me.jetby.treexclans.api.addons.listener.EventRegistrar;
 import me.jetby.treexclans.api.gui.GuiFactory;
@@ -94,6 +95,17 @@ public interface TreexClansAPI {
      * @return the global {@link EventRegistrar} instance
      */
     EventRegistrar getEventRegistrar();
+
+    /**
+     * Provides access to the addon manager.
+     * <p>
+     * Handles loading, enabling, disabling, and
+     * unloading of all TreexClans addons.
+     * </p>
+     *
+     * @return The {@link AddonManager} instance.
+     */
+    AddonManager getAddonManager();
 
     /**
      * Gives access to the core ClanManager system.

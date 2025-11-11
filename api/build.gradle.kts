@@ -29,7 +29,7 @@ repositories {
 }
 
 val exposedDependencies = listOf(
-    "com.github.MrJetby:Treex:68c61c48",
+    "space.jetby.libs:Treex:0.1.5",
     "com.jodexindustries.jguiwrapper:common:1.0.0.9-beta",
     "com.github.MilkBowl:VaultAPI:1.7",
 )
@@ -57,7 +57,7 @@ publishing {
             from(components["java"])
             groupId = "space.jetby.TreexClans"
             artifactId = "api"
-            version = "1.0.7-beta"
+            version = "2.1"
 
             pom.withXml {
                 val dependenciesNode = asNode().appendNode("dependencies")
