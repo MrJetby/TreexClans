@@ -29,9 +29,6 @@ public class GuiApi implements GuiService {
      *                </pre>
      */
     public void registerGui(@NotNull String guiType, @NotNull IGuiFactory factory) {
-        if (registeredGuis.containsKey(guiType.toUpperCase())) {
-            return;
-        }
         registeredGuis.put(guiType.toUpperCase(), factory);
     }
 

@@ -1,0 +1,210 @@
+prefix: "<#FFE259>&lTreexClans</#FFA751> &7>"
+
+formattedTime:
+  weeks: [ "нед.", "нед.", "нед." ]
+  days: [ "дн.", "дн.", "дн." ]
+  hours: [ "ч.", "ч.", "ч." ]
+  minutes: [ "мин.", "мин.", "мин." ]
+  seconds: [ "сек.", "сек.", "сек." ]
+
+
+null-economy: "Для этой функции требуется плагин на экономику"
+restart-needed: "Видимо администрация неправильно загрузила плагин. Если вы администратор то вам нужно перезапустить сервер так как для этой функции требуется работа с пакетами."
+
+commands:
+  setprefix:
+    - "[message] &#FC835C• /clan setprefix [префикс] &7- &fУстановить префикс клана"
+  setslogan:
+    - "[message] &#FC835C• /clan setslogan [слоган] &7- &fУстановить слоган клана"
+  setrank:
+    - "[message] &#FC835C• /clan setrank [ник] [ранг] &7- &fУстановить ранг игроку"
+  kick:
+    - "[message] &#FC835C• /clan kick [ник] &7- &fИзгнать игрока из своего клана"
+  invite:
+    - "[message] &#FC835C• /clan invite [ник] &7- &fПригласить игрока в свой клан"
+  withdraw:
+    - "[message] &#FC835C• /clan withdraw [сумма] &7- &fСнять с баланса клана"
+  deposit:
+    - "[message] &#FC835C• /clan invest [сумма] &7- &fПополнить баланс клана"
+  create:
+    - "[message] &#FC835C• /clan create [тэг] &7- &fСоздать клан"
+  accept:
+    - "[message] &#FC835C• /clan accept [тэг] &7- &fПринять приглашение в клан"
+  deny:
+    - "[message] &#FC835C• /clan deny [тэг] &7- &fОтклонить приглашение в клан"
+  help-no-clan:
+    - "&#FFE259◀&m          &r <#FFE259>&lTreexClans</#FFA751> &#FFE259&m          &#FFE259▶ "
+    - ""
+    - "&#FC835C• /clan create [тэг] &7- &fСоздать клан"
+    - "&#FC835C• /clan top &7- &fСписок сильнейших кланов"
+    - ""
+    - "&#FFE259◀&m                                       &#FFE259▶ "
+  help:
+    - "&#FFE259◀&m          &r <#FFE259>&lTreexClans</#FFA751> &#FFE259&m          &#FFE259▶ "
+    - ""
+    - "&#FC835C• /clan menu &7- &fМеню клана"
+    - "&#FC835C• /clan chat &7- &fПереключить клановый чат"
+    - "&#FC835C• /clan chat [текст] &7- &fНаписать в клановый чат"
+    - "&#FC835C• /clan pvp &7- &fПереключить чат"
+    - "&#FC835C• /clan balance &7- &fПроверить баланс клана"
+    - "&#FC835C• /clan invest [сумма] &7- &fПополнить баланс клана"
+    - "&#FC835C• /clan withdraw [сумма] &7- &fСнять с баланса клана"
+    - "&#FC835C• /clan glow &7- &fПереключить свечение игроков из клана"
+    - "&#FC835C• /clan invite [ник] &7- &fПригласить игрока в свой клан"
+    - "&#FC835C• /clan kick [ник] &7- &fИзгнать игрока из своего клана"
+    - "&#FC835C• /clan base &7- &fТелепортироваться на точку базы"
+    - "&#FC835C• /clan setbase &7- &fПоставить точку базы"
+    - "&#FC835C• /clan setrank [ник] [ранг] &7- &fУстановить ранг игроку"
+    - "&#FC835C• /clan disband &7- &fРасформировать клан (удаление клана)"
+    - ""
+    - "&#FFE259◀&m                                       &#FFE259▶ "
+you-cant-leave-leader: "§cYou can't leave this clan because you are the leader. If you want disband this clan you can use /clan disband"
+player-not-found:
+  - "[message] {prefix} &cИгрок не найден"
+disallowed-tag-regex:
+  - "[message] {prefix} &cКлан тег содержит недопустимые символы"
+disallowed-prefix-regex:
+  - "[message] {prefix} &cКлан префикс содержит недопустимые символы"
+clan-does-not-exist:
+  - "[message] {prefix} &cКлан {clan} не найден."
+clan-is-already-exists:
+  - "[message] {prefix} &cДанный клан уже существует. Придумайте другой тег"
+clan-created-successfully:
+  - "[message] {prefix} &aВы успешно создали клан &e{clan_tag} &a!"
+your-not-in-clan:
+  - "[message] {prefix} &cВы не состоите в клане!"
+your-already-in-clan:
+  - "[message] {prefix} &cВы уже состоите в клане"
+clan-tag-too-short:
+  - "[message] {prefix} &cТег короткий. Минимальная длина {min_length} символов."
+clan-tag-too-long:
+  - "[message] {prefix} &cТег длинный! Максимальная длина: {max_length} символов."
+clan-prefix-too-short:
+  - "[message] {prefix} &cПрефикс короткий. Минимальная длина {min_length} символов."
+clan-prefix-too-long:
+  - "[message] {prefix} &cПрефикс длинный! Максимальная длина: {max_length} символов."
+clan-tag-blocked:
+  - "[message] {prefix} &cДанный тег клана запрещен!"
+clan-you-cant-kick-yourself:
+  - '[message] {prefix} &cВы не можете кикнуть самого себя'
+clan-you-cant-setrank-yourself:
+  - '[message] {prefix} &cВы не можете выдать роль самому себе'
+you-haven-not-enough-money:
+  - "[message] {prefix} &cУ вас недостаточно средств!"
+no-invite:
+  - "[message] {prefix} &cДанный клан не отправлял вам приглашение"
+pvp-disabled:
+  # Если вам не нужно это сообщение то просто оставьте эту строку пустым pvp-disabled: {}
+  - "[actionbar] &cPvP против соклана отключено"
+clan-deny:
+  - "[message] {prefix} &cВы отклонили приглашение в клан."
+
+you-cant-do-that-with-leader:
+  - "[message] {prefix} &cВы не можете выполнить данное действие против лидера клана"
+
+your-rank-is-not-allowed-to-do-that:
+  - "[message] {prefix} &cYou are not allowed to do that! Please ask your clan leader to give you permission"
+
+
+clan-create:
+  - "[message] {prefix} &#17FF35Вы успешно создали клан &l{clan}"
+clan-balance:
+  - "[message] {prefix} &fБаланс клана составляет: &#17FF35&l${balance}"
+clan-balance-deposit:
+  - "[message] {prefix} &#17FF35Вы успешно &eпополнили &#17FF35баланс клана на сумму: &l${sum}"
+clan-balance-limit:
+  - "[message] {prefix} &cДостигнут лимит денег в балансе клана! &7(Лимит: {max-balance})"
+clan-deposit-no-money:
+  - '[message] {prefix} &cУ вас недостаточно средств чтобы пополнить на эту сумму'
+clan-balance-withdraw:
+  - "[message] {prefix} &#17FF35Вы успешно &cсняли &#17FF35с баланса банка на сумму: &l${sum}"
+clan-player-kick:
+  - "[message] {prefix} &aВы кикнули игрока {target} из клана"
+clan-you-was-kicked:
+  - "[message] {prefix} &aИгрок {player} кикнул вас из клана"
+clan-invite:
+  - "[message] {prefix} &#17FF35Запрос на вступление в клан игроку &l{target} &r&#17FF35успешно отправлен."
+clan-already-invited:
+  - "[message] {prefix} &cВы уже ранее отправляли приглашение в клану этому игроку."
+clan-player-already-in-clan:
+  - "[message] {prefix} &7Этот игрок уже в клане"
+clan-invite-denied:
+  - "[message] {prefix} &cИгрок &f{target} &cотклонил ваше приглашение."
+clan-invite-limit:
+  - "[message] {prefix} &cДостигнут лимит участников в клане"
+clan-setrank:
+  - "[message] {prefix} &fВы дали роль {rank_prefix} &fигроку &e{target}"
+clan-join-request:
+  - "[message] {prefix} &#17FF35Вам поступил запрос на вступление в клан &l{clan} &r&#17FF35от игрока &f&l{player}"
+  - "[message] &r"
+  - "[message] {prefix} &#17FF35Вам поступил запрос на вступление в клан &l{clan} &r&#17FF35от игрока &f&l{player}"
+  - "[message] &r"
+  # В типе [button] НЕ ПОДЕРЖИВАЮТСЯ HEX ЦВЕТА!!!!
+  - "[button] <hover:show_text:'&7Нажмите, чтобы &aпринять'><click:run_command:/clan accept {clan}>              &a[Принять]</click></hover> &7| <hover:show_text:'&7Нажмите, чтобы &cотклонить&c'><click:run_command:/clan deny {clan}>&c[Отклонить]&c</click></hover>"
+  - "[message] &r"
+clan-join:
+  - '[message] {prefix} &aВы вступили в клан {clan}'
+  - '[team_msg] {prefix} &aВ клане новый игрок &f{player}&a. Поприветствуйте его!'
+clan-chat-on:
+  - '[message] {prefix} &fКлановый чат &#17FF35включён'
+clan-chat-off:
+  - '[message] {prefix} &fКлановый чат &#FB0000выключен'
+clan-pvp-on:
+  - '[message] {prefix} &fКлановый pvp &#17FF35включён'
+clan-pvp-off:
+  - '[message] {prefix} &fКлановый pvp &#FB0000выключен'
+clan-disband:
+  - '[message] {prefix} &a&lКлан был успешно расформирован'
+  - '[team_msg] {prefix} &c&lВаш клан был расформирован лидером'
+clan-disband-confirm:
+  - '[message] {prefix} &c&lПодтвердите что вы хотите удалить ваш клан без возможного восстановления прописав команду ещё раз.'
+clan-leave:
+  - "[message] {prefix} &eВы покинули клан {clan}"
+  - "[team_msg] {prefix} &cИгрок {player} покинул клан"
+clan-setbase:
+  - '[message] {prefix} &aЛокация успешно установлена'
+clan-base:
+  - '[actionbar] &7Телепорт на базу'
+clan-base-unset:
+  - '[message] &cКлан база не установлена'
+clan-glow-on:
+  - '[message] {prefix} &fСвечение соклановцев &#17FF35включён'
+clan-glow-off:
+  - '[message] {prefix} &fСвечение соклановцев &#FB0000выключен'
+clan-setslogan:
+  - "[message] {prefix} &fВы поставили слоган клана таким: &6{slogan}"
+clan-setprefix:
+  - "[message] {prefix} &fВы поставили префикс клана таким: &6{clan_prefix}"
+
+
+quest-status-progress: "&eВ прогрессе"
+quest-status-uncompleted: "&cНе выполнен"
+quest-status-completed: "&aВыполнено"
+quest-status-gradual: "&eВыполните предыдущий"
+quest-progress-type-individual: "&aИндивидуальный"
+quest-progress-type-global: "&e&lГлобальный"
+
+rank-perm-yes: "&a✔"
+rank-perm-no: "&c✘"
+
+
+gui:
+  tops:
+    kills:
+      set: "&6✔ Убийствам"
+      unset: "&7⏺ Убийствам"
+    deaths:
+      set: "&6✔ Смертям"
+      unset: "&7⏺ Смертям"
+    level:
+      set: "&6✔ Уровню"
+      unset: "&7⏺ Уровню"
+    balance:
+      set: "&6✔ Балансу"
+      unset: "&7⏺ Балансу"
+    members:
+      set: "&6✔ Участникам"
+      unset: "&7⏺ Участникам"
+    kd:
+      set: "&6✔ У/С"
+      unset: "&7⏺ У/С"

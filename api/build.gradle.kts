@@ -1,6 +1,5 @@
 import java.util.Properties
 
-// === Load .env file ===
 val envFile = rootProject.file(".env")
 val envProps = Properties()
 
@@ -20,6 +19,8 @@ plugins {
 }
 
 java {
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
     withSourcesJar()
 }
 
@@ -29,12 +30,12 @@ repositories {
 }
 
 val exposedDependencies = listOf(
-    "space.jetby.libs:Treex:0.1.5",
     "com.jodexindustries.jguiwrapper:common:1.0.0.9-beta",
-    "com.github.MilkBowl:VaultAPI:1.7",
 )
 
 val compileOnlyDependencies = listOf(
+    "com.github.MilkBowl:VaultAPI:1.7",
+    "space.jetby.libs:Treex:0.1.5",
     "com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT",
     "org.projectlombok:lombok:1.18.42",
     "com.github.retrooper:packetevents-spigot:2.8.0",
@@ -44,7 +45,7 @@ val compileOnlyDependencies = listOf(
 
 dependencies {
     compileOnlyDependencies.forEach { compileOnly(it) }
-    exposedDependencies.forEach { compileOnly(it) }
+    exposedDependencies.forEach { api(it) }
 
     annotationProcessor("org.projectlombok:lombok:1.18.42")
     testCompileOnly("org.projectlombok:lombok:1.18.42")
@@ -58,18 +59,6 @@ publishing {
             groupId = "space.jetby.TreexClans"
             artifactId = "api"
             version = "2.1"
-
-            pom.withXml {
-                val dependenciesNode = asNode().appendNode("dependencies")
-                exposedDependencies.forEach {
-                    val (group, artifact, version) = it.split(":")
-                    val dep = dependenciesNode.appendNode("dependency")
-                    dep.appendNode("groupId", group)
-                    dep.appendNode("artifactId", artifact)
-                    dep.appendNode("version", version)
-                    dep.appendNode("scope", "compile")
-                }
-            }
 
             pom {
                 name.set("TreexClans API")

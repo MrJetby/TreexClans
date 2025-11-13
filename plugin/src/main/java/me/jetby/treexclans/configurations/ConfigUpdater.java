@@ -19,9 +19,19 @@ public class ConfigUpdater {
         switch (version) {
             case 1 -> loadV1();
             case 2 -> loadV2();
+            case 3 -> loadV3();
         }
     }
+    public void loadV3() {
+        try {
+            configuration.set("config-version", 4);
 
+            configuration.set("clan-storage.filter.type", "BLACKLIST");
+            configuration.set("clan-storage.filter.materials", List.of("BEDROCK", "BARRIER"));
+
+            configuration.save(file);
+        } catch (IOException ignored) {}
+    }
     public void loadV2() {
         try {
             configuration.set("config-version", 3);

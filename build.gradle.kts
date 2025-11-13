@@ -7,7 +7,7 @@ plugins {
 
 allprojects {
     group = "me.jetby"
-    version = "2.0"
+    version = "2.1"
 
     repositories {
         mavenCentral()
@@ -29,10 +29,10 @@ allprojects {
         maven("https://repo.jodex.xyz/releases") {
             name = "Jodexindustries-releases"
         }
-        maven {
+        maven("https://maven.jetby.space") {
             name = "jetby-repo"
-            url = uri("https://maven.jetby.space")
         }
+
     }
 }
 

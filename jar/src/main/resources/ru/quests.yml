@@ -1,0 +1,263 @@
+category:
+  example:
+    - quest1
+    - quest2
+    - quest3
+    - quest4
+    - quest5
+    - quest6
+    - quest7
+    - quest8
+    - quest9
+    - quest10
+
+
+# Все типы:
+# PLAYER_KILL
+# ENTITY_KILL;ID
+# BLOCK_BREAK;ID
+# BLOCK_PLACE;ID
+# CHAT
+#
+quest1:
+  type: ENTITY_KILL;ZOMBIE
+  target: 50
+  name: "Зомби-штурм"
+  description: "Убейте 50 зомби"
+  progress: individual
+  rewards-description:
+    - "&a+ &e20 клан коинов"
+    - "&a+ &e40 опыта"
+    - "&a+ &e2000 монет"
+  rewards:
+    - "[sound] ENTITY_PLAYER_LEVELUP"
+    - "[message] &6&m                                      &r"
+    - "[message] &e&l⭐ &7Вы выполнили квест &e%name%&7."
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lНаграды:"
+    - "[message] &a+ &e20 клан коинов"
+    - "[message] &a+ &e40 опыта"
+    - "[message] &a+ &e2000 монет"
+    - "[message] &6&m                                      &r"
+    - "[coin_give] 20"
+    - "[clan_exp_give] 40"
+    - "[money_give] 2000"
+
+quest2:
+  type: BLOCK_BREAK;OAK_LOG
+  target: 500
+  name: "Дровосек"
+  description: "Срубите 500 дубовых блоков"
+  progress: individual
+  rewards-description:
+    - "&a+ &e15 клан коинов"
+    - "&a+ &e25 опыта"
+    - "&a+ &e1500 монет"
+  rewards:
+    - "[sound] ENTITY_PLAYER_LEVELUP"
+    - "[message] &6&m                                      &r"
+    - "[message] &e&l⭐ &7Вы выполнили квест &e%name%&7."
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lНаграды:"
+    - "[message] &a+ &e15 клан коинов"
+    - "[message] &a+ &e25 опыта"
+    - "[message] &a+ &e1500 монет"
+    - "[message] &6&m                                      &r"
+    - "[coin_give] 15"
+    - "[clan_exp_give] 25"
+    - "[money_give] 1500"
+
+quest3:
+  type: BLOCK_PLACE;TORCH
+  target: 200
+  name: "Освещатель"
+  description: "Поставьте 200 факелов"
+  progress: individual
+  rewards-description:
+    - "&a+ &e10 клан коинов"
+    - "&a+ &e20 опыта"
+    - "&a+ &e1000 монет"
+  rewards:
+    - "[sound] ENTITY_PLAYER_LEVELUP"
+    - "[message] &6&m                                      &r"
+    - "[message] &e&l⭐ &7Вы выполнили квест &e%name%&7."
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lНаграды:"
+    - "[message] &a+ &e10 клан коинов"
+    - "[message] &a+ &e20 опыта"
+    - "[message] &a+ &e1000 монет"
+    - "[message] &6&m                                      &r"
+    - "[coin_give] 10"
+    - "[clan_exp_give] 20"
+    - "[money_give] 1000"
+
+quest4:
+  type: ENTITY_KILL;SKELETON
+  target: 30
+  name: "Скелетон"
+  description: "Убейте 30 скелетов"
+  progress: global
+  rewards-description:
+    - "&a+ &e30 клан коинов"
+    - "&a+ &e50 опыта"
+    - "&a+ &e3000 монет"
+  global-rewards:
+    - "[clan_exp_give] 100"
+  rewards:
+    - "[sound] ENTITY_PLAYER_LEVELUP"
+    - "[message] &6&m                                      &r"
+    - "[message] &e&l⭐ &7Ваш клан выполнил квест &e%name%&7."
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lНаграды:"
+    - "[message] &a+ &e30 клан коинов"
+    - "[message] &a+ &e50 опыта"
+    - "[message] &a+ &e3000 монет"
+    - "[message] &6&m                                      &r"
+    - "[coin_give] 30"
+    - "[money_give] 3000"
+
+quest5:
+  type: BLOCK_BREAK;DIAMOND_ORE
+  target: 50
+  name: "Алмазный рудокоп"
+  description: "Добыть 50 алмазов"
+  progress: individual
+  rewards-description:
+    - "&a+ &e50 клан коинов"
+    - "&a+ &e30 опыта"
+    - "&a+ &e5000 монет"
+  rewards:
+    - "[sound] ENTITY_PLAYER_LEVELUP"
+    - "[message] &6&m                                      &r"
+    - "[message] &e&l⭐ &7Вы выполнили квест &e%name%&7."
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lНаграды:"
+    - "[message] &a+ &e50 клан коинов"
+    - "[message] &a+ &e30 опыта"
+    - "[message] &a+ &e5000 монет"
+    - "[message] &6&m                                      &r"
+    - "[coin_give] 50"
+    - "[clan_exp_give] 30"
+    - "[money_give] 5000"
+
+quest6:
+  type: ENTITY_KILL;CREEPER
+  target: 40
+  name: "Хранитель тишины"
+  description: "Убейте 40 криперов"
+  progress: global
+  rewards-description:
+    - "&a+ &e40 клан коинов"
+    - "&a+ &e60 опыта"
+    - "&a+ &e3000 монет"
+  global-rewards:
+    - "[clan_exp_give] 120"
+  rewards:
+    - "[sound] ENTITY_PLAYER_LEVELUP"
+    - "[message] &6&m                                      &r"
+    - "[message] &e&l⭐ &7Ваш клан выполнил квест &e%name%&7."
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lНаграды:"
+    - "[message] &a+ &e40 клан коинов"
+    - "[message] &a+ &e60 опыта"
+    - "[message] &a+ &e3000 монет"
+    - "[message] &6&m                                      &r"
+    - "[coin_give] 40"
+    - "[money_give] 3000"
+
+quest7:
+  type: BLOCK_PLACE;STONE
+  target: 1000
+  name: "Строитель"
+  description: "Поставьте 1000 камней"
+  progress: individual
+  rewards-description:
+    - "&a+ &e25 клан коинов"
+    - "&a+ &e35 опыта"
+    - "&a+ &e4000 монет"
+  rewards:
+    - "[sound] ENTITY_PLAYER_LEVELUP"
+    - "[message] &6&m                                      &r"
+    - "[message] &e&l⭐ &7Вы выполнили квест &e%name%&7."
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lНаграды:"
+    - "[message] &a+ &e25 клан коинов"
+    - "[message] &a+ &e35 опыта"
+    - "[message] &a+ &e4000 монет"
+    - "[message] &6&m                                      &r"
+    - "[coin_give] 25"
+    - "[clan_exp_give] 35"
+    - "[money_give] 4000"
+
+quest8:
+  type: BLOCK_BREAK;IRON_ORE
+  target: 200
+  name: "Железный мастер"
+  description: "Добыть 200 железных блоков"
+  progress: individual
+  rewards-description:
+    - "&a+ &e30 клан коинов"
+    - "&a+ &e25 опыта"
+    - "&a+ &e2500 монет"
+  rewards:
+    - "[sound] ENTITY_PLAYER_LEVELUP"
+    - "[message] &6&m                                      &r"
+    - "[message] &e&l⭐ &7Вы выполнили квест &e%name%&7."
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lНаграды:"
+    - "[message] &a+ &e30 клан коинов"
+    - "[message] &a+ &e25 опыта"
+    - "[message] &a+ &e2500 монет"
+    - "[message] &6&m                                      &r"
+    - "[coin_give] 30"
+    - "[clan_exp_give] 25"
+    - "[money_give] 2500"
+
+quest9:
+  type: ENTITY_KILL;SPIDER
+  target: 25
+  name: "Паукоед"
+  description: "Убейте 25 пауков"
+  progress: global
+  rewards-description:
+    - "&a+ &e20 клан коинов"
+    - "&a+ &e30 опыта"
+    - "&a+ &e2000 монет"
+  global-rewards:
+    - "[clan_exp_give] 80"
+  rewards:
+    - "[sound] ENTITY_PLAYER_LEVELUP"
+    - "[message] &6&m                                      &r"
+    - "[message] &e&l⭐ &7Ваш клан выполнил квест &e%name%&7."
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lНаграды:"
+    - "[message] &a+ &e20 клан коинов"
+    - "[message] &a+ &e30 опыта"
+    - "[message] &a+ &e2000 монет"
+    - "[message] &6&m                                      &r"
+    - "[coin_give] 20"
+    - "[money_give] 2000"
+
+quest10:
+  type: BLOCK_BREAK;SAND
+  target: 1000
+  name: "Песчаный копатель"
+  description: "Вскопайте 1000 блоков песка"
+  progress: individual
+  rewards-description:
+    - "&a+ &e15 клан коинов"
+    - "&a+ &e20 опыта"
+    - "&a+ &e1500 монет"
+  rewards:
+    - "[sound] ENTITY_PLAYER_LEVELUP"
+    - "[message] &6&m                                      &r"
+    - "[message] &e&l⭐ &7Вы выполнили квест &e%name%&7."
+    - "[message] &6&m                                      &r"
+    - "[message] &6&lНаграды:"
+    - "[message] &a+ &e15 клан коинов"
+    - "[message] &a+ &e20 опыта"
+    - "[message] &a+ &e1500 монет"
+    - "[message] &6&m                                      &r"
+    - "[coin_give] 15"
+    - "[clan_exp_give] 20"
+    - "[money_give] 1500"

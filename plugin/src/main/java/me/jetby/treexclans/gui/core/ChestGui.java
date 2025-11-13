@@ -3,6 +3,7 @@ package me.jetby.treexclans.gui.core;
 import com.jodexindustries.jguiwrapper.api.item.ItemWrapper;
 import com.jodexindustries.jguiwrapper.gui.advanced.GuiItemController;
 import me.jetby.treex.text.Colorize;
+import me.jetby.treexclans.TreexClans;
 import me.jetby.treexclans.api.service.clan.Clan;
 import me.jetby.treexclans.api.gui.Button;
 import me.jetby.treexclans.api.gui.Gui;
@@ -255,6 +256,8 @@ public class ChestGui extends Gui {
 
         updateSlotMapping();
 
+        EnumSet<Material> allowedMaterials = getPlugin().getCfg().getAvailableStorageMaterials();
+
         for (Map.Entry<Integer, Integer> entry : slotToGlobalIndex.entrySet()) {
             int guiSlot = entry.getKey();
             int globalIndex = entry.getValue();
@@ -263,9 +266,15 @@ public class ChestGui extends Gui {
 
             if (item == null || item.getType() == Material.AIR) {
                 inv.setItem(guiSlot, null);
-            } else {
-                inv.setItem(guiSlot, item.clone());
+                continue;
             }
+
+            if (!allowedMaterials.contains(item.getType())) {
+                inv.setItem(guiSlot, null);
+                continue;
+            }
+
+            inv.setItem(guiSlot, item.clone());
         }
     }
 
@@ -307,6 +316,14 @@ public class ChestGui extends Gui {
             }
 
             ItemStack cursor = e.getCursor();
+            if (cursor != null && cursor.getType() != Material.AIR) {
+                EnumSet<Material> allowedMaterials = getPlugin().getCfg().getAvailableStorageMaterials();
+                if (!allowedMaterials.contains(cursor.getType())) {
+                    e.setCancelled(true);
+                    return;
+                }
+            }
+
             if (cursor != null && cursor.hasItemMeta()) {
                 ItemMeta meta = cursor.getItemMeta();
                 if (meta != null && meta.getPersistentDataContainer().has(NAMESPACED_KEY, PersistentDataType.STRING)) {
@@ -327,6 +344,12 @@ public class ChestGui extends Gui {
 
             ItemStack clicked = e.getCurrentItem();
             if (clicked == null || clicked.getType() == Material.AIR) {
+                return;
+            }
+
+            EnumSet<Material> allowedMaterials = getPlugin().getCfg().getAvailableStorageMaterials();
+            if (!allowedMaterials.contains(clicked.getType())) {
+                e.setCancelled(true);
                 return;
             }
 
@@ -385,6 +408,9 @@ public class ChestGui extends Gui {
                 notifyOtherViewers();
             }, 1L);
         }
+    }
+    public TreexClans getPlugin() {
+        return (TreexClans) super.getPlugin();
     }
 
 }

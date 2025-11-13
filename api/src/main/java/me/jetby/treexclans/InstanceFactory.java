@@ -1,7 +1,6 @@
 package me.jetby.treexclans;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.experimental.UtilityClass;
 import me.jetby.treexclans.api.gui.GuiFactory;
 import org.bukkit.NamespacedKey;
 
@@ -13,11 +12,11 @@ import org.bukkit.NamespacedKey;
  * <p>
  * Use it as a central place to store shared references initialized during plugin startup.
  */
-@Getter @Setter
-public final class InstanceFactory {
+@UtilityClass
+public class InstanceFactory {
 
     /** Example: global NamespacedKey factory base */
-    public static NamespacedKey ITEM_KEY;
-    public static GuiFactory GUI_FACTORY;
+    public NamespacedKey ITEM_KEY;
+    public GuiFactory GUI_FACTORY;
 
 }

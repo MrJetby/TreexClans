@@ -1,16 +1,8 @@
-config-version: 3
+config-version: 2
+
+lang: ru
 
 debug: true
-
-
-clan-storage:
-  # Фильтр предметов которых игроки не могут класть в клановый сундук
-  filter:
-    type: BLACKLIST # BLACKLIST или WHITELIST
-    materials:
-      - BEDROCK
-      - BARRIER
-
 
 clan-create:
 
